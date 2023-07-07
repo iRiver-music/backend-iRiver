@@ -1,0 +1,6 @@
+User/__pycache__/
+Music/__pycache__/
+Discover/__pycache__/
+Token/__pycache__/
+*.pyc
+
