@@ -1,7 +1,7 @@
-User/__pycache__/
-Music/__pycache__/
-Discover/__pycache__/
-Token/__pycache__/
-iRiver/__pycache__/
+User/__pycache__/*.pyc
+Music/__pycache__/*.pyc
+Discover/__pycache__/*.pyc
+Token/__pycache__/*.pyc
+iRiver/__pycache__/*.pyc
 *.pyc
 
