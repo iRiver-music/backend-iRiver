@@ -1,6 +1,11 @@
+# import
 from django.shortcuts import render
 
-# Create your views here.
+# self import
+
+
+
+# program START
 
 # google 登入
 
