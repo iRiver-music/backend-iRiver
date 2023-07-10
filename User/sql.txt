@@ -1,0 +1,79 @@
+---sql
+-django_user
+    -- auth_group
+        id ★
+        name ☆
+    -- auth_group_permission // 傳存
+        id ★
+        group_id ☆
+        permission_id ☆
+    -- auth_permission  // 放permission的log(nm)
+        id ★
+        name // 內容
+        content_type_id ☆ // 等級
+        codename ☆ // 回應碼
+    -- auth_user  // 放user(用密碼登的)
+    	id ★
+        password // 密碼
+        last_login // 上次登入的時間
+        is_superuser // 是否為特殊使用者
+        username ☆ // 名稱
+        first_name // 姓
+        last_name // 名
+        email // email
+        is_staff //
+        is_active //
+        date_joined // 加入日期
+    -- auth_user_groups // 傳存
+        id ★
+        user_id ☆
+        group_id ☆
+    -- auth_user_user_permissions // 傳存
+        id ★
+        user_id ☆
+        permission_id ☆
+    -- django_admin_log // admin log
+        id ★
+        action_time // 動作時間
+        object_id
+        object_repr
+        action_flag
+        change_message
+        content_type_id ☆ //
+        user_id ☆ // user id
+    -- django_content_type // 類型log(nm)
+        id ★
+        app_label ☆ // 內容
+        model ☆ // 回應碼
+    -- django_migrations //
+        id ★
+        app //
+        name //
+        applied // 新增日期
+    -- django_session // session_data log
+        session_key ★
+        session_data // 內文
+        expire_date // 啟用日期
+    -- music_book X
+    -- music_music X
+    -- music_post X
+    -- token_blacklist_blacklistedtoken X
+    -- token_blacklist_outstandingtoken X
+-iriver
+    - user
+        - iriver_user_data
+            id ★
+            email // email
+            username // 名稱
+            phone // 電話
+            country // 國家 列表在 model.py COUNTRY_CHOICES
+            birthday // 生日
+            gender //
+            user_img_url // 頭像位置
+            test
+            level // 等級
+
+
+
+
+nm -> not move

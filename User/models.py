@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxLengthValidator
 
 #國家清單
-COUNTRY_CHOICES=(
+country=(
     ('NN','不透露'),
     ('US','United States'),
     ('CA','Canada'),
@@ -24,8 +24,11 @@ COUNTRY_CHOICES=(
 )
 
 #性別清單
-GENDER=(
+gender=(
     ('U','不透露'),
     ('M','男'),
     ('F','女'),
 )
+
+class login(models.Model):
+    pass

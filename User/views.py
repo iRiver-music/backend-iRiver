@@ -11,7 +11,7 @@ def googleurl(request):
 def googlecallback(request):
     pass
 
-# line 登
+# line 登入
 
 def lineurl(request):
     pass
@@ -20,13 +20,13 @@ def lineurl(request):
 def linecallback(request):
     pass
 
-# 註冊(無用)
+# 註冊
 
 def signup(request):
     pass
 
 
-# 登入(無用)
+# 登入
 def signup(request):
     pass
 
