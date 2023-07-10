@@ -12,6 +12,9 @@ dbmusic=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5c
 
 query=dbuser.cursor() # 操作游標
 
+def loginsql(): # 登入用sql def
+    pass
+
 try:
     query.execute("INSERT INTO `sqltest`(`test`,`test2`,`test3`)VALUES(%s,%s,%s)",("123","234","345")) # 執行語法
     dbuser.commit() # 提交修改
@@ -23,3 +26,8 @@ except Exception as e:
 
 # 關閉連線
 dbuser.close()
+
+
+# 註記
+# 只要函式後面有加sql都是sql函式
+# 話說我不知道這樣串接是否符合你們要的，有錯直接跟我說即可

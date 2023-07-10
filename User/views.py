@@ -2,8 +2,7 @@
 from django.shortcuts import render
 
 # self import
-
-
+import sql
 
 # program START
 
