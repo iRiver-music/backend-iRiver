@@ -24,8 +24,18 @@ def query(db,query,data=()):
     db.close()
     return row.fetchall()
 
-def loginsql(): # 登入用sql
+# 登入
+def loginsql():
     pass
+
+# 登出
+def logoutsql():
+    pass
+
+# 註冊
+def signupsql():
+    pass
+
 
 # 註記
 # 只要函式後面有加sql都是sql函式
