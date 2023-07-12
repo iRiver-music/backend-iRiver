@@ -6,10 +6,12 @@ import requests
 import uuid
 import urllib.parse
 import pymysql
-from aiohttp import request
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
-from django.shortcuts import redirect
-
+from django.shortcuts import redirect, render
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 # self import
 # none
@@ -38,7 +40,7 @@ def query(db,query,data=()):
     return row.fetchall()
 
 # print_color 函式：在終端機中以不同顏色打印文字
-def print_color(text,color):
+def print_color(color,text):
     # 根据传入的颜色选择相应的 ANSI 转义码
     if color == "header":
         color_code="\033[95m"
@@ -57,13 +59,33 @@ def print_color(text,color):
     print(str(color_code)+str(text)+str("\033[0m"))
 
 # print_have_line 函式：在終端機中打印分隔線並打印文字
-def print_have_line(text="",color="green"):
+def print_have_line(color="green",text=""):
     print("---------------------------")
-    print_color(text,color)
+    print_color(color,text)
+
+test=True # only for testing
+url="https://iriver.ddns.net"
+url="http://127.0.0.1:8000" # only for testing
 
 
 # 登入
-def loginsql():
+def loginsql(method,email,password,token=""):
+    if method=="google":
+        google()
+    elif method=="line":
+        line()
+    elif method=="normal":
+        login()
+    else:
+        print_have_line("fail","loginmethod error")
+
+def google():
+    pass
+
+def line():
+    pass
+
+def login():
     pass
 
 # 登出
@@ -75,11 +97,30 @@ def signupsql():
     pass
 
 
-test = True  # 測試模式的標誌，用於根據不同的環境設定相應的參數和配置
 
+
+
+
+
+
+################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+test = True  # 測試模式的標誌，用於根據不同的環境設定相應的參數和配置
 formal_url = "https://iriver.ddns.net"  # 正式環境的 URL
 local_url = "http://127.0.0.1:8000"  # 本地開發環境的 URL
-
 client_id = '1026795084542-4faa7ard63anna4utjtmavuvbe4t4mf4.apps.googleusercontent.com'
 client_secret = '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'
 scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email'
@@ -103,30 +144,6 @@ else:
 # function START
 
 # user/lib::
-# print_color 函式：在終端機中以不同顏色打印文字
-def print_color(text,color):
-    # 根据传入的颜色选择相应的 ANSI 转义码
-    if color == "header":
-        color_code="\033[95m"
-    elif color == "blue":
-        color_code="\033[94m"
-    elif color == "green":
-        color_code="\033[92m"
-    elif color == "warning":
-        color_code="\033[93m"
-    elif color == "fail":
-        color_code="\033[91m"
-    else:
-        raise ValueError("Unsupported color.")
-
-    # 打印带有颜色的文本
-    print(str(color_code)+str(text)+str("\033[0m"))
-
-# print_have_line 函式：在終端機中打印分隔線並打印文字
-def print_have_line(text="",color="green"):
-    print("---------------------------")
-    print_color(text,color)
-
 # switch_key 函式：根據鍵的格式返回對應的鍵值
 def switch_key(tkey):
     if tkey.startswith('#'):
@@ -206,48 +223,37 @@ def get_user_show_data(request):
     }))
 
 # save_session 函式：保存用戶會話數據
-def save_session(request, **kwargs):
-    UID = kwargs.get('uid')
-    request.session['key'] = UID  # 保存會話鍵
-    request.session['name'] = kwargs.get('name')  # 保存用戶名
-    request.session['email'] = kwargs.get('email')  # 保存郵件地址
-    request.session['UID'] = kwargs.get('UID')  # 保存用戶 ID
-    request.session['user_img_url'] = kwargs.get('user_img_url')  # 保存用戶頭像 URL
+def save_session(request,name,email,uid,userimageurl):
+    request.session['key'] = uid  # 保存會話鍵
+    request.session['name'] = name  # 保存用戶名
+    request.session['email'] = email  # 保存郵件地址
+    request.session['uid'] = uid  # 保存用戶 ID
+    request.session['user_img_url'] = userimageurl  # 保存用戶頭像 URL
 
     # 創建 SQL 使用者實例
     sql_user = sqluser(dbconfiguser)
-
     # 舊版
-    request.session['user_data'] = {'name': kwargs.get('name')}  # 保存用戶數據
-
+    request.session['user_data'] = {'name': name}  # 保存用戶數據
     # 創建 SQL 音樂實例
-    sql_user_music_list = sqlmusic(config=dbconfigusermusiclist, table_name=UID)
-
+    sql_user_music_list = sqlmusic(config=dbconfigusermusiclist, table_name=uid)
     # 創建用戶音樂列表表格（如果不存在）
     sql_user_music_list.create_tables()
-
     # 獲取用戶播放列表
     user_playlist = sql_user_music_list.get_playlists(isAll=True)
-
     request.session['user_playlist'] = user_playlist  # 保存用戶播放列表
-
     # eq
-    user_eq = sqleq(dbconfiguser).commit(method="select", UID_EQ=UID)
-
+    user_eq = sqleq(dbconfiguser).commit(method="select", UID_EQ=uid)
     request.session['user_eq'] = user_eq  # 保存用戶均衡器設置
-
     # setting
-    user_setting = sqlusersetting(dbconfiguser).commit(method="select", UID_SETTING=UID)
-
+    user_setting = sqlusersetting(dbconfiguser).commit(method="select", UID_SETTING=uid)
     request.session['user_setting'] = user_setting  # 保存用戶設置
-
     request.session.save()
-
     print("##############################")
-    print_color("save session "+str(request.session['user_data'])+str(request.session['user_playlist']),"warning")
+    print_color("warning","save session "+str(request.session['user_data'])+str(request.session['user_playlist']))
     return JsonResponse({"success": True})
 
-def get_user_session(request, uid):
+def get_user_session(request):
+    uid=request.session['key']
     if request.method != 'POST':
         return HttpResponse('error')
 
@@ -282,7 +288,8 @@ def get_user_session(request, uid):
     }))
 
 # userplaylist
-def get_user_music_list(request, uid: str):
+def get_user_music_list(request):
+    uid=request.session['key']
     PLAYLIST = "我的最愛"
 
     data = json.loads(request.body)  # 解析 JSON 數據
@@ -319,7 +326,9 @@ def get_user_music_list(request, uid: str):
 
 # /login/
 # base 函式：處理用戶登入的基本操作
-def base(userid, email, name, user_img_url, request):
+
+# base 函式：處理用戶登入的基本操作
+def base(userid, email, name, userimageurl, request):
     sql = sqllogin(dbconfiguser)
     sql_user = sqluser(dbconfiguser)
 
@@ -342,128 +351,7 @@ def base(userid, email, name, user_img_url, request):
     sql.close()
 
     # 保存用戶會話數據
-    save_session(
-        request=request,
-        uid=uid,
-        user_img_url=user_img_url,
-        name=name,
-        email=email,
-    )
-
-# google
-# google_url 函式：生成 Google 登入連結
-def google_url(request):
-    state = str(uuid.uuid4())
-    request.session['oauth_state'] = state
-    auth_url = f'https://accounts.google.com/o/oauth2/v2/auth?scope={scope}&access_type={access_type}&include_granted_scopes={include_granted_scopes}&response_type={response_type}&state={state}&redirect_uri={urlgoogle}&client_id={client_id}'
-    return auth_url
-
-# google_token 函式：獲取存取令牌
-def google_token(code):
-    url = 'https://oauth2.googleapis.com/token'
-    params = {
-        'code': code,
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'redirect_uri': urlgoogle,
-        'grant_type': 'authorization_code'
-    }
-    response = requests.post(url, data=params)
-    token_data = response.json()
-    id_token = token_data.get('id_token', None)
-    access_token = token_data.get('access_token', None)
-    return {'id_token': id_token, 'access_token': access_token}
-
-# google_profile 函式：獲取使用者資料
-def google_profile(id_token):
-    url = 'https://oauth2.googleapis.com/tokeninfo'
-    data = {
-        'id_token': id_token,
-    }
-    response = requests.get(url, params=data)
-    data = response.json()
-    email = data['email']
-    picture = data['picture']
-    userid = data['sub']
-    name = data['name']
-    return {'email': email, 'picture': picture, 'userid': userid, 'name': name}
-
-# google_callback 函式：處理 Google 登入回調
-def google_callback(request):
-    code = request.GET.get('code')
-    state = request.GET.get('state')
-    if code and state == request.session.get('oauth_state'):
-        token_data = google_token(code)
-        id_token = token_data['id_token']
-        access_token = token_data['access_token']
-        userdata = google_profile(id_token)
-        base(
-            userid=userdata['userid'],
-            email=userdata['email'],
-            name=userdata['name'],
-            user_img_url=userdata['picture'],
-            request=request)
-        return True
-    print("驗證失敗")
-    return False
-
-# line
-# line_url 函式：生成 Line 登入連結
-def line_url(request):
-    state = str(uuid.uuid4())
-    request.session['oauth_state'] = state
-    encoded_scopes = urllib.parse.quote(" ".join(scopes))
-    auth_url = f'https://access.line.me/oauth2/v2.1/authorize?response_type={response_type}&client_id={client_id}&redirect_uri={urlline}&state={state}&scope={encoded_scopes}'
-    return auth_url
-
-# line_token 函式：獲取存取令牌
-def line_token(code):
-    url = 'https://api.line.me/oauth2/v2.1/token'
-    data = {
-        'grant_type': 'authorization_code',
-        'code': code,
-        'redirect_uri': urlline,
-        'client_id': client_id,
-        'client_secret': client_secret,
-    }
-    response = requests.post(url, data)
-    token_data = response.json()
-    id_token = token_data.get('id_token', None)
-    access_token = token_data.get('access_token', None)
-    return {'id_token': id_token, 'access_token': access_token}
-
-# line_profile 函式：獲取用戶資料
-def line_profile(id_token, client_id):
-    url = 'https://api.line.me/oauth2/v2.1/verify'
-    data = {
-        'id_token': id_token,
-        'client_id': client_id,
-    }
-    response = requests.post(url, data=data)
-    data = response.json()
-    email = data['email']
-    picture = data['picture']
-    userid = data['sub']
-    name = data['name']
-    return {'email': email, 'picture': picture, 'userid': userid, 'name': name}
-
-# line_callback 函式：處理 Line 登入回調
-def line_callback(request):
-    code = request.GET.get('code')
-    state = request.GET.get('state')
-    if code and state == request.session.get('oauth_state'):
-        token_data = line_token(code)
-        id_token = token_data['id_token']
-        access_token = token_data['access_token']
-        userdata = line_profile(id_token, client_id)
-        name = userdata['name']
-        email = userdata['email']
-        picture = userdata['picture']
-        userid = userdata['userid']
-        base(name=name, email=email, user_img_url=picture, userid=userid, request=request)
-        return True
-    print("驗證失敗")
-    return False
+    save_session(request,name,email,uid,userimageurl)
 
 ########################################################################
 
@@ -515,17 +403,16 @@ class sqlclass:
         self.cursor.execute(sql,values)
         self.db.commit()
         res=self.cursor.fetchall() if isALL else self.cursor.fetchone()
-        print("-" * 30)
+        print("------------------------------")
         print(f"sql {sql} results is {res}")
 
-        if res is not None:
-
+        if res!=None:
             return res
         else:
             return None
 
     def show(self,sql,kwargs):
-        print("-" * 30)
+        print("------------------------------")
         print("the sql is {},the kwargs is{}".format(sql,kwargs))
 
     def close(self):
@@ -900,7 +787,7 @@ class sqlusersetting(sqlclass):
 
     def insert(self,**kwargs):
         sql=f'INSERT INTO {self.table_name} (UID_SETTING,LANGUAGE,SHOW_MODAL,AUDIO_QUALITY,AUDIO_AUTO_PLAY,WIFI_AUTO_DOWNLOAD) VALUES (%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE UID_SETTING=UID_SETTING'
-        return super().insert(sql=sql,values=self.dict_to_tuple(**kwargs))
+        return super().insert(sql=sql,values=self.dict_to_tuple(**1))
 
     def select(self,**kwargs):
         sql=f'SELECT UID_SETTING,LANGUAGE,SHOW_MODAL,AUDIO_QUALITY,AUDIO_AUTO_PLAY,WIFI_AUTO_DOWNLOAD FROM {self.table_name} WHERE UID_SETTING=%s'
@@ -1028,6 +915,42 @@ class sqluser:
     def close(self):
         self.db.close()
 
+
+class RegisterForm(UserCreationForm):
+    username = forms.CharField(
+        label="帳號",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    email = forms.EmailField(
+        label="電子郵件",
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+    password1 = forms.CharField(
+        label="密碼",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    password2 = forms.CharField(
+        label="密碼確認",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        label="帳號",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    password = forms.CharField(
+        label="密碼",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+
+
+
 ########################################################################
 
 default_app_config='user.apps.UserConfig'
@@ -1039,16 +962,198 @@ print("init sql user app")
 sqllogin(config=dbconfiguser).create_tables()
 sql_user=sqluser(config=dbconfiguser)
 sql_user.create_tables()
-
 sqleq(config=dbconfiguser).create_table()
-
 sqlusersetting(config=dbconfiguser).create_table()
 
 
-# create_tables()
-# save_user_profile(id='123', email='example@example.com', username='example', phone='123456789', country='US', birthday='1990-01-01', gender='M', user_img_url='example.com', test=0, level=0)
-# get_user_data('123')
-# get_user_show_data('123')
+
+
+
+
+
+def usersave_session(request):
+    return save_session(request,request.session['name'],request.session['email'],request.session['key'],request.session['user_img_url'])
+
+
+# def userget_user_music_list(request):
+#     return get_user_music_list(request,request.session['key'])
+
+
+# 舊款
+def userget_user_show_data(request):
+    return get_user_show_data(request)
+
+
+# def userget_user_session(request):
+#     return get_user_session(request,request.session['key'])
+
+
+def check_login(request):
+    if request.session["isLogin"]:
+        return JsonResponse({'isLogin': request.session['isLogin']})
+    else:
+        return JsonResponse({'isLogin': False})
+
+# google 登入
+def googleurl(request):
+    state = str(uuid.uuid4()) # 保存 state 至 session 中，以防止 CSRF 攻擊
+    request.session['oauth_state'] = state
+    url = f'https://accounts.google.com/o/oauth2/v2/auth?scope={scope}&access_type={access_type}&include_granted_scopes={include_granted_scopes}&response_type={response_type}&state={state}&redirect_uri={urlgoogle}&client_id={client_id}' # 生成 Google 登入連結
+    return HttpResponseRedirect(url)
+
+def googlecallback(request):
+    success =  False
+    code = request.GET.get('code')
+    state = request.GET.get('state')
+    if code and state == request.session.get('oauth_state'):
+        url = 'https://oauth2.googleapis.com/token'
+        params = {
+            'code': code,
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'redirect_uri': urlgoogle,
+            'grant_type': 'authorization_code'
+        }
+        # 向 Google API 發送 POST 請求，獲取存取令牌
+        response = requests.post(url, data=params)
+        token_data = response.json()
+        id_token = token_data.get('id_token', None)
+        access_token = token_data.get('access_token', None)
+
+        url = 'https://oauth2.googleapis.com/tokeninfo'
+        data = {
+            'id_token': id_token,
+        }
+        # 向 Google API 發送 GET 請求，獲取使用者資料
+        response = requests.get(url, params=data)
+        data = response.json()
+        email = data['email']
+        picture = data['picture']
+        userid = data['sub']
+        name = data['name']
+
+        # 調用 base 函式進行處理
+        base(userid=userid, email=email, name=name, user_img_url=picture, request=request)
+        success =  True
+    else:
+        print("驗證失敗")
+    request.session['isLogin'] = success
+    if success:
+        print_have_line(text="登入成功")
+        return redirect('/music/discover/')
+    else:
+        print_have_line(text="登入失敗")
+        return redirect('/user/login/')
+
+# line 登入
+def lineurl(request):
+    state = str(uuid.uuid4())
+    # 保存 state 至 session 中，以防止 CSRF 攻擊
+    request.session['oauth_state'] = state
+    # 生成 Line 登入連結
+    encoded_scopes = urllib.parse.quote(" ".join(scopes))
+    url = f'https://access.line.me/oauth2/v2.1/authorize?response_type={response_type}&client_id={client_id}&redirect_uri={urlline}&state={state}&scope={encoded_scopes}'
+    return HttpResponseRedirect(url)
+
+def linecallback(request):
+    success = False
+    code = request.GET.get('code')
+    state = request.GET.get('state')
+    if code and state == request.session.get('oauth_state'):
+        url = 'https://api.line.me/oauth2/v2.1/token'
+        data = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': urlline,
+            'client_id': client_id,
+            'client_secret': client_secret,
+        }
+        # 向 Line API 發送 POST 請求，獲取存取令牌
+        response = requests.post(url, data)
+        token_data = response.json()
+        id_token = token_data.get('id_token', None)
+        access_token = token_data.get('access_token', None)
+
+        url = 'https://api.line.me/oauth2/v2.1/verify'
+        data = {
+            'id_token': id_token,
+            'client_id': client_id,
+        }
+        # 向 Line API 發送 POST 請求，獲取用戶資料
+        response = requests.post(url, data=data)
+        data = response.json()
+        email = data['email']
+        picture = data['picture']
+        userid = data['sub']
+        name = data['name']
+
+        # 調用 base 函式進行處理
+        base(userid, email, name, picture, request)
+        success =  True
+    else:
+        print("驗證失敗")
+
+    request.session['isLogin'] = success
+    if success:
+        print_have_line(text="登入成功")
+        return redirect('/music/discover/')
+    else:
+        print_have_line(text="登入失敗")
+        return redirect('/user/login/')
+
+# 個人資料
+def profile2(request):
+    sql = sqluser(dbconfiguser)
+    if request.method == 'POST':
+        form_data = {
+            'id': request.session['key'],
+            'username': request.POST.get('username'),
+            'email': request.POST.get('email'),
+            'phone': request.POST.get('phone'),
+            'country': request.POST.get('country'),
+            'birthday': request.POST.get('birthday'),
+            'gender': request.POST.get('gender'),
+        }
+        sql.save_user_profile(**form_data)
+        print("成功修改")
+        return redirect('/user/profile2/')
+    else:
+        old_data = sql.get_user_data(uid=request.session['key'])
+        return render(request, 'edit_profile.html', {'form': old_data})
+
+
+def user_eq(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        kwargs = body.get("kwargs")
+        print_have_line(text=kwargs)
+        kwargs['UID_EQ'] = request.session['key']
+        return JsonResponse({"data": (sqleq(dbconfiguser)).commit(method=body.get("method"), kwargs=kwargs)})
+    else:
+        return JsonResponse({"success": False})
+
+
+def user_setting(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        method = body.get("method")
+        kwargs = body.get("kwargs")
+        kwargs['UID_SETTING'] = request.session['key']
+        return JsonResponse({"data": (sqlusersetting(dbconfiguser)).commit(method=method, kwargs=kwargs)})
+    else:
+        return JsonResponse({"success": False})
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 註記
 # 只要函式後面有加sql都是sql函式

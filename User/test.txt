@@ -298,25 +298,14 @@ def create_tables():
     query(dbuser, sql)
 
 
-def save_user_profile(**user_profile):
-    print("*" * 30)
-    print(user_profile)
-    id = user_profile.get('id')
-    email = user_profile.get('email')
-    username = user_profile.get('username')
-    phone = user_profile.get('phone')
-    country = user_profile.get('country')
-    birthday = user_profile.get('birthday')
-    gender = user_profile.get('gender')
-    user_img_url = user_profile.get('user_img_url')
-    test = user_profile.get('test', 0)
-    level = user_profile.get('level', 0)
-    query(dbuser, 'INSERT `IGNORE` INTO `user_profile` (`id`,`email`,`username`,`phone`,`country`,`birthday`,`gender`,`user_img_url`,`test`,`level`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)', (id, email, username, phone, country, birthday, gender, user_img_url, test, level))
-    query(dbuser, 'UPDATE user_profile SET email=%s,username=%s,phone=%s,country=%s,bir`thday=%s,gender=%s,user_img_url=%s,test=%s,level=%s WHERE id=%s', (email, username, phone, country, birthday, gender, user_img_url, test, level, id))
-
+def saveuserprofile(id="",email="",username="",phone="",country="",birthday="",gender="",imageurl="",test=0,level=0):
+    print("******************************")
+    print(id)
+    query(dbconfiguser,'INSERT `IGNORE` INTO `user_profile` (`id`,`email`,`username`,`phone`,`country`,`birthday`,`gender`,`user_img_url`,`test`,`level`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',(id,email,username,phone,country,birthday,gender,imageurl,test,level))
+    query(dbconfiguser,'UPDATE `user_profile` SET `email`=%s,`username`=%s,`phone`=%s,`country`=%s,`birthday`=%s,`gender`=%s,`user_img_url`=%s,`test`=%s,`level`=%s WHERE `id`=%s',(email,username,phone,country,birthday,gender,imageurl,test,level,id))
 
 def get_user_data(uid):
-    result = query(dbuser, 'SELECT * FROM user_profile WHERE id=%s', (uid,))
+    result = query(dbuser, 'SELECT * FROM `user_profile` WHERE `id`=%s', (uid))
     if result:
         data = {
             'id': result[0][0],
@@ -330,7 +319,7 @@ def get_user_data(uid):
             'test': result[0][8],
             'level': result[0][9],
         }
-        print("$" * 30)
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         print(data)
         return data
     else:
@@ -338,7 +327,7 @@ def get_user_data(uid):
 
 
 def get_user_show_data(uid):
-    result = query(dbuser, 'SELECT * FROM user_profile WHERE id=%s', (uid,))
+    result = query(dbuser, 'SELECT * FROM `user_profile` WHERE `id`=%s', (uid))
     if result:
         data = {
             'id': result[0][0],
@@ -346,7 +335,7 @@ def get_user_show_data(uid):
             'username': result[0][2],
             'level': result[0][7],
         }
-        print("$" * 30)
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         print(data)
         return data
     else:
