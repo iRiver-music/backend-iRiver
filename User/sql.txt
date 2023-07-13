@@ -72,7 +72,12 @@
             user_img_url // 頭像位置
             test
             level // 等級
-
+        - iRiver_user_music_list
+            -uid
+                playlist
+                music_ID
+                favorite
+                created_at
 
 
 

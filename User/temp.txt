@@ -1,0 +1,83 @@
+import pymysql
+
+def query(db, query, data=()):
+    try:
+        cursor = db.cursor()
+        cursor.execute(query, data)
+        db.commit()
+        print("Success!")
+    except Exception as e:
+        print("[ERROR]" + str(e))
+
+    cursor.close()
+    db.close()
+    return cursor.fetchall()
+
+def connect(config):
+    db = pymysql.connect(**config)
+    cursor = db.cursor()
+    return db, cursor
+
+def create_table(cursor, table_name):
+    print("-" * 30)
+    print(f"Created table {table_name}")
+
+def commit(cursor, method, **kwargs):
+    if method == "insert":
+        insert(cursor, **kwargs)
+    elif method == "update":
+        update(cursor, **kwargs)
+    else:
+        print("-" * 30)
+        print(f"The method {method} is not supported")
+        return False
+
+def insert(cursor, sql, values):
+    print(values)
+    show(sql=sql, kwargs=values)
+    return execute(cursor, sql=sql, values=values)
+
+def update(cursor, sql, values):
+    show(sql=sql, kwargs=values)
+    return execute(cursor, sql=sql, values=values)
+
+def select(cursor, sql, values):
+    show(sql=sql, kwargs=values)
+    return execute(cursor, sql=sql, values=values)
+
+def execute(cursor, sql, values, isALL=False):
+    cursor.execute(sql, values)
+    cursor.db.commit()
+    res = cursor.fetchall() if isALL else cursor.fetchone()
+    print("------------------------------")
+    print(f"SQL {sql} results are {res}")
+
+    if res is not None:
+        return res
+    else:
+        return None
+
+def show(sql, kwargs):
+    print("------------------------------")
+    print("The SQL is {}, the kwargs are {}".format(sql, kwargs))
+
+def close(db):
+    db.close()
+
+config = {
+    'host': 'localhost',
+    'user': 'username',
+    'password': 'password',
+    'db': 'database_name'
+}
+
+db, cursor = connect(config)
+
+table_name = 'example_table'
+create_table(cursor, table_name)
+
+# 使用範例：
+query(db, "SELECT * FROM example_table")
+commit(cursor, "insert", sql="INSERT INTO example_table (column1, column2) VALUES (%s, %s)", values=("value1", "value2"))
+
+close(db)
