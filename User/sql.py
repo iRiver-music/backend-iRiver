@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
 # self import
-# none
+import models
 
 # program START
 
@@ -121,14 +121,6 @@ def applecallback(request):
 
 
 
-
-
-
-
-
-
-
-
 test=True  # 測試模式的標誌，用於根據不同的環境設定相應的參數和配置
 formal_url="https://iriver.ddns.net"  # 正式環境的URL
 local_url="http://127.0.0.1:8000"  # 本地開發環境的URL
@@ -228,7 +220,7 @@ def save_session(request,name,email,uid,userimageurl):
     request.session["user_data"]={"name": name}  # 保存用戶數據
     # 創建 SQL 音樂實例
 
-    # 創建用戶音樂列表表格（如果不存在）
+    # 創建用戶音樂列表表格(如果不存在)
     sql=f"""
         CREATE TABLE IF NOT EXISTS uid(
             playlist VARCHAR(255) NOT NULL,
@@ -390,7 +382,7 @@ def base(userid,email,name,userimageurl,request):
 
     # uid=sql.insert(userid,email)
     emailrow=query(dbconfiguser,"SELECT`uid`FROM `user_social` WHERE `email`=%s",(email))
-    useridrow=query(dbconfiguser,"SELECT`userid`FROM `user_social` WHERE `userid`=%s",(userid))
+    useridrow=query(dbconfiguser,"SELECT `userid` FROM `user_social` WHERE `userid`=%s",(userid))
     uid=emailrow[0]
     if uid==None:
         uid=uuid.uuid4()
@@ -404,7 +396,6 @@ def base(userid,email,name,userimageurl,request):
 
     if userrow is None: # 檢查是否有帳號
         query(dbconfiguser,"INSERT INTO `user_profile`(`id`,`email`,`username`,`phone`,`country`,`birthday`,`gender`,`user_img_url`,`test`,`level`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(uid,email,name,"","","","","",0,0))
-        # query(dbconfiguser,"UPDATE `user_profile` SET `email`=%s,`username`=%s,`phone`=%s,`country`=%s,`birthday`=%s,`gender`=%s,`user_img_url`=%s,`test`=%s,`level`=%s WHERE `id`=%s",(email,name,"","","","","",0,0,uid)) # 不懂這行在幹嘛?
 
         query(dbconfigusermusiclist,f"""
             CREATE TABLE IF NOT EXISTS {uid}(
@@ -428,292 +419,92 @@ def base(userid,email,name,userimageurl,request):
     printcolorhaveline("green","finish baseing"," ")
 ########################################################################
 
-class sqlclass:
-    def __init__(self,config):
-        self.config=config
-        self.table_name=None
-        self.connect()
+def eqCommit(method:str,**kwargs):
+    if method == "insert":
+        row=query(dbconfiguser,"INSERT IGNORE INTO `user_setting_eq`(`UID_EQ`,`ENGANCE_HIGH`,`ENGANCE_MIDDLE`,`ENGANCE_LOW`,`ENGANCE_HEAVY`,`STYLE`,`EQ_HIGH`,`EQ_MIDDLE`,`EQ_LOW`,`EQ_HEAVY`,`EQ_DISTORTION`,`EQ_ZIP`,`SPATIAL_AUDIO`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",eqDictToTuple(**kwargs))
+        return eqTupLetoDict(row)
+    elif method == "update":
+        kwargs = kwargs.get("kwargs")
+        row=query(dbconfiguser,"UPDATE `user_setting_eq` SET "+str(kwargs['column'])+"=%s WHERE `UID_EQ`=%s",(kwargs["new_value"],kwargs["UID_EQ"]))
+        return row
+    elif method == "select":
+        row=query(dbconfiguser,"SELECT*FROM `user_setting_eq` WHERE `UID_EQ`=%s",(kwargs["UID_EQ"]))
+        return eqTupLetoDict(row)
+    else:
+        printcolorhaveline("fail", f"the method {method} is not supported", "-")
+        return False
 
-    def connect(self):
-        self.db=MySQLdb.connect(**self.config)
-        self.cursor=self.db.cursor()
+def eqDictToTuple(**kwargs):
+    return (
+        kwargs.get("UID_EQ"),
+        kwargs.get("ENGANCE_HIGH"),
+        kwargs.get("ENGANCE_MIDDLE"),
+        kwargs.get("ENGANCE_LOW"),
+        kwargs.get("ENGANCE_HEAVY"),
+        kwargs.get("STYLE"),
+        kwargs.get("EQ_HIGH"),
+        kwargs.get("EQ_MIDDLE"),
+        kwargs.get("EQ_LOW"),
+        kwargs.get("EQ_HEAVY"),
+        kwargs.get("EQ_DISTORTION"),
+        kwargs.get("EQ_ZIP"),
+        kwargs.get("SPATIAL_AUDIO"),
+    )
 
-    def create_table(self,tablename):
-        printcolorhaveline("green","create class table"+str(tablename),"-")
+def eqTupLetoDict(data_tuple):
+    keys=[
+        'UID_EQ',
+        'ENGANCE_HIGH',
+        'ENGANCE_MIDDLE',
+        'ENGANCE_LOW',
+        'ENGANCE_HEAVY',
+        'STYLE',
+        'EQ_HIGH',
+        'EQ_MIDDLE',
+        'EQ_LOW',
+        'EQ_HEAVY',
+        'EQ_DISTORTION',
+        'EQ_ZIP',
+        'SPATIAL_AUDIO'
+    ]
+    return dict(zip(keys,data_tuple))
 
-    def commit(self,method: str,**kwargs):
-        if method=="insert":
-            self.insert(**kwargs)
-        elif method=="update":
-            self.updata(**kwargs)
-        else:
-            print("-"*30)
-            print(f"the method {method} is not supported")
-            return False
+def usersettingCommit(method:str,**kwargs):
+    if method=="insert":
+        row=query(dbconfiguser,"INSERT INTO `user_setting`(`UID_SETTING`,`LANGUAGE`,`SHOW_MODAL`,AUDIO_QUALITY,AUDIO_AUTO_PLAY,WIFI_AUTO_DOWNLOAD) VALUES (%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE UID_SETTING=UID_SETTING",usersettingDictToTuple(**kwargs))
+        return usersettingTupLetoDict(row)
+    elif method=="update":
+        kwargs=kwargs.get('kwargs')
+        printcolorhaveline("green",kwargs,"-")
+        row=query(dbconfiguser,"UPDATE `user_setting` SET "+kwargs['column']+"=%s WHERE `UID_SETTING`=%s",(kwargs["new_value"], kwargs["UID_SETTING"]))
+        return row
+    elif method=="select":
+        row=query(dbconfiguser,"SELECT UID_SETTING,LANGUAGE,SHOW_MODAL,AUDIO_QUALITY,AUDIO_AUTO_PLAY,WIFI_AUTO_DOWNLOAD FROM `user_setting` WHERE UID_SETTING=%s",kwargs["UID_SETTING"])
+        return usersettingTupLetoDict(row)
+    else:
+        printcolorhaveline("fail", f"the method {method} is not supported", "-")
+        return False
 
-    def insert(self,sql: str,values):
-        print(values)
-        self.show(sql=sql,kwargs=values)
-        return self.execute(sql=sql,values=values)
+def usersettingDictToTuple(**kwargs):
+    return (
+        kwargs.get("UID_SETTING"),
+        kwargs.get("LANGUAGE"),
+        kwargs.get("SHOW_MODAL"),
+        kwargs.get("AUDIO_QUALITY"),
+        kwargs.get("AUDIO_AUTO_PLAY"),
+        kwargs.get("WIFI_AUTO_DOWNLOAD"),
+    )
 
-    def update(self,sql: str,values):
-        self.show(sql=sql,kwargs=values)
-        return self.execute(sql=sql,values=values)
-
-    def select(self,sql: str,values):
-        self.show(sql=sql,kwargs=values)
-        return self.execute(sql=sql,values=values)
-
-    def execute(self,sql,values,isALL=False):
-        self.cursor.execute(sql,values)
-        self.db.commit()
-        res=self.cursor.fetchall() if isALL else self.cursor.fetchone()
-        print("------------------------------")
-        print(f"sql {sql} results is {res}")
-
-        if res!=None:
-            return res
-        else:
-            return None
-
-    def show(self,sql,kwargs):
-        print("------------------------------")
-        print("the sql is {},the kwargs is{}".format(sql,kwargs))
-
-    def close(self):
-        self.db.close()
-
-class sqleq(sqlclass):
-    def __init__(self,config):
-        super().__init__(config)
-
-        self.table_name="user_setting_eq"
-
-    def commit(self,method: str,**kwargs):
-        if method=="insert":
-            return self.tuple_to_dict(data_tuple=self.insert(**kwargs))
-        elif method=="update":
-            kwargs=kwargs.get("kwargs")
-            return self.update(**kwargs)
-        elif method=="select":
-            return self.tuple_to_dict(data_tuple=self.select(**kwargs))
-        else:
-            print("-"*30)
-            print(f"the method {method} is not supported")
-            return False
-
-    def insert(self,**kwargs):
-        sql=sql=f"INSERT IGNORE INTO {self.table_name} (UID_EQ,ENGANCE_HIGH,ENGANCE_MIDDLE,ENGANCE_LOW,ENGANCE_HEAVY,STYLE,EQ_HIGH,EQ_MIDDLE,EQ_LOW,EQ_HEAVY,EQ_DISTORTION,EQ_ZIP,SPATIAL_AUDIO) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        return super().insert(sql=sql,values=self.dict_to_tuple(**kwargs))
-
-    def update(self,**kwargs):
-        sql=f"UPDATE {self.table_name} SET {kwargs['column']}=%s WHERE UID_EQ=%s"
-        return super().update(sql=sql,values=(kwargs["new_value"],kwargs["UID_EQ"]))
-
-    def select(self,**kwargs):
-        sql=f"SELECT * FROM {self.table_name} WHERE UID_EQ=%s"
-        return super().select(sql=sql,values=(kwargs["UID_EQ"],))
-
-    def regsiter(self,UID_EQ: str):
-        self.insert(UID_EQ=UID_EQ,
-                    ENGANCE_HIGH=False,
-                    ENGANCE_MIDDLE=False,
-                    ENGANCE_LOW=False,
-                    ENGANCE_HEAVY=False,
-                    STYLE="null",
-                    EQ_HIGH=50,
-                    EQ_MIDDLE=50,
-                    EQ_LOW=50,
-                    EQ_HEAVY=50,
-                    EQ_DISTORTION=0,
-                    EQ_ZIP=0,
-                    SPATIAL_AUDIO="null"
-                    )
-
-    def execute(self,sql,values,isALL=False):
-        return super().execute(sql,values,isALL)
-
-    def dict_to_tuple(self,**kwargs):
-        return (
-            kwargs.get("UID_EQ"),
-            kwargs.get("ENGANCE_HIGH"),
-            kwargs.get("ENGANCE_MIDDLE"),
-            kwargs.get("ENGANCE_LOW"),
-            kwargs.get("ENGANCE_HEAVY"),
-            kwargs.get("STYLE"),
-            kwargs.get("EQ_HIGH"),
-            kwargs.get("EQ_MIDDLE"),
-            kwargs.get("EQ_LOW"),
-            kwargs.get("EQ_HEAVY"),
-            kwargs.get("EQ_DISTORTION"),
-            kwargs.get("EQ_ZIP"),
-            kwargs.get("SPATIAL_AUDIO"),
-        )
-
-    def tuple_to_dict(self,data_tuple):
-        keys=[
-            "UID_EQ",
-            "ENGANCE_HIGH",
-            "ENGANCE_MIDDLE",
-            "ENGANCE_LOW",
-            "ENGANCE_HEAVY",
-            "STYLE",
-            "EQ_HIGH",
-            "EQ_MIDDLE",
-            "EQ_LOW",
-            "EQ_HEAVY",
-            "EQ_DISTORTION",
-            "EQ_ZIP",
-            "SPATIAL_AUDIO"
-        ]
-        return dict(zip(keys,data_tuple))
-
-class sqlusersetting(sqlclass):
-    def __init__(self,config):
-        super().__init__(config)
-        self.table_name="user_setting"
-
-    def commit(self,method: str,**kwargs):
-        if method=="insert":
-            return self.tuple_to_dict(data_tuple=self.insert(**kwargs))
-        elif method=="update":
-            kwargs=kwargs.get("kwargs")
-            return self.update(**kwargs)
-        elif method=="select":
-            return self.tuple_to_dict(data_tuple=self.select(**kwargs))
-        else:
-            print("-"*30)
-            print(f"the method {method} is not supported")
-            return False
-
-    def insert(self,**kwargs):
-        sql=f"INSERT INTO {self.table_name} (UID_SETTING,LANGUAGE,SHOW_MODAL,AUDIO_QUALITY,AUDIO_AUTO_PLAY,WIFI_AUTO_DOWNLOAD) VALUES (%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE UID_SETTING=UID_SETTING"
-        return super().insert(sql=sql,values=self.dict_to_tuple(**1))
-
-    def select(self,**kwargs):
-        sql=f"SELECT UID_SETTING,LANGUAGE,SHOW_MODAL,AUDIO_QUALITY,AUDIO_AUTO_PLAY,WIFI_AUTO_DOWNLOAD FROM {self.table_name} WHERE UID_SETTING=%s"
-        return super().select(sql=sql,values=(kwargs["UID_SETTING"],))
-
-    def update(self,**kwargs):
-        printcolorhaveline(text=kwargs)
-        sql=f"UPDATE {self.table_name} SET {kwargs['column']}=%s WHERE UID_SETTING=%s"
-        return super().update(sql=sql,values=(kwargs["new_value"],kwargs["UID_SETTING"]))
-
-    def regsiter(self,UID_SETTING: str):
-        self.insert(UID_SETTING=UID_SETTING,
-                    LANGUAGE="ch",
-                    SHOW_MODAL="auto",
-                    AUDIO_QUALITY="auto",
-                    AUDIO_AUTO_PLAY=True,
-                    WIFI_AUTO_DOWNLOAD=True
-                    )
-
-    def execute(self,sql,values,isALL=False):
-        return super().execute(sql,values,isALL)
-
-    def dict_to_tuple(self,**kwargs):
-        return (
-            kwargs.get("UID_SETTING"),
-            kwargs.get("LANGUAGE"),
-            kwargs.get("SHOW_MODAL"),
-            kwargs.get("AUDIO_QUALITY"),
-            kwargs.get("AUDIO_AUTO_PLAY"),
-            kwargs.get("WIFI_AUTO_DOWNLOAD"),
-        )
-
-    def tuple_to_dict(self,data_tuple):
-        keys=[
-            "UID_SETTING",
-            "LANGUAGE",
-            "SHOW_MODAL",
-            "AUDIO_QUALITY",
-            "AUDIO_AUTO_PLAY",
-            "WIFI_AUTO_DOWNLOAD"
-        ]
-        return dict(zip(keys,data_tuple))
-
-    def __init__(self,config):
-        self.config=config
-        self.connect()
-
-    def connect(self):
-        self.db=MySQLdb.connect(**self.config)
-        self.cursor=self.db.cursor()
-
-    def create_tables(self):
-        sql=f"""
-            CREATE TABLE IF NOT EXISTS user_profile (
-                id VARCHAR(36) NOT NULL PRIMARY KEY,
-                email VARCHAR(24) NOT NULL,
-                username VARCHAR(24) NOT NULL,
-                phone VARCHAR(16) NOT NULL,
-                country CHAR(2),
-                birthday DATE,
-                gender CHAR(1),
-                user_img_url VARCHAR(255),
-                test TINYINT(2) UNSIGNED DEFAULT 0,
-                level TINYINT(2) UNSIGNED DEFAULT 0
-            )
-        """
-        self.cursor.execute(sql)
-
-    def save_user_profile(self,**user_profile):
-        print("******************************")
-        print(user_profile)
-        id=user_profile.get("id")
-        email=user_profile.get("email")
-        username=user_profile.get("username")
-        phone=user_profile.get("phone")
-        country=user_profile.get("country")
-        birthday=user_profile.get("birthday")
-        gender=user_profile.get("gender")
-        user_img_url=user_profile.get("user_img_url")
-        test=user_profile.get("test",0)
-        level=user_profile.get("level",0)
-        self.cursor.execute( "INSERT INTO `user_profile` (`id`,`email`,`username`,`phone`,`country`,`birthday`,`gender`,`user_img_url`,`test`,`level`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(id,email,username,phone,country,birthday,gender,user_img_url,test,level))
-        self.cursor.execute("UPDATE user_profile SET email=%s,username=%s,phone=%s,country=%s,bir``thday=%s,gender=%s,user_img_url=%s,test=%s,level=%s WHERE id=%s",(email,username,phone,country,birthday,gender,user_img_url,test,level,id))
-        self.db.commit()
-
-    def get_user_data(self,uid):
-        self.cursor.execute("SELECT * FROM user_profile WHERE id=%s",(uid,))
-        result=self.cursor.fetchone()
-        if result:
-            data={
-                "id": result[0],
-                "email": result[1],
-                "username": result[2],
-                "phone": result[3],
-                "country": result[4],
-                "birthday": result[5],
-                "gender": result[6],
-                "user_img_url": result[7],
-                "test": result[8],
-                "level": result[9],
-            }
-            print("$"*30)
-            print(data)
-            return data
-        else:
-            return None
-
-    def get_user_show_data(self,uid):
-        self.cursor.execute("SELECT * FROM user_profile WHERE id=%s",(uid))
-        result=self.cursor.fetchone()
-        if result:
-            data={
-                "id": result[0],
-                "email": result[1],
-                "username": result[2],
-                "level": result[7],
-            }
-            print("$"*30)
-            print(data)
-            return data
-        else:
-            return None
-
-    def close(self):
-        self.db.close()
+def usersettingTupLetoDict(data_tuple):
+    keys=[
+        'UID_SETTING',
+        'LANGUAGE',
+        'SHOW_MODAL',
+        'AUDIO_QUALITY',
+        'AUDIO_AUTO_PLAY',
+        'WIFI_AUTO_DOWNLOAD'
+    ]
+    return dict(zip(keys,data_tuple))
 
 ########################################################################
 
@@ -800,53 +591,96 @@ def checklogin(request):
 # google 登入
 def googleurl(request):
     state=str(uuid.uuid4()) # 保存 state 至 session 中，以防止 CSRF 攻擊
-    request.session["oauth_state"]=state
+    # 这一行生成一个随机的UUID作为状态码，并将其转换为字符串。这个状态码用于防止跨站请求伪造(CSRF)攻击，并将其保存在会话(session)中。
+
+    request.session["oauth_state"]=state # 将生成的状态码存储在请求的会话中，以便后续验证请求的合法性。
     url=f"https://accounts.google.com/o/oauth2/v2/auth?scope={scope}&access_type={access_type}&include_granted_scopes={include_granted_scopes}&response_type={response_type}&state={state}&redirect_uri={urlgoogle}&client_id={client_id}" # 生成 Google 登入連結
+    """
+    这一行生成一个URL，用于重定向用户到Google的登录页面。URL中包含了一系列参数
+    例如:
+    授权范围(scope)
+    访问类型(access_type)
+    是否包括已授予的范围(include_granted_scopes)
+    响应类型(response_type)
+    状态码(state)
+    回调URL(redirect_uri)和客户端ID(client_id)。这些参数将在登录页面中使用以进行身份验证和授权。
+    """
     return HttpResponseRedirect(url)
 
 def googlecallback(request):
     success=False
     code=request.GET.get("code")
     state=request.GET.get("state")
-    if code and state==request.session.get("oauth_state"):
+    if code and state==request.session.get("oauth_state"): # 检查code和state是否存在，并且state的值与之前保存在会话中的oauth_state相匹配。
         url="https://oauth2.googleapis.com/token"
         params={
-            "code": code,
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "redirect_uri": urlgoogle,
-            "grant_type": "authorization_code"
+            "code": code, # 授权码
+            "client_id": client_id, # 客户端ID
+            "client_secret": client_secret, # 客户端密钥
+            "redirect_uri": urlgoogle, # 回调URL
+            "grant_type": "authorization_code" # 授权类型
         }
         # 向 Google API 發送 POST 請求，獲取存取令牌
-        response=requests.post(url,data=params)
+        response=requests.post(url,data=params) # 设置向Google API发送POST请求的URL和参数
         token_data=response.json()
-        id_token=token_data.get("id_token",None)
-        access_token=token_data.get("access_token",None)
+
+        id_token=token_data.get("id_token",None) # 从响应的JSON数据中提取出ID令牌
+        access_token=token_data.get("access_token",None) # 访问令牌
 
         url="https://oauth2.googleapis.com/tokeninfo"
-        data={
-            "id_token": id_token,
-        }
-        # 向 Google API 發送 GET 請求，獲取使用者資料
-        response=requests.get(url,params=data)
+        data={ "id_token": id_token }
+
+        response=requests.get(url,params=data) # 向 Google API 發送 GET 請求，獲取使用者資料
         data=response.json()
         email=data["email"]
         picture=data["picture"]
         userid=data["sub"]
         name=data["name"]
+        # 使用requests.get方法向Google API发送GET请求，获取用户的详细信息。然后从响应的JSON数据中提取出用户的电子邮件(email)、头像(picture)、用户ID(sub)和姓名(name)。
 
-        # 調用 base 函式進行處理
-        base(userid=userid,email=email,name=name,user_img_url=picture,request=request)
-        success= True
+        base(userid,email,name,picture,request) # 調用 base 函式進行處理 将获取到的用户信息传递给它进行处理。
+        success=True
     else:
         printcolor("warning","google驗證失敗")
-    request.session["isLogin"]=success
+    request.session["isLogin"]=success # 将isLogin标志保存到会话中，以便在其他地方可以使用。
     if success:
         printcolorhaveline("green","google登入成功")
-        return redirect("/music/discover/")
+        return redirect("/music/discover/") # 重定向到"/music/discover/"页面
     else:
         printcolorhaveline("warning","google登入失敗")
-        return redirect("/user/login/")
+        return redirect("/user/login/") # 重定向到"/user/login/"页面。
+
+"""
+大概代碼是用於實現Google OAuth登錄功能的。它包含兩個視圖函數：googleurl和googlecallback。
+
+googleurl函數生成一個重定向的URL
+該URL用於將用戶重定向到Google的登錄頁面。生成的URL包括一些參數
+例如scope(指定授權範圍)
+access_type(指定訪問類型)
+include_granted_scopes(指定是否包括已授予的范围)
+response_type(指定響應類型)
+state(用於防止CSRF攻擊的狀態碼)
+redirect_uri(指定回調URL)和client_id(客戶端ID)。生成的URL會在函數的最後通過進行HttpResponseRedirect重定向。
+
+googlecallback函數是完成回調View函數
+當用戶Google登錄並被重定向返回時
+會執行這個函數。它首先從請求參數中獲取和
+並檢查它們是否與之前保存在會話中的匹配。如果成功匹配code
+state則oauth_state它會向Google API發送POST請求
+以獲取訪問令牌。然後
+它向Google API發送GET請求
+使用獲取到的訪問令牌獲取用戶的詳細信息
+例如電子郵件、頭像、用戶ID和姓名。最後它調用名為base的函數
+將獲取到的用戶信息進行處理。
+
+處理完成後
+將isLogin標誌設置為登錄成功或失敗
+並根據的success值進行重定向到不同的頁面。
+
+總體來說
+大概代碼實現了利用Google賬戶進行登錄認證的功能
+並獲取用戶的相關信息。
+"""
 
 # line 登入
 def lineurl(request):
@@ -951,7 +785,6 @@ def profile2(request):
             data=None
         return render(request,"edit_profile.html",{"form": data})
 
-
 ## 不知道在幹嘛的
 def user_eq(request):
     if request.method=="POST":
@@ -960,9 +793,9 @@ def user_eq(request):
         printcolorhaveline("green",kwargs)
         kwargs["UID_EQ"]=request.session["key"]
         method=body.get("method")
-        return JsonResponse({"data": (sqleq(dbconfiguser)).commit(method=method,kwargs=kwargs)})
+        return JsonResponse({"data": eqCommit(method,kwargs)})
     else:
-        return JsonResponse({"success": False})
+        return JsonResponse({"success":False})
 
 def user_setting(request):
     if request.method=="POST":
@@ -970,7 +803,7 @@ def user_setting(request):
         method=body.get("method")
         kwargs=body.get("kwargs")
         kwargs["UID_SETTING"]=request.session["key"]
-        return JsonResponse({"data": (sqlusersetting(dbconfiguser)).commit(method=method,kwargs=kwargs)})
+        return JsonResponse({"data": usersettingCommit(method,kwargs) })
     else:
         return JsonResponse({"success": False})
 
@@ -986,4 +819,4 @@ def user_setting(request):
 
 # 註記
 # 只要函式後面有加sql都是sql函式
-# 話說我不知道這樣串接是否符合你們要的，有錯直接跟我說即可
+# 話說我不知道這樣串接是否符合你們要的，有錯直接跟我說即可(之後會改成django sql 語法)
