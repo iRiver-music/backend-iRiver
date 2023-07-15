@@ -1,12 +1,4 @@
-# import
-from django.utils import timezone
-from datetime import datetime
-from django.http import HttpResponse,HttpResponseRedirect
-from django.shortcuts import redirect,render
-from httplib2 import Authentication
-from django.contrib.auth import authenticate,login,logout
-from django.http import JsonResponse
-from django.contrib.auth.models import User
+# import models
 import json
 import time
 import difflib
@@ -21,23 +13,61 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.utils import timezone
+from datetime import datetime
+from django.http import HttpResponse,HttpResponseRedirect
+from django.shortcuts import redirect,render
+from httplib2 import Authentication
+from django.contrib.auth import authenticate,login,logout
+from django.http import JsonResponse
+from django.contrib.auth.models import User
 
 # self import
 from models import LoginForm,RegisterForm
+# none
 
-# import models
+
 
 # program START
 
-# sql 串接
-# dbuser=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="django_user",charset="utf8") # user 的 db
-# dbmusic=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="music_db",charset="utf8") # muisc 的 db
-# dbconfiguser=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="iRiver_user_data",charset="utf8")
-# dbconfigusermusiclist=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="iRiver_user_music_list",charset="utf8")
-dbuser=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="django_user",charset="utf8") # user 的 db
-dbmusic=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="music_db",charset="utf8") # muisc 的 db
-dbconfiguser=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="iRiver_user_data",charset="utf8")
-dbconfigusermusiclist=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="iRiver_user_music_list",charset="utf8")
+test=True # only for testing
+url="https://iriver.ddns.net"
+localurl="http://127.0.0.1:8000" # only for testing
+
+# google api
+client_secret="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"
+client_id="1026795084542-4faa7ard63anna4utjtmavuvbe4t4mf4.apps.googleusercontent.com"
+scope="https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"
+access_type="offline"
+include_granted_scopes="true"
+response_type="code"
+
+# line api
+line_client_id="1661190797"
+line_client_secret="3fc12add18f596c2597c993f1f858acf"
+line_response_type="code"
+line_scopes=["profile","openid","email"]
+
+if test:
+    # 測試用環境
+    urlgoogle=localurl+"/complete/google/"
+    urlline=localurl+"/complete/line/"
+
+    # sql 串接
+    dbuser=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="django_user",charset="utf8") # user 的 db
+    dbmusic=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="music_db",charset="utf8") # muisc 的 db
+    dbconfiguser=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="iRiver_user_data",charset="utf8")
+    dbconfigusermusiclist=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="iRiver_user_music_list",charset="utf8")
+else:
+    # 正式環境
+    urlgoogle=url+"/complete/google/"
+    urlline=url+"/complete/line/"
+
+    # sql 串接
+    dbuser=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="django_user",charset="utf8") # user 的 db
+    dbmusic=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="music_db",charset="utf8") # muisc 的 db
+    dbconfiguser=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="iRiver_user_data",charset="utf8")
+    dbconfigusermusiclist=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="iRiver_user_music_list",charset="utf8")
 
 # query 的簡化 function
 def query(db,query,data=()):
@@ -50,7 +80,6 @@ def query(db,query,data=()):
     except Exception as e:
         printcolorhaveline("fail","[ERROR]"+str(e))
         return None
-
 
 # printcolor 函式：在終端機中以不同顏色打印文字
 def printcolor(color,text):
@@ -78,9 +107,11 @@ def printcolorhaveline(color="green",text="",linestyle="-"):
     print(linestyle*30)
     printcolor(color,text)
 
-test=True # only for testing
-url="https://iriver.ddns.net"
-url="http://127.0.0.1:8000" # only for testing
+# nowtime 函式：輸出現在的時間
+def nowtime():
+    localtime=time.localtime() # 現在時間
+    nowtime=time.strftime("%Y-%m-%d %H:%M:%S",localtime) # 轉成date format
+    return nowtime
 
 # 登入
 def loginsql(request,method,email,password,token=""):
@@ -167,87 +198,6 @@ def logout(request):
 
 ###########################################################################
 
-
-# def test123(request,data):
-#     name = data['name']
-#     email = data['email']
-#     picture = data['picture']
-#     userid = data['userid']
-#     query(dbconfigusermusiclist,'''
-#         CREATE TABLE IF NOT EXISTS `%s`(
-#             `playlist` VARCHAR(255) NOT NULL,
-#             `music_ID` VARCHAR(32) NOT NULL,
-#             `favorite` BOOLEAN NOT NULL DEFAULT false,
-#             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-#         )
-#     ''',(request.session['key']))
-
-#     # create setting
-#     def regsiter(self,UID_EQ: str):
-#         self.insert(UID_EQ=request.session['key'],
-#             ENGANCE_HIGH=False,
-#             ENGANCE_MIDDLE=False,
-#             ENGANCE_LOW=False,
-#             ENGANCE_HEAVY=False,
-#             STYLE="null",
-#             EQ_HIGH=50,
-#             EQ_MIDDLE=50,
-#             EQ_LOW=50,
-#             EQ_HEAVY=50,
-#             EQ_DISTORTION=0,
-#             EQ_ZIP=0,
-#             SPATIAL_AUDIO="null"
-#         )
-#     SQL_eq(config=config.DB_CONFIG_user).regsiter(UID_EQ=request.session['key'])
-#     SQL_user_setting(config=config.DB_CONFIG_user).regsiter(UID_SETTING=request.session['key'])
-
-#     row=query(dbconfiguser,'SELECT*FROM `user_profile` WHERE id=%s',(request.session['key']))[0]
-#     if row:
-#         data={
-#             'id': row[0],
-#             'email': row[1],
-#             'username': row[2],
-#             'phone': row[3],
-#             'country': row[4],
-#             'birthday': row[5],
-#             'gender': row[6],
-#             'user_img_url': row[7],
-#             'test': row[8],
-#             'level': row[9],
-#         }
-#         printcolorhaveline("green",data,"$")
-#     else:
-#         query(dbconfiguser,'INSERT `IGNORE` INTO `user_profile`(`id`,`email`,`username`,`phone`,`country`,`birthday`,`gender`,`user_img_url`,`test`,`level`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',(request.session['key'],request.session['email'],name,"","","","","","",""))
-
-
-
-test=True  # 測試模式的標誌，用於根據不同的環境設定相應的參數和配置
-formal_url="https://iriver.ddns.net"  # 正式環境的URL
-local_url="http://127.0.0.1:8000"  # 本地開發環境的URL
-
-client_id="1026795084542-4faa7ard63anna4utjtmavuvbe4t4mf4.apps.googleusercontent.com"
-client_secret="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"
-scope="https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"
-access_type="offline"
-include_granted_scopes="true"
-response_type="code"
-
-line_client_id="1661190797"
-line_client_secret="3fc12add18f596c2597c993f1f858acf"
-line_response_type="code"
-line_scopes=["profile","openid","email"]
-
-if test:
-    urlgoogle=local_url + "/complete/google/"
-    urlline=local_url + "/complete/line/"
-else:
-    urlgoogle=formal_url + "/complete/google/"
-    urlline=formal_url + "/complete/line/"
-
-
-###########################################################################
-# function START
-
 # user/lib::
 # switch_key 函式：根據鍵的格式返回對應的鍵值
 def switch_key(tkey):
@@ -312,7 +262,6 @@ def userdata(request):
 
 # save_session 函式：保存用戶會話數據
 def save_session(request,name,email,uid,userimageurl):
-    print("uid="+str(uid))
     request.session["key"]=uid # 保存會話鍵
     request.session["name"]=name # 保存用戶名
     request.session["email"]=email # 保存郵件地址
@@ -333,7 +282,6 @@ def save_session(request,name,email,uid,userimageurl):
         )
     """
     query(dbconfigusermusiclist,sql,(uid))
-    print("uid="+str(uid))
 
     # 獲取用戶播放列表
     miuscrow=query(dbconfigusermusiclist,"SELECT*FROM `%s`",(uid))
@@ -351,7 +299,6 @@ def save_session(request,name,email,uid,userimageurl):
 
     # setting
     settingrow=query(dbconfiguser,"SELECT*FROM `user_setting` WHERE `UID_SETTING`=%s",(uid))[0]
-    print(settingrow)
     setting={
         "UID_SETTING":settingrow[0],
         "LANGUAGE":settingrow[1],
@@ -492,25 +439,17 @@ def get_user_music_list(request):
 # /login/
 # base 函式：處理用戶登入的基本操作
 def base(userid,email,name,userimageurl,request):
-    print("userid="+str(userid))
-    print("email="+str(email))
-    # userrow=query(dbconfiguser,"SELECT `userid` FROM `user_social` WHERE `userid`=%s",(userid))
-
     emailrow=query(dbconfiguser,"SELECT `uid` FROM `user_social` WHERE `email`=%s",(email))
     try:
         uid=emailrow[0][0]
-    except Exception as e:
+    except Exception as e: # 無帳號
         printcolorhaveline("green","create user","-")
         uid=uuid.uuid4()
         uid_str=str(uid).replace("-","")
         short_uid="a"+uid_str[:12]
         uid=short_uid
-    # if emailrow is None:
-    # 保存用戶會話數據
-    # else:
-    #     uid=emailrow[0][0]
 
-    # if userrow is None: # 檢查是否有帳號
+        # 創建帳號所需資料表及欄位
         query(dbconfiguser,"INSERT INTO `user_social`(`userid`,`email`,`uid`)VALUES(%s,%s,%s)",(userid,email,uid))
         query(dbconfiguser,"INSERT INTO `user_profile`(`id`,`email`,`username`,`phone`,`country`,`birthday`,`gender`,`user_img_url`,`test`,`level`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(uid,email,name,"","","","","",0,0))
 
@@ -526,20 +465,16 @@ def base(userid,email,name,userimageurl,request):
 
         # 註冊用戶均衡器
         query(dbconfiguser,"INSERT INTO `user_setting_eq`(`UID_EQ`,`ENGANCE_HIGH`,`ENGANCE_MIDDLE`,`ENGANCE_LOW`,`ENGANCE_HEAVY`,`STYLE`,`EQ_HIGH`,`EQ_MIDDLE`,`EQ_LOW`,`EQ_HEAVY`,`EQ_DISTORTION`,`EQ_ZIP`,`SPATIAL_AUDIO`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(uid,0,0,0,0,"null",50,50,50,50,0,0,"null"))
-        # sqleq(config=dbconfiguser).register(UID_EQ=uid)
 
         # 註冊用戶設置
-        localtime=time.localtime()
-        nowtime=time.strftime("%Y-%m-%d %H:%M:%S", localtime)
-        query(dbconfiguser,"INSERT INTO `user_setting`(`UID_SETTING`,`LANGUAGE`,`SHOW_MODAL`,`AUDIO_QUALITY`,`AUDIO_AUTO_PLAY`,`WIFI_AUTO_DOWNLOAD`,`CREATED_AT`)VALUES(%s,%s,%s,%s,%s,%s,%s)",(uid,"ch","auto","auto",1,1,nowtime))
-        # sqlusersetting(config=dbconfiguser).register(UID_SETTING=uid)
+        query(dbconfiguser,"INSERT INTO `user_setting`(`UID_SETTING`,`LANGUAGE`,`SHOW_MODAL`,`AUDIO_QUALITY`,`AUDIO_AUTO_PLAY`,`WIFI_AUTO_DOWNLOAD`,`CREATED_AT`)VALUES(%s,%s,%s,%s,%s,%s,%s)",(uid,"ch","auto","auto",1,1,nowtime()))
 
     save_session(request,name,email,uid,userimageurl)
 
     printcolorhaveline("green","finish baseing"," ")
 ########################################################################
 
-def eqCommit(method:str,**kwargs):
+def eqCommit(method,**kwargs):
     if method == "insert":
         row=query(dbconfiguser,"INSERT IGNORE INTO `user_setting_eq`(`UID_EQ`,`ENGANCE_HIGH`,`ENGANCE_MIDDLE`,`ENGANCE_LOW`,`ENGANCE_HEAVY`,`STYLE`,`EQ_HIGH`,`EQ_MIDDLE`,`EQ_LOW`,`EQ_HEAVY`,`EQ_DISTORTION`,`EQ_ZIP`,`SPATIAL_AUDIO`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",eqDictToTuple(**kwargs))
         return eqTupLetoDict(row)
@@ -589,103 +524,6 @@ def eqTupLetoDict(data_tuple):
     ]
     return dict(zip(keys,data_tuple))
 
-def usersettingCommit(method:str,**kwargs):
-    if method=="insert":
-        row=query(dbconfiguser,"INSERT INTO `user_setting`(`UID_SETTING`,`LANGUAGE`,`SHOW_MODAL`,AUDIO_QUALITY,AUDIO_AUTO_PLAY,WIFI_AUTO_DOWNLOAD) VALUES (%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE UID_SETTING=UID_SETTING",usersettingDictToTuple(**kwargs))
-        return usersettingTupLetoDict(row)
-    elif method=="update":
-        kwargs=kwargs.get('kwargs')
-        printcolorhaveline("green",kwargs,"-")
-        row=query(dbconfiguser,"UPDATE `user_setting` SET "+kwargs['column']+"=%s WHERE `UID_SETTING`=%s",(kwargs["new_value"],kwargs["UID_SETTING"]))
-        return row
-    elif method=="select":
-        row=query(dbconfiguser,"SELECT UID_SETTING,LANGUAGE,SHOW_MODAL,AUDIO_QUALITY,AUDIO_AUTO_PLAY,WIFI_AUTO_DOWNLOAD FROM `user_setting` WHERE UID_SETTING=%s",kwargs["UID_SETTING"])
-        return usersettingTupLetoDict(row)
-    else:
-        printcolorhaveline("fail",f"the method {method} is not supported","-")
-        return False
-
-def usersettingDictToTuple(**kwargs):
-    return (
-        kwargs.get("UID_SETTING"),
-        kwargs.get("LANGUAGE"),
-        kwargs.get("SHOW_MODAL"),
-        kwargs.get("AUDIO_QUALITY"),
-        kwargs.get("AUDIO_AUTO_PLAY"),
-        kwargs.get("WIFI_AUTO_DOWNLOAD"),
-    )
-
-def usersettingTupLetoDict(data_tuple):
-    keys=[
-        'UID_SETTING',
-        'LANGUAGE',
-        'SHOW_MODAL',
-        'AUDIO_QUALITY',
-        'AUDIO_AUTO_PLAY',
-        'WIFI_AUTO_DOWNLOAD'
-    ]
-    return dict(zip(keys,data_tuple))
-
-########################################################################
-
-default_app_config="user.apps.UserConfig"
-
-printcolorhaveline("green","init sql user app","#")
-
-# 建立個人資料table name
-query(dbconfiguser,f"""
-    CREATE TABLE IF NOT EXISTS `user_social` (
-        `userid` VARCHAR(36) NOT NULL PRIMARY KEY,
-        `email` VARCHAR(24) NOT NULL,
-        `uid` VARCHAR(24) NOT NULL
-    )
-""") # 創建sqllogin
-
-query(dbconfiguser,f"""
-    CREATE TABLE IF NOT EXISTS `user_profile` (
-        `id` VARCHAR(36) NOT NULL PRIMARY KEY,
-        `email` VARCHAR(24) NOT NULL,
-        `username` VARCHAR(24) NOT NULL,
-        `phone` VARCHAR(16) NOT NULL,
-        `country` CHAR(2),
-        `birthday` DATE,
-        `gender` CHAR(1),
-        `user_img_url` VARCHAR(255),
-        `test` TINYINT(2) UNSIGNED DEFAULT 0,
-        `level` TINYINT(2) UNSIGNED DEFAULT 0
-    )
-""") # 創建sqluser
-
-query(dbconfiguser,f"""
-    CREATE TABLE IF NOT EXISTS `user_setting_eq`(
-        `UID_EQ` VARCHAR(36) NOT NULL PRIMARY KEY,
-        `ENGANCE_HIGH` BOOL,
-        `ENGANCE_MIDDLE` BOOL,
-        `ENGANCE_LOW` BOOL,
-        `ENGANCE_HEAVY` BOOL,
-        `STYLE` VARCHAR(255),
-        `EQ_HIGH` INT CHECK (EQ_HIGH >=0 AND EQ_HIGH <=100),
-        `EQ_MIDDLE` INT CHECK (EQ_MIDDLE >=0 AND EQ_MIDDLE <=100),
-        `EQ_LOW` INT CHECK (EQ_LOW >=0 AND EQ_LOW <=100),
-        `EQ_HEAVY` INT CHECK (EQ_HEAVY >=0 AND EQ_HEAVY <=100),
-        `EQ_DISTORTION` INT CHECK (EQ_DISTORTION >=0 AND EQ_DISTORTION <=100),
-        `EQ_ZIP` INT CHECK (EQ_ZIP >=0 AND EQ_ZIP <=100),
-        `SPATIAL_AUDIO` VARCHAR(255)
-    )
-""") # 創建sqleq
-
-query(dbconfiguser,f"""
-    CREATE TABLE IF NOT EXISTS `user_setting`(
-        `UID_SETTING` VARCHAR(36) NOT NULL PRIMARY KEY,
-        `LANGUAGE` VARCHAR(255) NOT NULL,
-        `SHOW_MODAL` VARCHAR(255) NOT NULL,
-        `AUDIO_QUALITY` VARCHAR(255) NOT NULL,
-        `AUDIO_AUTO_PLAY` BOOL NOT NULL,
-        `WIFI_AUTO_DOWNLOAD` BOOL NOT NULL,
-        `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-""") # 創建sqlusersetting
-
 def usersavesession(request):
     return save_session(request,request.session["name"],request.session["email"],request.session["key"],request.session["user_img_url"])
 
@@ -712,16 +550,6 @@ def googleurl(request):
 
     request.session["oauth_state"]=state # 将生成的状态码存储在请求的会话中，以便后续验证请求的合法性。
     url=f"https://accounts.google.com/o/oauth2/v2/auth?scope={scope}&access_type={access_type}&include_granted_scopes={include_granted_scopes}&response_type={response_type}&state={state}&redirect_uri={urlgoogle}&client_id={client_id}" # 生成 Google 登入連結
-    """
-    这一行生成一个URL，用于重定向用户到Google的登录页面。URL中包含了一系列参数
-    例如:
-    授权范围(scope)
-    访问类型(access_type)
-    是否包括已授予的范围(include_granted_scopes)
-    响应类型(response_type)
-    状态码(state)
-    回调URL(redirect_uri)和客户端ID(client_id)。这些参数将在登录页面中使用以进行身份验证和授权。
-    """
     return HttpResponseRedirect(url)
 
 def googlecallback(request):
@@ -766,7 +594,6 @@ def googlecallback(request):
     else:
         printcolorhaveline("warning","google登入失敗")
         return redirect("/user/login/") # 重定向到"/user/login/"页面。
-
 
 # line 登入
 def lineurl(request):
@@ -825,7 +652,7 @@ def linecallback(request):
         return redirect("/user/login/")
 
 # 個人資料
-def profile2(request):
+def profile(request):
     if request.method=="POST":
         # data
         id=request.session["key"]
@@ -840,16 +667,14 @@ def profile2(request):
         level=0
 
         # 存入sql
-        print("******************************")
-        query(dbconfiguser,"INSERT INTO `user_profile` (`id`,`email`,`username`,`phone`,`country`,`birthday`,`gender`,`user_img_url`,`test`,`level`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(id,email,username,phone,country,birthday,gender,userimageurl,test,level))
-        query(dbconfiguser,"UPDATE user_profile SET email=%s,username=%s,phone=%s,country=%s,bir``thday=%s,gender=%s,user_img_url=%s,test=%s,level=%s WHERE id=%s",(email,username,phone,country,birthday,gender,userimageurl,test,level,id))
+        query(dbconfiguser,"UPDATE `user_profile` SET `email`=%s,`username`=%s,`phone`=%s,`country`=%s,`birthday`=%s,`gender`=%s,`user_img_url`=%s,`test`=%s,`level`=%s WHERE `id`=%s",(email,username,phone,country,birthday,gender,userimageurl,test,level,id))
 
-        print("成功修改")
+        printcolorhaveline("green","成功修改 "+str(id)+" 的資料","-")
         return redirect("/user/profile2/")
     else:
         # 查詢用戶
         uid=request.session["key"]
-        row=query(dbconfiguser,"SELECT * FROM user_profile WHERE id=%s",(uid))
+        row=query(dbconfiguser,"SELECT*FROM `user_profile` WHERE `id`=%s",(uid))
         data=""
         if row:
             row=row[0]
@@ -865,20 +690,18 @@ def profile2(request):
                 "test": row[8],
                 "level": row[9],
             }
-            print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            print(data)
+            printcolorhaveline("green",data,"-")
         else:
             data=None
         return render(request,"edit_profile.html",{"form": data})
 
-## 不知道在幹嘛的
 def user_eq(request):
     if request.method=="POST":
         body=json.loads(request.body)
         kwargs=body.get("kwargs")
-        printcolorhaveline("green",kwargs)
         kwargs["UID_EQ"]=request.session["key"]
         method=body.get("method")
+        printcolorhaveline("green",kwargs)
         return JsonResponse({"data": eqCommit(method,kwargs)})
     else:
         return JsonResponse({"success":False})
@@ -888,10 +711,90 @@ def user_setting(request):
         body=json.loads(request.body)
         method=body.get("method")
         kwargs=body.get("kwargs")
-        kwargs["UID_SETTING"]=request.session["key"]
-        return JsonResponse({"data": usersettingCommit(method,kwargs) })
+        uid=request.session["key"]
+        data=False
+        if method=="insert":
+            row=query(dbconfiguser,"INSERT INTO `user_setting`(`UID_SETTING`,`LANGUAGE`,`SHOW_MODAL`,`AUDIO_QUALITY`,`AUDIO_AUTO_PLAY`,`WIFI_AUTO_DOWNLOAD`,`CREATED_AT`)VALUES(%s,%s,%s,%s,%s,%s,%s)",(uid,"ch","auto","auto",1,1,nowtime()))
+            data=row
+        elif method=="update":
+            column=kwargs["column"]
+            newvalue=kwargs["new_value"]
+            printcolorhaveline("green",kwargs,"-")
+            row=query(dbconfiguser,"UPDATE `user_setting` SET `"+column+"`=%s WHERE `UID_SETTING`=%s",(newvalue,uid))
+            data=row
+        elif method=="select":
+            row=query(dbconfiguser,"SELECT*FROM `user_setting` WHERE `UID_SETTING`=%s",(uid))
+            data=row
+        else:
+            printcolorhaveline("fail",f"the method {method} is not supported","-")
+
+        return JsonResponse({"data": data })
     else:
         return JsonResponse({"success": False})
+
+
+########################################################################
+
+default_app_config="user.apps.UserConfig"
+
+printcolorhaveline("green","init sql user app start","#")
+
+# 建立個人資料table name
+query(dbconfiguser,f"""
+    CREATE TABLE IF NOT EXISTS `user_social` (
+        `userid` VARCHAR(36) NOT NULL PRIMARY KEY,
+        `email` VARCHAR(24) NOT NULL,
+        `uid` VARCHAR(24) NOT NULL
+    )
+""") # 創建sqllogin
+
+query(dbconfiguser,f"""
+    CREATE TABLE IF NOT EXISTS `user_profile` (
+        `id` VARCHAR(36) NOT NULL PRIMARY KEY,
+        `email` VARCHAR(24) NOT NULL,
+        `username` VARCHAR(24) NOT NULL,
+        `phone` VARCHAR(16) NOT NULL,
+        `country` CHAR(2),
+        `birthday` DATE,
+        `gender` CHAR(1),
+        `user_img_url` VARCHAR(255),
+        `test` TINYINT(2) UNSIGNED DEFAULT 0,
+        `level` TINYINT(2) UNSIGNED DEFAULT 0
+    )
+""") # 創建sqluser
+
+query(dbconfiguser,f"""
+    CREATE TABLE IF NOT EXISTS `user_setting_eq`(
+        `UID_EQ` VARCHAR(36) NOT NULL PRIMARY KEY,
+        `ENGANCE_HIGH` BOOL,
+        `ENGANCE_MIDDLE` BOOL,
+        `ENGANCE_LOW` BOOL,
+        `ENGANCE_HEAVY` BOOL,
+        `STYLE` VARCHAR(255),
+        `EQ_HIGH` INT CHECK (EQ_HIGH >=0 AND EQ_HIGH <=100),
+        `EQ_MIDDLE` INT CHECK (EQ_MIDDLE >=0 AND EQ_MIDDLE <=100),
+        `EQ_LOW` INT CHECK (EQ_LOW >=0 AND EQ_LOW <=100),
+        `EQ_HEAVY` INT CHECK (EQ_HEAVY >=0 AND EQ_HEAVY <=100),
+        `EQ_DISTORTION` INT CHECK (EQ_DISTORTION >=0 AND EQ_DISTORTION <=100),
+        `EQ_ZIP` INT CHECK (EQ_ZIP >=0 AND EQ_ZIP <=100),
+        `SPATIAL_AUDIO` VARCHAR(255)
+    )
+""") # 創建sqleq
+
+query(dbconfiguser,f"""
+    CREATE TABLE IF NOT EXISTS `user_setting`(
+        `UID_SETTING` VARCHAR(36) NOT NULL PRIMARY KEY,
+        `LANGUAGE` VARCHAR(255) NOT NULL,
+        `SHOW_MODAL` VARCHAR(255) NOT NULL,
+        `AUDIO_QUALITY` VARCHAR(255) NOT NULL,
+        `AUDIO_AUTO_PLAY` BOOL NOT NULL,
+        `WIFI_AUTO_DOWNLOAD` BOOL NOT NULL,
+        `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+""") # 創建sqlusersetting
+
+printcolorhaveline("green","init sql user app start finish success","#")
+
 
 
 
@@ -900,10 +803,6 @@ def user_setting(request):
 # dbmusic.close()
 # dbconfiguser.close()
 # dbconfigusermusiclist.close()
-
-
-
-
 
 
 
