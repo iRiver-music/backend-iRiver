@@ -19,9 +19,6 @@ from django.contrib.auth import authenticate,login,logout
 
 # self import
 from models import LoginForm,RegisterForm
-# none
-
-
 
 # program START
 

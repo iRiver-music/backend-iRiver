@@ -31,13 +31,13 @@ gender=(
     ('F','女'),
 )
 
-class login(models.Model):
-    pass
+# class login(models.Model):
+#     pass
 
-class GoogleLogin(models.Model):
-    provider=models.CharField(max_length=200,default="google") # 若未來新增其他的登入方式,如Facebook,GitHub...
-    unique_id=models.CharField(max_length=200)
-    user=models.ForeignKey(User,related_name="social",on_delete=models.CASCADE)
+# class GoogleLogin(models.Model):
+#     provider=models.CharField(max_length=200,default="google") # 若未來新增其他的登入方式,如Facebook,GitHub...
+#     unique_id=models.CharField(max_length=200)
+#     user=models.ForeignKey(User,related_name="social",on_delete=models.CASCADE)
 
 
 
