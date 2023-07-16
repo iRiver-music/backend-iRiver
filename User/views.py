@@ -56,7 +56,7 @@ class LoginForm(forms.Form):
     )
 
 
-test=True # only for testing
+test=False # only for testing
 url="https://iriver.ddns.net"
 localurl="http://127.0.0.1:8000" # only for testing
 
