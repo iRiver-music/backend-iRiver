@@ -12,15 +12,10 @@ from django.shortcuts import redirect,render
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
 from django.utils import timezone
 from datetime import datetime
-from django.http import HttpResponse,HttpResponseRedirect
-from django.shortcuts import redirect,render
 from httplib2 import Authentication
 from django.contrib.auth import authenticate,login,logout
-from django.http import JsonResponse
-from django.contrib.auth.models import User
 
 # self import
 from models import LoginForm,RegisterForm
