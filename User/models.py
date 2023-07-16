@@ -31,46 +31,12 @@ gender=(
     ('F','女'),
 )
 
-# class login(models.Model):
-#     pass
+class login(models.Model):
+    pass
 
-# class GoogleLogin(models.Model):
-#     provider=models.CharField(max_length=200,default="google") # 若未來新增其他的登入方式,如Facebook,GitHub...
-#     unique_id=models.CharField(max_length=200)
-#     user=models.ForeignKey(User,related_name="social",on_delete=models.CASCADE)
+class GoogleLogin(models.Model):
+    provider=models.CharField(max_length=200,default="google") # 若未來新增其他的登入方式,如Facebook,GitHub...
+    unique_id=models.CharField(max_length=200)
+    user=models.ForeignKey(User,related_name="social",on_delete=models.CASCADE)
 
-
-
-
-class RegisterForm(UserCreationForm):
-    username=forms.CharField(
-        label="帳號",
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    email=forms.EmailField(
-        label="電子郵件",
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
-    )
-    password1=forms.CharField(
-        label="密碼",
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
-    )
-    password2=forms.CharField(
-        label="密碼確認",
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
-    )
-
-    class Meta:
-        model=User
-        fields=('username','email','password1','password2')
-
-class LoginForm(forms.Form):
-    username=forms.CharField(
-        label="帳號",
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    password=forms.CharField(
-        label="密碼",
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
-    )
 
