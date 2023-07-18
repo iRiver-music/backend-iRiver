@@ -14,7 +14,7 @@ class Artist(models.Model):
     def __str__(self):
         return self.artist
 
-class music(models.Model):
+class Music(models.Model):
     artist = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     music_ID = models.CharField(max_length=255, unique=True)
@@ -37,10 +37,11 @@ class music(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ('-pub_date' , )
+        app_label = 'music'
+        db_table = 'songs'
 
     def __str__(self):
-        return f"{self.title}  / {self.song_ID} / ({self.pub_date})"
+        return self.music_ID
     
 def create_tables(ob):
     ob.objects.create_table()
