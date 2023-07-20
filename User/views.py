@@ -18,7 +18,7 @@ from httplib2 import Authentication
 from django.contrib.auth import authenticate,login,logout
 
 # self import
-# from models import LoginForm,RegisterForm
+from .models import UserSocial, UserProfile, UserSettingEQ, UserSetting
 
 # program START
 
@@ -763,67 +763,68 @@ def user_setting(request):
 
 default_app_config="user.apps.UserConfig"
 
-printcolorhaveline("green","init sql user app start","#")
+printcolorhaveline("green","user app start!","#")
 
-# 建立個人資料table name
-query(dbconfiguser,f"""
-    CREATE TABLE IF NOT EXISTS `user_social` (
-        `userid` VARCHAR(36) NOT NULL PRIMARY KEY,
-        `email` VARCHAR(24) NOT NULL,
-        `uid` VARCHAR(24) NOT NULL
-    )
-""") # 創建sqllogin
+# # 建立個人資料table name
+# query(dbconfiguser,f"""
+#     CREATE TABLE IF NOT EXISTS `user_social` (
+#         `userid` VARCHAR(36) NOT NULL PRIMARY KEY,
+#         `email` VARCHAR(24) NOT NULL,
+#         `uid` VARCHAR(24) NOT NULL
+#     )
+# """) # 創建sqllogin
 
-query(dbconfiguser,f"""
-    CREATE TABLE IF NOT EXISTS `user_profile` (
-        `id` VARCHAR(36) NOT NULL PRIMARY KEY,
-        `email` VARCHAR(24) NOT NULL,
-        `username` VARCHAR(24) NOT NULL,
-        `phone` VARCHAR(16) NOT NULL,
-        `country` CHAR(2),
-        `birthday` DATE,
-        `gender` CHAR(1),
-        `user_img_url` VARCHAR(255),
-        `test` TINYINT(2) UNSIGNED DEFAULT 0,
-        `level` TINYINT(2) UNSIGNED DEFAULT 0
-    )
-""") # 創建sqluser
+# query(dbconfiguser,f"""
+#     CREATE TABLE IF NOT EXISTS `user_profile` (
+#         `id` VARCHAR(36) NOT NULL PRIMARY KEY,
+#         `email` VARCHAR(24) NOT NULL,
+#         `username` VARCHAR(24) NOT NULL,
+#         `phone` VARCHAR(16) NOT NULL,
+#         `country` CHAR(2),
+#         `birthday` DATE,
+#         `gender` CHAR(1),
+#         `user_img_url` VARCHAR(255),
+#         `test` TINYINT(2) UNSIGNED DEFAULT 0,
+#         `level` TINYINT(2) UNSIGNED DEFAULT 0
+#     )
+# """) # 創建sqluser
 
-query(dbconfiguser,f"""
-    CREATE TABLE IF NOT EXISTS `user_setting_eq`(
-        `UID_EQ` VARCHAR(36) NOT NULL PRIMARY KEY,
-        `ENGANCE_HIGH` BOOL,
-        `ENGANCE_MIDDLE` BOOL,
-        `ENGANCE_LOW` BOOL,
-        `ENGANCE_HEAVY` BOOL,
-        `STYLE` VARCHAR(255),
-        `EQ_HIGH` INT CHECK (EQ_HIGH >=0 AND EQ_HIGH <=100),
-        `EQ_MIDDLE` INT CHECK (EQ_MIDDLE >=0 AND EQ_MIDDLE <=100),
-        `EQ_LOW` INT CHECK (EQ_LOW >=0 AND EQ_LOW <=100),
-        `EQ_HEAVY` INT CHECK (EQ_HEAVY >=0 AND EQ_HEAVY <=100),
-        `EQ_DISTORTION` INT CHECK (EQ_DISTORTION >=0 AND EQ_DISTORTION <=100),
-        `EQ_ZIP` INT CHECK (EQ_ZIP >=0 AND EQ_ZIP <=100),
-        `SPATIAL_AUDIO` VARCHAR(255)
-    )
-""") # 創建sqleq
+# query(dbconfiguser,f"""
+#     CREATE TABLE IF NOT EXISTS `user_setting_eq`(
+#         `UID_EQ` VARCHAR(36) NOT NULL PRIMARY KEY,
+#         `ENGANCE_HIGH` BOOL,
+#         `ENGANCE_MIDDLE` BOOL,
+#         `ENGANCE_LOW` BOOL,
+#         `ENGANCE_HEAVY` BOOL,
+#         `STYLE` VARCHAR(255),
+#         `EQ_HIGH` INT CHECK (EQ_HIGH >=0 AND EQ_HIGH <=100),
+#         `EQ_MIDDLE` INT CHECK (EQ_MIDDLE >=0 AND EQ_MIDDLE <=100),
+#         `EQ_LOW` INT CHECK (EQ_LOW >=0 AND EQ_LOW <=100),
+#         `EQ_HEAVY` INT CHECK (EQ_HEAVY >=0 AND EQ_HEAVY <=100),
+#         `EQ_DISTORTION` INT CHECK (EQ_DISTORTION >=0 AND EQ_DISTORTION <=100),
+#         `EQ_ZIP` INT CHECK (EQ_ZIP >=0 AND EQ_ZIP <=100),
+#         `SPATIAL_AUDIO` VARCHAR(255)
+#     )
+# """) # 創建sqleq
 
-query(dbconfiguser,f"""
-    CREATE TABLE IF NOT EXISTS `user_setting`(
-        `UID_SETTING` VARCHAR(36) NOT NULL PRIMARY KEY,
-        `LANGUAGE` VARCHAR(255) NOT NULL,
-        `SHOW_MODAL` VARCHAR(255) NOT NULL,
-        `AUDIO_QUALITY` VARCHAR(255) NOT NULL,
-        `AUDIO_AUTO_PLAY` BOOL NOT NULL,
-        `WIFI_AUTO_DOWNLOAD` BOOL NOT NULL,
-        `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-""") # 創建sqlusersetting
+# query(dbconfiguser,f"""
+#     CREATE TABLE IF NOT EXISTS `user_setting`(
+#         `UID_SETTING` VARCHAR(36) NOT NULL PRIMARY KEY,
+#         `LANGUAGE` VARCHAR(255) NOT NULL,
+#         `SHOW_MODAL` VARCHAR(255) NOT NULL,
+#         `AUDIO_QUALITY` VARCHAR(255) NOT NULL,
+#         `AUDIO_AUTO_PLAY` BOOL NOT NULL,
+#         `WIFI_AUTO_DOWNLOAD` BOOL NOT NULL,
+#         `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+#     )
+# """) # 創建sqlusersetting
 
-printcolorhaveline("green","init sql user app start finish success","#")
-
-
+# printcolorhaveline("green","init sql user app start finish success","#")
 
 
+
+
+# 資料庫連結如果打開程式會炸(不明原因) 反正之後就會換方式了就不管它了
 # 程式結束時關閉資料庫連接
 # dbuser.close()
 # dbmusic.close()
