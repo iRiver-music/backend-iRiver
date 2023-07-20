@@ -73,6 +73,25 @@ class SQL:
             print(f"no summary")
             return None
         
+    def query(self, query):
+        artist_song_res , artist_song_sorce = self.query_all_artist_song(artist=query) or (None,0)
+        song_res        , song_score = self.query_song(song_name=query) or (None, 0)
+        
+        if(artist_song_sorce > song_score):
+            forwards = artist_song_res
+            back = song_res
+        else:
+            forwards = song_res
+            back = artist_song_res
+        
+        result = []
+        if forwards is not None:
+            result.extend(forwards)
+        if back is not None:
+            result.extend(back)
+
+        return tuple(result)
+
     def query_all_artist_song(self, artist):
         r =self.get_all_artist()
         try :

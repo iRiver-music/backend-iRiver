@@ -20,6 +20,9 @@ from django.contrib.auth import authenticate,login,logout
 # self import
 from .models import UserSocial, UserProfile, UserSettingEQ, UserSetting
 
+# if test
+test = False
+
 # program START
 
 
