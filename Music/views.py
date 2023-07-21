@@ -7,7 +7,7 @@ import json
 import sys
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import music
+from .models import Music
 from collections import Counter
 import threading
 import re
