@@ -9,7 +9,7 @@ import re
 # 自製
 from .options import get_chrome_options
 from .options import get_available_port
-from music.lib.clear_str import clear_str
+from Music.clean_str import clear_str
 
 def query_music_list(url :str , artist :str) ->json:
     service = Service('chromedriver.exe')

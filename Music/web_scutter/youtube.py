@@ -13,7 +13,7 @@ from collections import Counter
 # 自製
 from .options import get_chrome_options
 from  .options import get_available_port
-from music.lib.clear_str import clear_str
+from Music.clean_str import clear_str
 
 def query_youtube(query : str) ->json:
     service = Service('chromedriver.exe')
