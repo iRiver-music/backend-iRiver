@@ -43,7 +43,7 @@ class UserProfile(models.Model):
     level=models.PositiveSmallIntegerField(default=0)
 
     class Meta:
-        app_label="user"
+        app_label="User"
         db_table="user_profile"
 
 class UserSetting(models.Model):
@@ -56,7 +56,7 @@ class UserSetting(models.Model):
     CREATED_AT=models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        app_label="user"
+        app_label="User"
         db_table="user_setting"
 
 class UserSettingEQ(models.Model):
@@ -75,7 +75,7 @@ class UserSettingEQ(models.Model):
     SPATIAL_AUDIO=models.CharField(max_length=255,null=True,blank=True)
 
     class Meta:
-        app_label="user"
+        app_label="User"
         db_table="user_setting_eq"
 
 class UserSocial(models.Model):
@@ -84,7 +84,7 @@ class UserSocial(models.Model):
     uid=models.CharField(max_length=24)
 
     class Meta:
-        app_label="user"
+        app_label="User"
         db_table="user_social"
 
 
@@ -97,7 +97,7 @@ def usermusiclist(uid):
         create_at=models.DateTimeField(auto_now_add=True)
 
         class Meta:
-            app_label = 'user'
+            app_label = "User"
             db_table = uid
 
     return UserMusicList

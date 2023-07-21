@@ -42,6 +42,6 @@ class Music(models.Model):
 
     def __str__(self):
         return self.music_ID
-    
+
 def create_tables(ob):
     ob.objects.create_table()
