@@ -182,7 +182,40 @@ DATABASES = {
         'OPTIONS': {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
-    }
+    },
+    'user': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'iriver_user_data',
+        'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'PASSWORD': 'JABmQsQhpj05F6WI',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_ALL_TABLES',
+        }
+    },
+    'usermusic': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'iriver_user_music_list',
+        'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'PASSWORD': 'JABmQsQhpj05F6WI',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_ALL_TABLES',
+        }
+    },
+    'djangouser': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_user',
+        'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'PASSWORD': 'JABmQsQhpj05F6WI',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_ALL_TABLES',
+        }
+    },
 
 }
 

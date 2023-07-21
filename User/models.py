@@ -6,119 +6,98 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxLengthValidator
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator,MaxValueValidator
 
 #國家清單
 COUNTRY_CHOICES=(
-    ('NN','不透露'),
-    ('US','United States'),
-    ('CA','Canada'),
-    ('JP','Japan'),
-    ('CN','China'),
-    ('TW','Taiwan'),
-    ('KR','Korea'),
-    ('SG','Singapore'),
-    ('MY','Malaysia'),
-    ('TH','Thailand'),
-    ('PH','Philippines'),
-    ('ID','Indonesia'),
+    ("NN","不透露"),
+    ("US","United States"),
+    ("CA","Canada"),
+    ("JP","Japan"),
+    ("CN","China"),
+    ("TW","Taiwan"),
+    ("KR","Korea"),
+    ("SG","Singapore"),
+    ("MY","Malaysia"),
+    ("TH","Thailand"),
+    ("PH","Philippines"),
+    ("ID","Indonesia"),
 )
 #性別清單
 GENDER={
-    ('U','不透露'),
-    ('M','男'),
-    ('F','女'),
+    ("U","不透露"),
+    ("M","男"),
+    ("F","女"),
 }
 
-# 登入
-class Login(models.Model):
-    email=models.CharField(max_length=255)
-    username=models.CharField(max_length=255)
-    password=models.CharField(max_length=255)
-
-class Logingoogle(models.Model):
-    provider=models.CharField(max_length=200,default="google") # 若未來新增其他的登入方式,如Facebook,GitHub...
-    unique_id=models.CharField(max_length=200)
-    user=models.ForeignKey(User,related_name="social",on_delete=models.CASCADE)
-
-class Loginline(models.Model):
-    pass
-
-class Loginapple(models.Model):
-    pass
-
-# 設定
-class Settings(models.Model):
-    language=models.CharField(max_length=255)
-    showmodal=models.CharField(max_length=255)
-    audioquality=models.CharField(max_length=255)
-    audioautoplay=models.CharField(max_length=255)
-    wifiautodownload=models.CharField(max_length=255)
-
-# 註冊
-class Signup(models.Model):
-    email=models.CharField(max_length=255)
-    username=models.CharField(max_length=255)
-    password=models.CharField(max_length=255)
-    phone=models.CharField(max_length=255)
-    gender=models.CharField(max_length=255)
-    country=models.CharField(max_length=255)
-    # gender=models.CharField(max_length=1,choices=GENDER)
-    # country=models.CharField(max_length=2,choices=COUNTRY_CHOICES)
-    birthday=models.DateField()
-    # userimage=models.ImageField(upload_to='avatar/',default='avatar/default.png')
-
-# 個人檔案
-class Profile(models.Model):
-    email=models.CharField(max_length=255)
-    username=models.CharField(max_length=255)
-    phone=models.CharField(max_length=255)
-    gender=models.CharField(max_length=255)
-    country=models.CharField(max_length=255)
-    birthday=models.DateField()
-    # userimage=models.ImageField(upload_to='avatar/',default='avatar/default.png')
-
-# 回報問題
-class Problem(models.Model):
-    pass
-
-class UserSocial(models.Model):
-    userid = models.CharField(max_length=36, primary_key=True)
-    email = models.CharField(max_length=24)
-    uid = models.CharField(max_length=24)
-
 class UserProfile(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
-    email = models.CharField(max_length=24)
-    username = models.CharField(max_length=24)
-    phone = models.CharField(max_length=16)
-    country = models.CharField(max_length=2, null=True, blank=True)
-    birthday = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=1, null=True, blank=True)
-    user_img_url = models.CharField(max_length=255, null=True, blank=True)
-    test = models.BooleanField(default=False)
-    level = models.PositiveSmallIntegerField(default=0)
+    id=models.CharField(max_length=36,primary_key=True)
+    email=models.CharField(max_length=24)
+    username=models.CharField(max_length=24)
+    phone=models.CharField(max_length=16)
+    country=models.CharField(max_length=2,null=True)
+    birthday=models.DateField(null=True)
+    gender=models.CharField(max_length=1,null=True)
+    user_img_url=models.CharField(max_length=255,null=True)
+    test=models.PositiveSmallIntegerField(default=0)
+    level=models.PositiveSmallIntegerField(default=0)
 
-class UserSettingEQ(models.Model):
-    UID_EQ = models.CharField(max_length=36, primary_key=True)
-    ENGANCE_HIGH = models.BooleanField(null=True, blank=True)
-    ENGANCE_MIDDLE = models.BooleanField(null=True, blank=True)
-    ENGANCE_LOW = models.BooleanField(null=True, blank=True)
-    ENGANCE_HEAVY = models.BooleanField(null=True, blank=True)
-    STYLE = models.CharField(max_length=255, null=True, blank=True)
-    EQ_HIGH = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True)
-    EQ_MIDDLE = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True)
-    EQ_LOW = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True)
-    EQ_HEAVY = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True)
-    EQ_DISTORTION = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True)
-    EQ_ZIP = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True)
-    SPATIAL_AUDIO = models.CharField(max_length=255, null=True, blank=True)
+    class Meta:
+        app_label="user"
+        db_table="user_profile"
 
 class UserSetting(models.Model):
-    UID_SETTING = models.CharField(max_length=36, primary_key=True)
-    LANGUAGE = models.CharField(max_length=255)
-    SHOW_MODAL = models.CharField(max_length=255)
-    AUDIO_QUALITY = models.CharField(max_length=255)
-    AUDIO_AUTO_PLAY = models.BooleanField()
-    WIFI_AUTO_DOWNLOAD = models.BooleanField()
-    CREATED_AT = models.DateTimeField(auto_now_add=True)
+    UID_SETTING=models.CharField(max_length=36,primary_key=True)
+    LANGUAGE=models.CharField(max_length=255)
+    SHOW_MODAL=models.CharField(max_length=255)
+    AUDIO_QUALITY=models.CharField(max_length=255)
+    AUDIO_AUTO_PLAY=models.BooleanField()
+    WIFI_AUTO_DOWNLOAD=models.BooleanField()
+    CREATED_AT=models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label="user"
+        db_table="user_setting"
+
+class UserSettingEQ(models.Model):
+    UID_EQ=models.CharField(max_length=36,primary_key=True)
+    ENGANCE_HIGH=models.BooleanField(null=True,blank=True)
+    ENGANCE_MIDDLE=models.BooleanField(null=True,blank=True)
+    ENGANCE_LOW=models.BooleanField(null=True,blank=True)
+    ENGANCE_HEAVY=models.BooleanField(null=True,blank=True)
+    STYLE=models.CharField(max_length=255,null=True,blank=True)
+    EQ_HIGH=models.IntegerField(null=True)
+    EQ_MIDDLE=models.IntegerField(null=True)
+    EQ_LOW=models.IntegerField(null=True)
+    EQ_HEAVY=models.IntegerField(null=True)
+    EQ_DISTORTION=models.IntegerField(null=True)
+    EQ_ZIP=models.IntegerField(null=True)
+    SPATIAL_AUDIO=models.CharField(max_length=255,null=True,blank=True)
+
+    class Meta:
+        app_label="user"
+        db_table="user_setting_eq"
+
+class UserSocial(models.Model):
+    userid=models.CharField(max_length=36,primary_key=True)
+    email=models.CharField(max_length=24)
+    uid=models.CharField(max_length=24)
+
+    class Meta:
+        app_label="user"
+        db_table="user_social"
+
+
+# 還沒完工
+def usermusiclist(uid):
+    class UserMusicList(models.Model):
+        playlist=models.CharField(max_length=255)
+        music_ID=models.CharField(max_length=32)
+        favorite=models.PositiveSmallIntegerField(default=0)
+        create_at=models.DateTimeField(auto_now_add=True)
+
+        class Meta:
+            app_label = 'user'
+            db_table = uid
+
+    return UserMusicList

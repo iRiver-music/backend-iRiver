@@ -16,9 +16,10 @@ from django.utils import timezone
 from datetime import datetime
 from httplib2 import Authentication
 from django.contrib.auth import authenticate,login,logout
+from django.db import connections
 
 # self import
-from .models import UserSocial, UserProfile, UserSettingEQ, UserSetting
+from .models import UserSocial, UserProfile, UserSettingEQ, UserSetting, usermusiclist
 
 # if test
 test = False
@@ -136,7 +137,6 @@ def printcolorhaveline(color="green",text="",linestyle="-"):
     print(linestyle*30)
     printcolor(color,text)
 
-# nowtime 函式：輸出現在的時間
 def nowtime():
     localtime=time.localtime() # 現在時間
     nowtime=time.strftime("%Y-%m-%d %H:%M:%S",localtime) # 轉成date format
@@ -171,26 +171,22 @@ def apple(request):
     pass
 
 def login(request):
-    form = LoginForm()
+    form=LoginForm()
     print(form)
     if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        user = authenticate(request,username=username,password=password)
+        username=request.POST.get("username")
+        password=request.POST.get("password")
+        user=authenticate(request,username=username,password=password)
         if user is not None:
             login(request,user)
             print("成功登入")
             return redirect('/user/data/')  # 重新導向到首頁
         else:
             print("登入錯誤")
-    context = {
+    context={
         'form': form
     }
     return render(request,'registration/login.html',context)
-
-# 登出
-def logoutsql():
-    pass
 
 # 註冊
 def signupsql():
@@ -203,23 +199,24 @@ def applecallback(request):
     pass
 
 def signup(request):
-    form = RegisterForm()
+    form=RegisterForm()
     if request.method == "POST":
-        form = RegisterForm(request.POST)
+        form=RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             print("註冊成功")
             return redirect('/user/login/')  # 重新導向到登入畫面
         else:
             print("註冊錯誤")
-    context = {
+    context={
         'form': form
     }
     return render(request,'registration/register.html',context)
 
+# 登出
 def logout(request):
     # logout(request)
-    request.session['isLogin'] = False
+    request.session['isLogin']=False
     request.session.save()
     printcolorhaveline("green","登出成功"," ")
     return redirect('/user/login')
@@ -300,17 +297,6 @@ def save_session(request,name,email,uid,userimageurl):
     # 創建 SQL 使用者實例
     request.session["user_data"]={"name": name}  # 保存用戶數據
     # 創建 SQL 音樂實例
-
-    # 創建用戶音樂列表表格(如果不存在)
-    sql=f"""
-        CREATE TABLE IF NOT EXISTS `%s`(
-            playlist VARCHAR(255) NOT NULL,
-            music_ID VARCHAR(32) NOT NULL,
-            favorite BOOLEAN NOT NULL DEFAULT false,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """
-    query(dbconfigusermusiclist,sql,(uid))
 
     # 獲取用戶播放列表
     miuscrow=query(dbconfigusermusiclist,"SELECT*FROM `%s`",(uid))
@@ -468,9 +454,10 @@ def get_user_music_list(request):
 # /login/
 # base 函式：處理用戶登入的基本操作
 def base(userid,email,name,userimageurl,request):
-    emailrow=query(dbconfiguser,"SELECT `uid` FROM `user_social` WHERE `email`=%s",(email))
+    row=UserSocial.objects.using("user").filter(email=email).all()
+
     try:
-        uid=emailrow[0][0]
+        uid=row[0][0]
     except Exception as e: # 無帳號
         printcolorhaveline("green","create user","-")
         uid=uuid.uuid4()
@@ -479,79 +466,56 @@ def base(userid,email,name,userimageurl,request):
         uid=short_uid
 
         # 創建帳號所需資料表及欄位
-        query(dbconfiguser,"INSERT INTO `user_social`(`userid`,`email`,`uid`)VALUES(%s,%s,%s)",(userid,email,uid))
-        query(dbconfiguser,"INSERT INTO `user_profile`(`id`,`email`,`username`,`phone`,`country`,`birthday`,`gender`,`user_img_url`,`test`,`level`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(uid,email,name,"","","","","",0,0))
+        UserSocial.objects.using("user").create(
+            userid=userid,
+            email=email,
+            uid=uid
+        ).save()
 
-        query(dbconfigusermusiclist,f"""
-            CREATE TABLE IF NOT EXISTS `%s`(
-                `id` VARCHAR(36) NOT NULL PRIMARY KEY,
-                `music_ID` VARCHAR(32) NOT NULL,
-                `playlist` VARCHAR(255) NOT NULL,
-                `favorite` BOOLEAN NOT NULL DEFAULT false,
-                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """,(uid)) # 創建用戶音樂列表表格(如果不存在) ir->user_music_list-///
+        UserProfile.objects.using("user").create(
+            id=uid,
+            email=email,
+            username=name,
+            phone="",
+            country="",
+            birthday="",
+            gender="",
+            user_img_url="",
+            test=0,
+            level=0
+        ).save()
 
-        # 註冊用戶均衡器
-        query(dbconfiguser,"INSERT INTO `user_setting_eq`(`UID_EQ`,`ENGANCE_HIGH`,`ENGANCE_MIDDLE`,`ENGANCE_LOW`,`ENGANCE_HEAVY`,`STYLE`,`EQ_HIGH`,`EQ_MIDDLE`,`EQ_LOW`,`EQ_HEAVY`,`EQ_DISTORTION`,`EQ_ZIP`,`SPATIAL_AUDIO`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(uid,0,0,0,0,"null",50,50,50,50,0,0,"null"))
+        # 創建新的 UserSettingEQ 記錄並使用 "user" 資料庫連線
+        UserSettingEQ.objects.using("user").create(
+            UID_EQ=uid,
+            ENGANCE_HIGH=False,
+            ENGANCE_MIDDLE=False,
+            ENGANCE_LOW=False,
+            ENGANCE_HEAVY=False,
+            STYLE="null",
+            EQ_HIGH=50,
+            EQ_MIDDLE=50,
+            EQ_LOW=50,
+            EQ_HEAVY=50,
+            EQ_DISTORTION=0,
+            EQ_ZIP=0,
+            SPATIAL_AUDIO="null"
+        ).save()
 
         # 註冊用戶設置
-        query(dbconfiguser,"INSERT INTO `user_setting`(`UID_SETTING`,`LANGUAGE`,`SHOW_MODAL`,`AUDIO_QUALITY`,`AUDIO_AUTO_PLAY`,`WIFI_AUTO_DOWNLOAD`,`CREATED_AT`)VALUES(%s,%s,%s,%s,%s,%s,%s)",(uid,"ch","auto","auto",1,1,nowtime()))
+        UserSetting.objects.using("user").create(
+            UID_SETTING=uid,
+            LANGUAGE="ch",
+            SHOW_MODAL="auto",
+            AUDIO_QUALITY="auto",
+            AUDIO_AUTO_PLAY=1,
+            WIFI_AUTO_DOWNLOAD=1,
+            CREATED_AT=nowtime()
+        ).save()
 
     save_session(request,name,email,uid,userimageurl)
 
     printcolorhaveline("green","finish baseing"," ")
-########################################################################
-
-def eqCommit(method,**kwargs):
-    if method == "insert":
-        row=query(dbconfiguser,"INSERT IGNORE INTO `user_setting_eq`(`UID_EQ`,`ENGANCE_HIGH`,`ENGANCE_MIDDLE`,`ENGANCE_LOW`,`ENGANCE_HEAVY`,`STYLE`,`EQ_HIGH`,`EQ_MIDDLE`,`EQ_LOW`,`EQ_HEAVY`,`EQ_DISTORTION`,`EQ_ZIP`,`SPATIAL_AUDIO`)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",eqDictToTuple(**kwargs))
-        return eqTupLetoDict(row)
-    elif method == "update":
-        kwargs = kwargs.get("kwargs")
-        row=query(dbconfiguser,"UPDATE `user_setting_eq` SET "+str(kwargs['column'])+"=%s WHERE `UID_EQ`=%s",(kwargs["new_value"],kwargs["UID_EQ"]))
-        return row
-    elif method == "select":
-        row=query(dbconfiguser,"SELECT*FROM `user_setting_eq` WHERE `UID_EQ`=%s",(kwargs["UID_EQ"]))
-        return eqTupLetoDict(row)
-    else:
-        printcolorhaveline("fail",f"the method {method} is not supported","-")
-        return False
-
-def eqDictToTuple(**kwargs):
-    return (
-        kwargs.get("UID_EQ"),
-        kwargs.get("ENGANCE_HIGH"),
-        kwargs.get("ENGANCE_MIDDLE"),
-        kwargs.get("ENGANCE_LOW"),
-        kwargs.get("ENGANCE_HEAVY"),
-        kwargs.get("STYLE"),
-        kwargs.get("EQ_HIGH"),
-        kwargs.get("EQ_MIDDLE"),
-        kwargs.get("EQ_LOW"),
-        kwargs.get("EQ_HEAVY"),
-        kwargs.get("EQ_DISTORTION"),
-        kwargs.get("EQ_ZIP"),
-        kwargs.get("SPATIAL_AUDIO"),
-    )
-
-def eqTupLetoDict(data_tuple):
-    keys=[
-        'UID_EQ',
-        'ENGANCE_HIGH',
-        'ENGANCE_MIDDLE',
-        'ENGANCE_LOW',
-        'ENGANCE_HEAVY',
-        'STYLE',
-        'EQ_HIGH',
-        'EQ_MIDDLE',
-        'EQ_LOW',
-        'EQ_HEAVY',
-        'EQ_DISTORTION',
-        'EQ_ZIP',
-        'SPATIAL_AUDIO'
-    ]
-    return dict(zip(keys,data_tuple))
 
 def usersavesession(request):
     return save_session(request,request.session["name"],request.session["email"],request.session["key"],request.session["user_img_url"])
@@ -695,15 +659,31 @@ def profile(request):
         test=0
         level=0
 
-        # 存入sql
-        query(dbconfiguser,"UPDATE `user_profile` SET `email`=%s,`username`=%s,`phone`=%s,`country`=%s,`birthday`=%s,`gender`=%s,`user_img_url`=%s,`test`=%s,`level`=%s WHERE `id`=%s",(email,username,phone,country,birthday,gender,userimageurl,test,level,id))
+        # 存入sql(U)
+
+        # 根據 id 找到對應的記錄
+        user_profile=UserProfile.objects.using("user").get(id=id)
+
+        # 更新記錄的各個欄位
+        user_profile.email=email
+        user_profile.username=username
+        user_profile.phone=phone
+        user_profile.country=country
+        user_profile.birthday=birthday
+        user_profile.gender=gender
+        user_profile.user_img_url=userimageurl
+        user_profile.test=test
+        user_profile.level=level
+
+        # 儲存記錄
+        user_profile.save()
 
         printcolorhaveline("green","成功修改 "+str(id)+" 的資料","-")
         return redirect("/user/profile2/")
     else:
         # 查詢用戶
         uid=request.session["key"]
-        row=query(dbconfiguser,"SELECT*FROM `user_profile` WHERE `id`=%s",(uid))
+        row=UserProfile.objects.using("user").filter(id=uid).all()
         data=""
         if row:
             row=row[0]
@@ -728,10 +708,44 @@ def user_eq(request):
     if request.method=="POST":
         body=json.loads(request.body)
         kwargs=body.get("kwargs")
-        kwargs["UID_EQ"]=request.session["key"]
         method=body.get("method")
+        kwargs["UID_EQ"]=request.session["key"]
         printcolorhaveline("green",kwargs)
-        return JsonResponse({"data": eqCommit(method,kwargs)})
+        row=False
+        if method=="insert":
+            query=UserSettingEQ.objects.using("user").get_or_create(
+                UID_EQ=kwargs["UID_EQ"],
+                defaults={
+                    'ENGANCE_HIGH': kwargs["ENGANCE_HIGH"],
+                    'ENGANCE_MIDDLE': kwargs["ENGANCE_MIDDLE"],
+                    'ENGANCE_LOW': kwargs["ENGANCE_LOW"],
+                    'ENGANCE_HEAVY': kwargs["ENGANCE_HEAVY"],
+                    'STYLE': kwargs["STYLE"],
+                    'EQ_HIGH': kwargs["EQ_HIGH"],
+                    'EQ_MIDDLE': kwargs["EQ_MIDDLE"],
+                    'EQ_LOW': kwargs["EQ_LOW"],
+                    'EQ_HEAVY': kwargs["EQ_HEAVY"],
+                    'EQ_DISTORTION': kwargs["EQ_DISTORTION"],
+                    'EQ_ZIP': kwargs["EQ_ZIP"],
+                    'SPATIAL_AUDIO': kwargs["SPATIAL_AUDIO"],
+                }
+            )
+            row=query
+        elif method=="update":
+            column=kwargs["column"]
+            newvalue=kwargs["new_value"]
+            printcolorhaveline("green",kwargs,"-")
+            query=UserSettingEQ.objects.using("user").get(UID_EQ=kwargs["UID_EQ"])
+            # 更新記錄的各個欄位
+            setattr(query,column,newvalue)
+            query.save()
+            row=query
+        elif method=="select":
+            row=UserSettingEQ.objects.using("user").filter(UID_EQ=kwargs["UID_EQ"]).all()
+        else:
+            printcolorhaveline("fail",f"the method {method} is not supported","-")
+
+        return JsonResponse({"data": row })
     else:
         return JsonResponse({"success":False})
 
@@ -741,100 +755,48 @@ def user_setting(request):
         method=body.get("method")
         kwargs=body.get("kwargs")
         uid=request.session["key"]
-        data=False
+        row=False
         if method=="insert":
-            row=query(dbconfiguser,"INSERT INTO `user_setting`(`UID_SETTING`,`LANGUAGE`,`SHOW_MODAL`,`AUDIO_QUALITY`,`AUDIO_AUTO_PLAY`,`WIFI_AUTO_DOWNLOAD`,`CREATED_AT`)VALUES(%s,%s,%s,%s,%s,%s,%s)",(uid,"ch","auto","auto",1,1,nowtime()))
-            data=row
+            query=UserSettingEQ.objects.using("user").get_or_create(
+                UID_SETTING=uid,
+                defaults={
+                    'LANGUAGE': "ch",
+                    'SHOW_MODAL': "auto",
+                    'AUDIO_QUALITY': "auto",
+                    'AUDIO_AUTO_PLAY': 1,
+                    'WIFI_AUTO_DOWNLOAD': 1,
+                    'CREATED_AT': nowtime()
+                }
+            )
+            row=query
         elif method=="update":
             column=kwargs["column"]
             newvalue=kwargs["new_value"]
             printcolorhaveline("green",kwargs,"-")
-            row=query(dbconfiguser,"UPDATE `user_setting` SET `"+column+"`=%s WHERE `UID_SETTING`=%s",(newvalue,uid))
-            data=row
+
+            query=UserSetting.objects.using("user").get(UID_SETTING=uid)
+            setattr(query,column,newvalue)
+            query.save()
+            row=query
         elif method=="select":
-            row=query(dbconfiguser,"SELECT*FROM `user_setting` WHERE `UID_SETTING`=%s",(uid))
-            data=row
+            row=UserSetting.objects.using("user").filter(UID_EQ=uid).all()
         else:
             printcolorhaveline("fail",f"the method {method} is not supported","-")
 
-        return JsonResponse({"data": data })
+        return JsonResponse({"data": row })
     else:
         return JsonResponse({"success": False})
 
-
-########################################################################
-
-default_app_config="user.apps.UserConfig"
-
 printcolorhaveline("green","user app start!","#")
 
-# # 建立個人資料table name
-# query(dbconfiguser,f"""
-#     CREATE TABLE IF NOT EXISTS `user_social` (
-#         `userid` VARCHAR(36) NOT NULL PRIMARY KEY,
-#         `email` VARCHAR(24) NOT NULL,
-#         `uid` VARCHAR(24) NOT NULL
-#     )
-# """) # 創建sqllogin
+# def create_user_music_list(request, uid):
+#     # 使用傳入的 uid 來動態生成模型
+#     UserMusicList = usermusiclist(uid)
 
-# query(dbconfiguser,f"""
-#     CREATE TABLE IF NOT EXISTS `user_profile` (
-#         `id` VARCHAR(36) NOT NULL PRIMARY KEY,
-#         `email` VARCHAR(24) NOT NULL,
-#         `username` VARCHAR(24) NOT NULL,
-#         `phone` VARCHAR(16) NOT NULL,
-#         `country` CHAR(2),
-#         `birthday` DATE,
-#         `gender` CHAR(1),
-#         `user_img_url` VARCHAR(255),
-#         `test` TINYINT(2) UNSIGNED DEFAULT 0,
-#         `level` TINYINT(2) UNSIGNED DEFAULT 0
-#     )
-# """) # 創建sqluser
-
-# query(dbconfiguser,f"""
-#     CREATE TABLE IF NOT EXISTS `user_setting_eq`(
-#         `UID_EQ` VARCHAR(36) NOT NULL PRIMARY KEY,
-#         `ENGANCE_HIGH` BOOL,
-#         `ENGANCE_MIDDLE` BOOL,
-#         `ENGANCE_LOW` BOOL,
-#         `ENGANCE_HEAVY` BOOL,
-#         `STYLE` VARCHAR(255),
-#         `EQ_HIGH` INT CHECK (EQ_HIGH >=0 AND EQ_HIGH <=100),
-#         `EQ_MIDDLE` INT CHECK (EQ_MIDDLE >=0 AND EQ_MIDDLE <=100),
-#         `EQ_LOW` INT CHECK (EQ_LOW >=0 AND EQ_LOW <=100),
-#         `EQ_HEAVY` INT CHECK (EQ_HEAVY >=0 AND EQ_HEAVY <=100),
-#         `EQ_DISTORTION` INT CHECK (EQ_DISTORTION >=0 AND EQ_DISTORTION <=100),
-#         `EQ_ZIP` INT CHECK (EQ_ZIP >=0 AND EQ_ZIP <=100),
-#         `SPATIAL_AUDIO` VARCHAR(255)
-#     )
-# """) # 創建sqleq
-
-# query(dbconfiguser,f"""
-#     CREATE TABLE IF NOT EXISTS `user_setting`(
-#         `UID_SETTING` VARCHAR(36) NOT NULL PRIMARY KEY,
-#         `LANGUAGE` VARCHAR(255) NOT NULL,
-#         `SHOW_MODAL` VARCHAR(255) NOT NULL,
-#         `AUDIO_QUALITY` VARCHAR(255) NOT NULL,
-#         `AUDIO_AUTO_PLAY` BOOL NOT NULL,
-#         `WIFI_AUTO_DOWNLOAD` BOOL NOT NULL,
-#         `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-#     )
-# """) # 創建sqlusersetting
-
-# printcolorhaveline("green","init sql user app start finish success","#")
-
-
-
-
-# 資料庫連結如果打開程式會炸(不明原因) 反正之後就會換方式了就不管它了
-# 程式結束時關閉資料庫連接
-# dbuser.close()
-# dbmusic.close()
-# dbconfiguser.close()
-# dbconfigusermusiclist.close()
-
-
+#     # 創建一個新的用戶音樂清單記錄
+#     music_list = UserMusicList(playlist='我的最愛', music_ID='歌曲ID', favorite=False)
+#     music_list.save()
+#     # 其他相關操作...
 
 # 註記
 # 只要函式後面有加sql都是sql函式
