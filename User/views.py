@@ -19,7 +19,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.db import connections
 
 # self import
-from .models import UserSocial, UserProfile, UserSettingEQ, UserSetting, usermusiclist
+from .models import UserSocial, UserProfile, UserSettingEQ, UserSetting, UserMusicList
 
 # if test
 test = False
@@ -64,15 +64,13 @@ test=False # only for testing
 url="https://iriver.ddns.net"
 localurl="http://127.0.0.1:8000" # only for testing
 
-# google api
-client_secret="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"
 client_id="1026795084542-4faa7ard63anna4utjtmavuvbe4t4mf4.apps.googleusercontent.com"
+client_secret="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"
 scope="https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"
 access_type="offline"
 include_granted_scopes="true"
 response_type="code"
 
-# line api
 line_client_id="1661190797"
 line_client_secret="3fc12add18f596c2597c993f1f858acf"
 line_response_type="code"
@@ -82,34 +80,11 @@ if test:
     # 測試用環境
     urlgoogle=localurl+"/complete/google/"
     urlline=localurl+"/complete/line/"
-
-    # sql 串接
-    dbuser=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="django_user",charset="utf8") # user 的 db
-    dbmusic=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="music_db",charset="utf8") # muisc 的 db
-    dbconfiguser=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="iRiver_user_data",charset="utf8")
-    dbconfigusermusiclist=pymysql.connect(host="localhost",port=3306,user="root",passwd="",db="iRiver_user_music_list",charset="utf8")
 else:
     # 正式環境
     urlgoogle=url+"/complete/google/"
     urlline=url+"/complete/line/"
 
-    # sql 串接
-    dbuser=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="django_user",charset="utf8") # user 的 db
-    dbmusic=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="music_db",charset="utf8") # muisc 的 db
-    dbconfiguser=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="iRiver_user_data",charset="utf8")
-    dbconfigusermusiclist=pymysql.connect(host="iriversql.ddns.net",port=3306,user="gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr",passwd="JABmQsQhpj05F6WI",db="iRiver_user_music_list",charset="utf8")
-
-# query 的簡化 function
-def query(db,query,data=()):
-    try:
-        row=db.cursor() # 操作游標
-        row.execute(query,data) # 匯入data
-        db.commit()
-        printcolorhaveline("green",f"sql query {query} success!")
-        return row.fetchall()
-    except Exception as e:
-        printcolorhaveline("fail","[ERROR]"+str(e))
-        return None
 
 # printcolor 函式：在終端機中以不同顏色打印文字
 def printcolor(color,text):
@@ -299,21 +274,25 @@ def save_session(request,name,email,uid,userimageurl):
     # 創建 SQL 音樂實例
 
     # 獲取用戶播放列表
-    miuscrow=query(dbconfigusermusiclist,"SELECT*FROM `%s`",(uid))
+    UserMusicList._meta.db_table=uid
+    miuscrow=UserMusicList.objects.using("usermusic").all()
 
     if miuscrow:
-        userplaylistrow=query(dbconfigusermusiclist,"SELECT DISTINCT `playlist` FROM `%s`",(uid))
+        UserMusicList._meta.db_table=uid
+        userplaylistrow=UserMusicList.objects.using("usermusic").values_list('playlist', flat=True).distinct()
     else:
         userplaylistrow=None
 
     request.session["user_playlist"]=userplaylistrow # 保存用戶播放列表
 
     # eq
-    eqrow=query(dbconfiguser,"SELECT*FROM `user_setting_eq` WHERE `UID_EQ`=%s",(uid))
+    UserMusicList._meta.db_table=uid
+    eqrow=UserSettingEQ.objects.using("user").filter(UID_EQ=uid).all()
     request.session["user_eq"]=eqrow  # 保存用戶均衡器設置
 
     # setting
-    settingrow=query(dbconfiguser,"SELECT*FROM `user_setting` WHERE `UID_SETTING`=%s",(uid))[0]
+    UserMusicList._meta.db_table=uid
+    settingrow=UserSetting.objects.using("user").filter(UID_SETTING=uid).all()[0]
     setting={
         "UID_SETTING":settingrow[0],
         "LANGUAGE":settingrow[1],
@@ -381,19 +360,26 @@ def get_user_music_list(request):
             for music_ID in music_ID_list:
                 printcolorhaveline("green","add ",music_ID,"=> ",music_list," ")
                 # 查询数据库中是否已存在相同的 music_ID
-                # select_sql=(f"SELECT COUNT(*) FROM {uid} ""WHERE music_ID=%s AND playlist=%s")
-                row=query(dbconfigusermusiclist,"SELECT COUNT(*) FROM "+str(uid)+" WHERE `music_ID`=%s AND `playlist`=%s",(music_ID,music_list))
-                if row[0]==0: # 不存在则插入新数据
-                    query(dbconfigusermusiclist,"INSERT INTO "+str(uid)+"(`playlist`,`music_ID`,`favorite`)VALUES(%s,%s,%s)",(music_list,music_ID,False))
+                UserMusicList._meta.db_table=uid
+                row=UserMusicList.objects.using("usermusic").filter(music_ID=music_ID, playlist=music_list).count()
+                if row==0: # 不存在则插入新数据
+                    UserMusicList._meta.db_table=uid
+                    UserMusicList.objects.using("usermusic").create(
+                        playlist=music_list,
+                        music_ID=music_ID,
+                        favorite=False
+                    )
                 if music_list==playlist: # 如果是我的最愛或在最愛裡面，則將favorite設為true
-                    query(dbconfigusermusiclist,"UPDATE "+str(uid)+" SET `favorite`=%s WHERE `music_ID`=%s",(True,music_ID))
+                    UserMusicList._meta.db_table=uid
+                    UserMusicList.objects.using("usermusic").filter(music_ID=music_ID).update(favorite=True)
             success=True
         except Exception as e:
             printcolorhaveline("fail",e,"-")
             success=False
         return JsonResponse(json.dumps({"success":success}),safe=False)
     elif method=="get": # 獲取播放列表中的音樂
-        row=query(dbconfigusermusiclist,"SELECT`music_ID`FROM "+str(uid)+" WHERE `playlist`=%s ORDER BY `created_at` DESC",music_list)
+        UserMusicList._meta.db_table=uid
+        row=UserMusicList.objects.using("usermusic").filter(playlist=music_list).order_by('-created_at').values_list('music_ID',flat=True)
         return JsonResponse(list(row),safe=False)
     elif method=="delete": # 從播放列表中刪除音樂
         try:
@@ -402,10 +388,12 @@ def get_user_music_list(request):
             music_ID_list=json.loads(music_ID_list) # 解析list
             # 删除每个id
             for music_ID in music_ID_list:
-                query(dbconfigusermusiclist,"DELETE FROM "+str(uid)+" WHERE `playlist`=%s AND `music_ID`=%s",(music_list,music_ID))
+                UserMusicList._meta.db_table=uid
+                UserMusicList.objects.using("usermusic").filter(playlist=music_list, music_ID=music_ID).delete()
                 # 如果是我的最愛，則將favorite設為false
                 if music_list==1:
-                    query(dbconfigusermusiclist,"UPDATE "+str(uid)+" SET `favorite`=%s WHERE `music_ID`=%s",(False,music_ID))
+                    UserMusicList._meta.db_table=uid
+                    UserMusicList.objects.using("usermusic").filter(music_ID=music_ID).update(favorite=False)
             success=True
         except Exception as e:
             printcolorhaveline("fail",e,"-")
@@ -414,28 +402,32 @@ def get_user_music_list(request):
     elif method=="delete_playlist": # 刪除播放列表
         try:
             playlist=data.get("playlist",playlist)
-            query(dbconfigusermusiclist,"DELETE FROM "+str(uid)+" WHERE `playlist`=%s",(playlist))
+            UserMusicList._meta.db_table=uid
+            UserMusicList.objects.using("usermusic").filter(playlist=playlist).delete()
             success=True
         except Exception as e:
             printcolorhaveline("fail",e,"-")
             success=False
         return JsonResponse(json.dumps({"success":success}),safe=False)
-    elif method=="create_playlist": # 創建播放列表   ### 還沒做
+    elif method=="create_playlist": # 創建播放列表
         playlist=data.get("playlist",playlist)
         try:
-            # query(dbconfigusermusiclist,"INSERT INTO"+str(uid)+"()VALUES()",())
+            UserMusicList._meta.db_table=uid
+            UserMusicList.objects.using("usermusic").create(
+                playlist=playlist,
+                music_ID="",
+                favorite="",
+            ).save()
             success=True
         except Exception as e:
             printcolorhaveline("fail",e,"-")
             success=False
         return JsonResponse(json.dumps({"success": success}),safe=False)
     elif method=="get_playlist": # 獲取所有播放列表
-        countrow=query(dbconfigusermusiclist,"SELECT COUNT(*) FROM "+str(uid))[0]
-        if countrow[0]==0:
-            check=None
-
-        row=query(dbconfigusermusiclist,"SELECT DISTINCT playlist FROM "+str(uid)+" WHERE playlist != '我的最愛'")
-
+        UserMusicList._meta.db_table=uid
+        countrow=UserMusicList.objects.using("usermusic").count()
+        UserMusicList._meta.db_table=uid
+        row=UserMusicList.objects.using("usermusic").exclude(playlist='我的最愛').values_list('playlist', flat=True).distinct().all()
         if row:
             check=row
         else:

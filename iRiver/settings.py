@@ -188,7 +188,7 @@ DATABASES = {
         'NAME': 'iriver_user_data',
         'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
         'PASSWORD': 'JABmQsQhpj05F6WI',
-        'HOST': 'localhost',
+        'HOST': '49.213.238.75',
         'PORT': '3306',
         'OPTIONS': {
             'sql_mode': 'STRICT_ALL_TABLES',
@@ -199,7 +199,7 @@ DATABASES = {
         'NAME': 'iriver_user_music_list',
         'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
         'PASSWORD': 'JABmQsQhpj05F6WI',
-        'HOST': 'localhost',
+        'HOST': '49.213.238.75',
         'PORT': '3306',
         'OPTIONS': {
             'sql_mode': 'STRICT_ALL_TABLES',
@@ -210,7 +210,7 @@ DATABASES = {
         'NAME': 'django_user',
         'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
         'PASSWORD': 'JABmQsQhpj05F6WI',
-        'HOST': 'localhost',
+        'HOST': '49.213.238.75',
         'PORT': '3306',
         'OPTIONS': {
             'sql_mode': 'STRICT_ALL_TABLES',

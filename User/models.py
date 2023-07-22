@@ -87,17 +87,11 @@ class UserSocial(models.Model):
         app_label="User"
         db_table="user_social"
 
+class UserMusicList(models.Model):
+    playlist=models.CharField(max_length=255)
+    music_ID=models.CharField(max_length=32)
+    favorite=models.PositiveSmallIntegerField(default=0)
+    create_at=models.DateTimeField(auto_now_add=True)
 
-# 還沒完工
-def usermusiclist(uid):
-    class UserMusicList(models.Model):
-        playlist=models.CharField(max_length=255)
-        music_ID=models.CharField(max_length=32)
-        favorite=models.PositiveSmallIntegerField(default=0)
-        create_at=models.DateTimeField(auto_now_add=True)
-
-        class Meta:
-            app_label = "User"
-            db_table = uid
-
-    return UserMusicList
+    class Meta:
+        app_label="User"
