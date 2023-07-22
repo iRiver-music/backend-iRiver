@@ -46,6 +46,7 @@ class SQL:
     def get_all_artist_song(self, artist):
         try: 
             artists_songs = Music.objects.filter(artist).order_by('views')
+            print(artists_songs)
             music_list_infos = []
             for song in artists_songs :
                 music_list_infos.append(

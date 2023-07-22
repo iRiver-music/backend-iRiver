@@ -51,7 +51,7 @@ def search(request):
 def music_list(request):
     artist = request.GET.get('artist', '')
     index = request.GET.get('index', '')
-    mysql = SQL(music.lib.sql.config.DB_CONFIG)
+    mysql = SQL(Music.sql.config.DB_CONFIG)
     music_list_infos = mysql.get_all_artist_song(artist=artist)
     summary_str = mysql.get_artist_summary(artist=artist)
     summary = "".join(item[0] for item in summary_str)
@@ -95,7 +95,7 @@ def get_my_music_list(request):
     # headers['X-CSRFToken'] = csrftoken
     # response = requests.post(url, headers=headers, data=json.dumps(data))
 
-    mysql = SQL(music.lib.sql.config.DB_CONFIG)
+    mysql = SQL(Music.sql.config.DB_CONFIG)
     music_list_infos = mysql.get_music_list_infos(
         music_ID_list=[item[0] for item in json.loads(response.content)])
     try:
@@ -113,14 +113,14 @@ def get_my_music_list(request):
 
 def get_music_list(request):
     artist = request.GET.get('artist')
-    mysql = SQL(music.lib.sql.config.DB_CONFIG)
-    mysql.create_tables()
+    mysql = SQL(Music.sql.config.DB_CONFIG)
+    #mysql.create_tables()
     r = mysql.get_all_artist_song(artist=artist)
     print('#'*30)
     print(r)
 
     result_list = []
-    if r == "()":
+    if r == "()" or r == None:
         return JsonResponse({'sucess': False})
 
     for row in r:
@@ -135,7 +135,7 @@ def query_db_song(request):
         print(f'get db {query} !!')
     # 資料庫
     try:
-        mysql = SQL(music.lib.sql.config.DB_CONFIG)
+        mysql = SQL(Music.sql.config.DB_CONFIG)
         res = mysql.query(query=query)
         if res is None:
             print("the res is empty")
@@ -169,7 +169,7 @@ def query_web_song(request):
 def is_song_exist(request):
     music_ID = request.get('music_ID', None)
     if music_ID:
-        mysql = SQL(music.lib.sql.config.DB_CONFIG)
+        mysql = SQL(Music.sql.config.DB_CONFIG)
         # mysql.query_song()
         return JsonResponse({'success': True})
     else:
