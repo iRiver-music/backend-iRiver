@@ -7,7 +7,6 @@ import json
 import sys
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Music
 from collections import Counter
 import threading
 import re
@@ -20,7 +19,13 @@ from django.shortcuts import redirect
 
 # import sql相關
 import Music.sql.config
-from Music.sql.sql import SQL
+
+#import query function
+from Music.query import query
+
+#import models
+from .models import Music
+from .models import Artist
 
 #import clean_str
 from Music.clean_str import clear_str
@@ -52,8 +57,8 @@ def music_list(request):
     artist = request.GET.get('artist', '')
     index = request.GET.get('index', '')
     mysql = SQL(Music.sql.config.DB_CONFIG)
-    music_list_infos = mysql.get_all_artist_song(artist=artist)
-    summary_str = mysql.get_artist_summary(artist=artist)
+    music_list_infos = Music.objects.using('test').filter(artist=artist).values().order_by('-views')
+    summary_str = Artist.objects.get(artist=artist).value('summary')
     summary = "".join(item[0] for item in summary_str)
 
     response_data = {
@@ -96,17 +101,15 @@ def get_my_music_list(request):
     # response = requests.post(url, headers=headers, data=json.dumps(data))
 
     mysql = SQL(Music.sql.config.DB_CONFIG)
-    music_list_infos = mysql.get_music_list_infos(
-        music_ID_list=[item[0] for item in json.loads(response.content)])
-    try:
-        title_img_url = f"/media/{music_list_infos[0]['artist']}/img/{music_list_infos[0]['music_ID']}.jpg"
-    except:
-        title_img_url = "/static/img/music_img.jpg"
+    music_ID_list=[item[0] for item in json.loads(response.content)]
+    music_list_infos = []
+    for music_id in music_ID_list :
+        music_info = Music.objects.using('test').get(music_ID=music_id)
+        music_list_infos.append()
     
     response_data = {
         'music_list_infos': music_list_infos,
         'music_list': music_list,
-        'title_img_url': title_img_url,
     }
 
     return JsonResponse(response_data)
@@ -115,7 +118,7 @@ def get_music_list(request):
     artist = request.GET.get('artist')
     mysql = SQL(Music.sql.config.DB_CONFIG)
     #mysql.create_tables()
-    r = mysql.get_all_artist_song(artist=artist)
+    r = Music.objects.using('test').filter(artist=artist).values().order_by('-views')
     print('#'*30)
     print(r)
 
@@ -125,6 +128,7 @@ def get_music_list(request):
 
     for row in r:
         result_list.append(row)
+        print("row : ", row)
 
     return JsonResponse({'musicList': result_list})
 
