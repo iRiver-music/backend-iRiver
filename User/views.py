@@ -404,7 +404,6 @@ def base(userid,email,name,userimageurl,request):
         uid_str=str(uid).replace("-","")
         short_uid="a"+uid_str[:12]
         uid=short_uid
-
         # 創建帳號所需資料表及欄位
         UserSocial.objects.using("user").create(
             userid=userid,
