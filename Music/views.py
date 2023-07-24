@@ -108,7 +108,7 @@ test = False
 
 #     return JsonResponse(response_data)
 
-def get_artist_music_list(request):
+def get_artist_info(request):
     artist = request.GET.get('artist')
     #mysql.create_tables()
     r = Artist.objects.using('test').get(artist=artist)
