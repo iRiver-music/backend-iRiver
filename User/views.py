@@ -38,14 +38,21 @@ line_client_secret="3fc12add18f596c2597c993f1f858acf"
 line_response_type="code"
 line_scopes=["profile","openid","email"]
 
+apple_client_id="1661190797"
+apple_client_secret="3fc12add18f596c2597c993f1f858acf"
+apple_response_type="code"
+apple_scopes=["profile","openid","email"]
+
 if test:
     # 測試用環境
     urlgoogle=localurl+"/complete/google/"
     urlline=localurl+"/complete/line/"
+    urlapple=localurl+"/complete/apple/"
 else:
     # 正式環境
     urlgoogle=url+"/complete/google/"
     urlline=url+"/complete/line/"
+    urlapple=url+"/complete/apple/"
 
 # printcolor 函式：在終端機中以不同顏色打印文字
 def printcolor(color,text):
@@ -123,16 +130,6 @@ def login(request):
         'form': form
     }
     return render(request,'registration/login.html',context)
-
-# 註冊
-def signupsql():
-    pass
-
-def appleurl(request):
-    pass
-
-def applecallback(request):
-    pass
 
 # switch_key 函式：根據鍵的格式返回對應的鍵值
 def switch_key(tkey):
@@ -396,8 +393,8 @@ def logout(request,uid):
 def base(userid,email,name,userimageurl,request):
     row=UserSocial.objects.using("user").filter(email=email).all()
 
-    if row[0]!=None:
-        uid=row[0][0]
+    if len(row)>0:
+        uid=row[0].uid
     else: # 無帳號
         printcolorhaveline("green","create user","-")
         uid=uuid.uuid4()
@@ -582,6 +579,12 @@ def linecallback(request):
         printcolorhaveline(text="登入失敗")
         return redirect("/user/login/")
 
+def appleurl(request):
+    pass
+
+def applecallback(request):
+    pass
+
 # 個人資料
 def profileget(request,uid):
     if request.method=="GET":
@@ -612,11 +615,13 @@ def profileget(request,uid):
         printcolorhaveline("fail","method error","-")
 
 def profilepost(request):
-    if request.method=="POST":
+    if request.method=="PUT":
         # data
         id=request.session["key"]
-        value=request.POST.get('value')  # 获取POST请求中的value参数
-        newvalue=request.POST.get('newValue')  # 获取POST请求中的newValue参数
+        data = request.body.decode('utf-8')
+        data_dict = json.loads(data)
+        value = data_dict.get('value')
+        newvalue = data_dict.get('newValue')
         # 根據 id 找到對應的記錄
         query=UserProfile.objects.using("user").get(id=id)
         setattr(query,value,newvalue) # 更新記錄的各個欄位
@@ -627,83 +632,104 @@ def profilepost(request):
         printcolorhaveline("fail","method error","-")
 
 def user_setting(request):
-    if request.method=="POST":
-        body=json.loads(request.body)
-        method=body.get("method")
-        kwargs=body.get("kwargs")
+    if request.method=="PUT":
         uid=request.session["key"]
-        row=False
-        if method=="insert":
-            query=UserSettingEQ.objects.using("user").get_or_create(
-                UID_SETTING=uid,
-                defaults={
-                    'LANGUAGE': "ch",
-                    'SHOW_MODAL': "auto",
-                    'AUDIO_QUALITY': "auto",
-                    'AUDIO_AUTO_PLAY': 1,
-                    'WIFI_AUTO_DOWNLOAD': 1,
-                    'CREATED_AT': nowtime()
-                }
-            )
-            row=query
-        elif method=="update":
-            column=kwargs["column"]
-            newvalue=kwargs["new_value"]
-            printcolorhaveline("green",kwargs,"-")
+        data = request.body.decode('utf-8')
+        data_dict = json.loads(data)
+        value = data_dict.get('value')
+        newvalue = data_dict.get('newValue')
+        print(value,newvalue)
+        # query=""
+        query=UserSetting.objects.using("user").get(UID_SETTING=uid)
+        setattr(query,value,newvalue)
+        query.save()
+        # body=json.loads(request.body)
+    #     method=body.get("method")
+    #     kwargs=body.get("kwargs")
+    #     row=False
+    #     if method=="insert":
+    #         query=UserSettingEQ.objects.using("user").get_or_create(
+    #             UID_SETTING=uid,
+    #             defaults={
+    #                 'LANGUAGE': "ch",
+    #                 'SHOW_MODAL': "auto",
+    #                 'AUDIO_QUALITY': "auto",
+    #                 'AUDIO_AUTO_PLAY': 1,
+    #                 'WIFI_AUTO_DOWNLOAD': 1,
+    #                 'CREATED_AT': nowtime()
+    #             }
+    #         )
+    #         row=query
+    #     elif method=="update":
+    #         column=kwargs["column"]
+    #         newvalue=kwargs["new_value"]
+    #         printcolorhaveline("green",kwargs,"-")
 
-            query=UserSetting.objects.using("user").get(UID_SETTING=uid)
-            setattr(query,column,newvalue)
-            query.save()
-            row=query
-        elif method=="select":
-            row=UserSetting.objects.using("user").filter(UID_EQ=uid).all()
-        else:
-            printcolorhaveline("fail",f"the method {method} is not supported","-")
-
+    #         query=UserSetting.objects.using("user").get(UID_SETTING=uid)
+    #         setattr(query,column,newvalue)
+    #         query.save()
+    #         row=query
+    #     elif method=="select":
+    #         row=UserSetting.objects.using("user").filter(UID_EQ=uid).all()
+    #     else:
+    #         printcolorhaveline("fail",f"the method {method} is not supported","-")
+        row=query
         return JsonResponse({"data": row })
     else:
         return JsonResponse({"success": False})
 
 def user_eq(request):
-    if request.method=="POST":
-        body=json.loads(request.body)
-        kwargs=body.get("kwargs")
-        method=body.get("method")
-        kwargs["UID_EQ"]=request.session["key"]
-        printcolorhaveline("green",kwargs)
-        row=False
-        if method=="insert":
-            query=UserSettingEQ.objects.using("user").get_or_create(
-                UID_EQ=kwargs["UID_EQ"],
-                defaults={
-                    'ENGANCE_HIGH': kwargs["ENGANCE_HIGH"],
-                    'ENGANCE_MIDDLE': kwargs["ENGANCE_MIDDLE"],
-                    'ENGANCE_LOW': kwargs["ENGANCE_LOW"],
-                    'ENGANCE_HEAVY': kwargs["ENGANCE_HEAVY"],
-                    'STYLE': kwargs["STYLE"],
-                    'EQ_HIGH': kwargs["EQ_HIGH"],
-                    'EQ_MIDDLE': kwargs["EQ_MIDDLE"],
-                    'EQ_LOW': kwargs["EQ_LOW"],
-                    'EQ_HEAVY': kwargs["EQ_HEAVY"],
-                    'EQ_DISTORTION': kwargs["EQ_DISTORTION"],
-                    'EQ_ZIP': kwargs["EQ_ZIP"],
-                    'SPATIAL_AUDIO': kwargs["SPATIAL_AUDIO"],
-                }
-            )
-            row=query
-        elif method=="update":
-            column=kwargs["column"]
-            newvalue=kwargs["new_value"]
-            printcolorhaveline("green",kwargs,"-")
-            query=UserSettingEQ.objects.using("user").get(UID_EQ=kwargs["UID_EQ"])
-            # 更新記錄的各個欄位
-            setattr(query,column,newvalue)
-            query.save()
-            row=query
-        elif method=="select":
-            row=UserSettingEQ.objects.using("user").filter(UID_EQ=kwargs["UID_EQ"]).all()
-        else:
-            printcolorhaveline("fail",f"the method {method} is not supported","-")
+    if request.method=="PUT":
+        uid=request.session["key"]
+        data = request.body.decode('utf-8')
+        data_dict = json.loads(data)
+        value = data_dict.get('value')
+        newvalue = data_dict.get('newValue')
+        # column=kwargs["column"]
+        # newvalue=kwargs["new_value"]
+        # printcolorhaveline("green",kwargs,"-")
+        query=UserSettingEQ.objects.using("user").get(UID_EQ=uid)
+        # 更新記錄的各個欄位
+        setattr(query,value,newvalue)
+        query.save()
+        row=query
+        # body=json.loads(request.body)
+        # kwargs=body.get("kwargs")
+        # method=body.get("method")
+        # printcolorhaveline("green",kwargs)
+        # row=False
+        # if method=="insert":
+        #     query=UserSettingEQ.objects.using("user").get_or_create(
+        #         UID_EQ=kwargs["UID_EQ"],
+        #         defaults={
+        #             'ENGANCE_HIGH': kwargs["ENGANCE_HIGH"],
+        #             'ENGANCE_MIDDLE': kwargs["ENGANCE_MIDDLE"],
+        #             'ENGANCE_LOW': kwargs["ENGANCE_LOW"],
+        #             'ENGANCE_HEAVY': kwargs["ENGANCE_HEAVY"],
+        #             'STYLE': kwargs["STYLE"],
+        #             'EQ_HIGH': kwargs["EQ_HIGH"],
+        #             'EQ_MIDDLE': kwargs["EQ_MIDDLE"],
+        #             'EQ_LOW': kwargs["EQ_LOW"],
+        #             'EQ_HEAVY': kwargs["EQ_HEAVY"],
+        #             'EQ_DISTORTION': kwargs["EQ_DISTORTION"],
+        #             'EQ_ZIP': kwargs["EQ_ZIP"],
+        #             'SPATIAL_AUDIO': kwargs["SPATIAL_AUDIO"],
+        #         }
+        #     )
+        #     row=query
+        # elif method=="update":
+        #     column=kwargs["column"]
+        #     newvalue=kwargs["new_value"]
+        #     printcolorhaveline("green",kwargs,"-")
+        #     query=UserSettingEQ.objects.using("user").get(UID_EQ=kwargs["UID_EQ"])
+        #     # 更新記錄的各個欄位
+        #     setattr(query,column,newvalue)
+        #     query.save()
+        #     row=query
+        # elif method=="select":
+        #     row=UserSettingEQ.objects.using("user").filter(UID_EQ=kwargs["UID_EQ"]).all()
+        # else:
+        #     printcolorhaveline("fail",f"the method {method} is not supported","-")
 
         return JsonResponse({"data": row })
     else:
