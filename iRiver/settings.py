@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'User',
     'Token',
     'Discover',
-    #'corsheaders',
+    # 'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -54,7 +54,7 @@ REST_FRAMEWORK = {
     )
 }
 
-#JWT
+# JWT
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
@@ -163,7 +163,7 @@ DATABASES = {
     },
     'local': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'music_db',
+        'NAME': 'test',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '127.0.0.1',
@@ -207,7 +207,6 @@ DATABASES = {
     },
 
 }
-
 
 
 # Password validation

@@ -32,7 +32,7 @@ def query(query):
 
 def query_all_artist_song(artist):
     # r =self.get_all_artist()
-    r = list(Artist.objects.all().using('test'))
+    r = list(Artist.objects.all())
     # print(r)
 
     try:
@@ -49,7 +49,7 @@ def query_all_artist_song(artist):
     if matches is None:
         print('match is none')
         return None, 0
-    result = Music.objects.using('test').filter(
+    result = Music.objects.filter(
         artist__in=matches).order_by('-views')[:4]
     # print("result:", result)
     # result -> QureySet
@@ -58,8 +58,8 @@ def query_all_artist_song(artist):
 
 def query_song(song_name):
     # r = self.get_all_song(field='title')
-    r = list(Music.objects.using('test').values(
-        'title').all().order_by('publish_time'))
+    r = list(Music.objects.values(
+        'title').all().order_by('-views'))
     # print('music:', r)
 
     try:
@@ -75,7 +75,7 @@ def query_song(song_name):
         return None, 0
     if not matches:
         return None, 0
-    result = Music.objects.using('test').filter(
+    result = Music.objects.filter(
         title__in=matches).order_by('-views')[:4]
     # print('query_song : ', result)
     # print('query_song : ', score)
