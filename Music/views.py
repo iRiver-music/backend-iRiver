@@ -108,8 +108,8 @@ test = False
 
 #     return JsonResponse(response_data)
 
-def get_artist_info(request):
-    artist = request.GET.get('artist')
+def get_artist_info(request, artist):
+    #artist = request.GET.get('artist')
     #mysql.create_tables()
     r = Artist.objects.using('test').get(artist=artist)
     print('#'*30)
@@ -122,8 +122,8 @@ def get_artist_info(request):
     return JsonResponse({'musicList': artist_info})
 
 
-def query_db_song(request):
-    query = request.GET.get('query', '')
+def query_db_song(request, query):
+    #query = request.GET.get('query', '')
     if test:
         print('='*50)
         print(f'get db {query} !!')
@@ -149,8 +149,8 @@ def query_db_song(request):
 
     return JsonResponse({'success': True, 'music_list': music_list}, safe=False)
 
-def query_web_song(request):
-    query = request.GET.get('query', '')
+def query_web_song(request, query):
+    #query = request.GET.get('query', '')
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         future_youtube = executor.submit(query_youtube, query)
     # 網路
@@ -165,5 +165,13 @@ def query_web_song(request):
         print(e)
     return JsonResponse({'success': True, 'music_list': music_list}, safe=False)
 
+def query_album(request, be_search_album):
+    search_album = Music.objects.using('test').filter(album=be_search_album)
+    album_list = []
+    for adbum in search_album:
+        serializer = MusicSerializer(adbum)
+        album_list.append(serializer.data)
+    print(album_list)
 
-
+    #send an array
+    return JsonResponse({'success': True, 'album_list': album_list}, safe=False)
