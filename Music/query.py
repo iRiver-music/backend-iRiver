@@ -38,7 +38,8 @@ def query_all_artist_song(artist):
     try:
         # print('inside')
         matches = difflib.get_close_matches(
-            artist, [x.artist for x in r], n=3, cutoff=0.4)
+            artist, [x['artist'] for x in r], n=3, cutoff=0.4)
+
         print("query_all_artist_song matches:", matches)
         score = difflib.SequenceMatcher(None, artist, matches[0]).ratio()
         # print("score:", score)
