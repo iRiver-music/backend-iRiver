@@ -20,8 +20,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/Music/', include('Music.urls', namespace='Music')),
-    path('api/User/', include('User.urls', namespace='User')),
-    path('api/Discover/', include('Discover.urls', namespace='Discover')),
-    path('apiToken/', include('Token.urls', namespace='Token')),
+    path('api/music/', include('Music.urls', namespace='Music')),
+    path('api/user/', include('User.urls', namespace='User')),
+    path('api/discover/', include('Discover.urls', namespace='Discover')),
+    path('api/token/', include('Token.urls', namespace='Token')),
 ]
