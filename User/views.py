@@ -389,7 +389,7 @@ def logout(request,uid):
     # logout(request)
     request.session['isLogin']=False
     request.session.save()
-    printcolorhaveline("green","登出成功"," ")
+    printcolorhaveline("green",str(uid)+" 登出成功"," ")
     return redirect('/user/login')
 
 # base 函式：處理用戶登入的基本操作
@@ -710,7 +710,8 @@ def user_eq(request):
         return JsonResponse({"success":False})
 
 def my_playlist():
-    pass
+    row=""
+    return JsonResponse({"success":False,"data": row })
 
 # 註記
 # 只要函式後面有加sql都是sql函式

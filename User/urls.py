@@ -7,11 +7,11 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
     path('logout/<str:uid>/', views.logout, name='logout'),
+    path('my_playList/<str:uid>/', views.my_playlist, name='my_playList'),
+    path('profile/<str:uid>/', views.profileget, name='profile'),
     path('user_setting', views.user_setting, name='user_setting'),
     path('user_eq', views.user_eq, name='user_eq'),
-    path('profile/<str:uid>/', views.profileget, name='profile'),
     path('profile/', views.profilepost, name='profile'),
-    path('my_playList/<str:uid>/', views.my_playlist, name='my_playList'),
 
     path('save_session/', views.save_session, name='save_session'),
     path('isLogin/', views.checklogin, name='testuser'),
