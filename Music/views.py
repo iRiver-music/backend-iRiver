@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from collections import Counter
 import threading
 import re
+import difflib
 from urllib.parse import unquote
 from multiprocessing import Process, Queue
 import concurrent.futures
@@ -166,12 +167,16 @@ def query_web_song(request, query):
     return JsonResponse({'success': True, 'music_list': music_list}, safe=False)
 
 def query_album(request, be_search_album):
-    search_album = Music.objects.using('test').filter(album=be_search_album)
+    search_album = Music.objects.using('test').all()
+    matches = difflib.get_close_matches(be_search_album, [x.album for x in search_album],n = 6, cutoff=0.06)
+    aldum_get = Music.objects.using('test').filter(album__in = matches)
+    print('query_album_matches : ', matches)
     album_list = []
-    for adbum in search_album:
+    for adbum in aldum_get:
         serializer = MusicSerializer(adbum)
         album_list.append(serializer.data)
-    print(album_list)
-
-    #send an array
+    #print(album_list)
+    if album_list == []:
+        return JsonResponse({'success': False, 'album_list': album_list}, safe=False)
+    
     return JsonResponse({'success': True, 'album_list': album_list}, safe=False)

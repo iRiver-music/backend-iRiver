@@ -35,8 +35,7 @@ def query_all_artist_song(artist):
     try :
         #print('inside')
         matches = difflib.get_close_matches(artist, [x.artist for x in r], n=3, cutoff=0.4)
-        #print("matches:")
-        #print(matches)
+        print("query_all_artist_song matches:", matches)
         score = difflib.SequenceMatcher(None, artist, matches[0]).ratio()
         #print("score:", score)
     except Exception as e:
@@ -58,7 +57,7 @@ def query_song(song_name):
 
     try:
         matches = difflib.get_close_matches(song_name, [x['title'] for x in r],n = 3, cutoff=0.0003)
-        #print("matches", matches)
+        print("query_song matches", matches)
         score = difflib.SequenceMatcher(None, song_name, matches[0]).ratio()
         # print('*'*20)
         # print(f'get_song sorce{score}')
