@@ -2,12 +2,12 @@ from rest_framework import serializers
 from .models import Music, Artist
 
 
-class SongSerializer(serializers.ModelSerializer):
+class MusicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Music
-        exclude = ['created_at']
+        fields = '__all__'
 
 class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
-        exclude = ['created_at']
+        fields = '__all__'
