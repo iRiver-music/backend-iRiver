@@ -6,7 +6,6 @@ import jwt
 import requests
 import uuid
 import urllib.parse
-import pymysql
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from django.shortcuts import redirect,render
 from django import forms
@@ -19,47 +18,10 @@ from django.contrib.auth import authenticate,login,logout
 from django.db import connections
 
 # self import
-from .models import UserSocial, UserProfile, UserSettingEQ, UserSetting, UserMusicList
-
-# if test
-test = False
+from .models import UserSocial,UserProfile,UserSettingEQ,UserSetting,UserMusicList
+from .form import RegisterForm,LoginForm
 
 # program START
-
-
-class RegisterForm(UserCreationForm):
-    username=forms.CharField(
-        label="帳號",
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    email=forms.EmailField(
-        label="電子郵件",
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
-    )
-    password1=forms.CharField(
-        label="密碼",
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
-    )
-    password2=forms.CharField(
-        label="密碼確認",
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
-    )
-
-    class Meta:
-        model=User
-        fields=('username','email','password1','password2')
-
-class LoginForm(forms.Form):
-    username=forms.CharField(
-        label="帳號",
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    password=forms.CharField(
-        label="密碼",
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
-    )
-
-
 test=False # only for testing
 url="https://iriver.ddns.net"
 localurl="http://127.0.0.1:8000" # only for testing
@@ -84,7 +46,6 @@ else:
     # 正式環境
     urlgoogle=url+"/complete/google/"
     urlline=url+"/complete/line/"
-
 
 # printcolor 函式：在終端機中以不同顏色打印文字
 def printcolor(color,text):
@@ -173,33 +134,6 @@ def appleurl(request):
 def applecallback(request):
     pass
 
-def signup(request):
-    form=RegisterForm()
-    if request.method == "POST":
-        form=RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            print("註冊成功")
-            return redirect('/user/login/')  # 重新導向到登入畫面
-        else:
-            print("註冊錯誤")
-    context={
-        'form': form
-    }
-    return render(request,'registration/register.html',context)
-
-# 登出
-def logout(request):
-    # logout(request)
-    request.session['isLogin']=False
-    request.session.save()
-    printcolorhaveline("green","登出成功"," ")
-    return redirect('/user/login')
-
-
-###########################################################################
-
-# user/lib::
 # switch_key 函式：根據鍵的格式返回對應的鍵值
 def switch_key(tkey):
     if tkey.startswith("#"):
@@ -207,9 +141,6 @@ def switch_key(tkey):
     else:
         key=tkey.split("@")[0]
     return key
-
-#/data/
-# getdata 函式
 
 def getusetemail(accesstoken,channel):
     # 獲取 id_token
@@ -279,7 +210,7 @@ def save_session(request,name,email,uid,userimageurl):
 
     if miuscrow:
         UserMusicList._meta.db_table=uid
-        userplaylistrow=UserMusicList.objects.using("usermusic").values_list('playlist', flat=True).distinct()
+        userplaylistrow=UserMusicList.objects.using("usermusic").values_list('playlist',flat=True).distinct()
     else:
         userplaylistrow=None
 
@@ -361,7 +292,7 @@ def get_user_music_list(request):
                 printcolorhaveline("green","add ",music_ID,"=> ",music_list," ")
                 # 查询数据库中是否已存在相同的 music_ID
                 UserMusicList._meta.db_table=uid
-                row=UserMusicList.objects.using("usermusic").filter(music_ID=music_ID, playlist=music_list).count()
+                row=UserMusicList.objects.using("usermusic").filter(music_ID=music_ID,playlist=music_list).count()
                 if row==0: # 不存在则插入新数据
                     UserMusicList._meta.db_table=uid
                     UserMusicList.objects.using("usermusic").create(
@@ -389,7 +320,7 @@ def get_user_music_list(request):
             # 删除每个id
             for music_ID in music_ID_list:
                 UserMusicList._meta.db_table=uid
-                UserMusicList.objects.using("usermusic").filter(playlist=music_list, music_ID=music_ID).delete()
+                UserMusicList.objects.using("usermusic").filter(playlist=music_list,music_ID=music_ID).delete()
                 # 如果是我的最愛，則將favorite設為false
                 if music_list==1:
                     UserMusicList._meta.db_table=uid
@@ -427,7 +358,7 @@ def get_user_music_list(request):
         UserMusicList._meta.db_table=uid
         countrow=UserMusicList.objects.using("usermusic").count()
         UserMusicList._meta.db_table=uid
-        row=UserMusicList.objects.using("usermusic").exclude(playlist='我的最愛').values_list('playlist', flat=True).distinct().all()
+        row=UserMusicList.objects.using("usermusic").exclude(playlist='我的最愛').values_list('playlist',flat=True).distinct().all()
         if row:
             check=row
         else:
@@ -438,19 +369,36 @@ def get_user_music_list(request):
 
 
 # 註冊
-# none
+def register(request):
+    form=RegisterForm()
+    if request.method == "POST":
+        form=RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            print("註冊成功")
+            return redirect('/user/login/')  # 重新導向到登入畫面
+        else:
+            print("註冊錯誤")
+    context={
+        'form': form
+    }
+    return render(request,'registration/register.html',context)
 
-########################################################################
+# 登出
+def logout(request,uid):
+    # logout(request)
+    request.session['isLogin']=False
+    request.session.save()
+    printcolorhaveline("green","登出成功"," ")
+    return redirect('/user/login')
 
-
-# /login/
 # base 函式：處理用戶登入的基本操作
 def base(userid,email,name,userimageurl,request):
     row=UserSocial.objects.using("user").filter(email=email).all()
 
-    try:
+    if row[0]!=None:
         uid=row[0][0]
-    except Exception as e: # 無帳號
+    else: # 無帳號
         printcolorhaveline("green","create user","-")
         uid=uuid.uuid4()
         uid_str=str(uid).replace("-","")
@@ -532,7 +480,6 @@ def checklogin(request):
 def googleurl(request):
     state=str(uuid.uuid4()) # 保存 state 至 session 中，以防止 CSRF 攻擊
     # 这一行生成一个随机的UUID作为状态码，并将其转换为字符串。这个状态码用于防止跨站请求伪造(CSRF)攻击，并将其保存在会话(session)中。
-
     request.session["oauth_state"]=state # 将生成的状态码存储在请求的会话中，以便后续验证请求的合法性。
     url=f"https://accounts.google.com/o/oauth2/v2/auth?scope={scope}&access_type={access_type}&include_granted_scopes={include_granted_scopes}&response_type={response_type}&state={state}&redirect_uri={urlgoogle}&client_id={client_id}" # 生成 Google 登入連結
     return HttpResponseRedirect(url)
@@ -637,43 +584,10 @@ def linecallback(request):
         return redirect("/user/login/")
 
 # 個人資料
-def profile(request):
-    if request.method=="POST":
-        # data
-        id=request.session["key"]
-        username=request.POST.get("username")
-        email=request.POST.get("email")
-        phone=request.POST.get("phone")
-        country=request.POST.get("country")
-        birthday=request.POST.get("birthday")
-        gender=request.POST.get("gender")
-        userimageurl=""
-        test=0
-        level=0
-
-        # 存入sql(U)
-
-        # 根據 id 找到對應的記錄
-        user_profile=UserProfile.objects.using("user").get(id=id)
-
-        # 更新記錄的各個欄位
-        user_profile.email=email
-        user_profile.username=username
-        user_profile.phone=phone
-        user_profile.country=country
-        user_profile.birthday=birthday
-        user_profile.gender=gender
-        user_profile.user_img_url=userimageurl
-        user_profile.test=test
-        user_profile.level=level
-
-        # 儲存記錄
-        user_profile.save()
-
-        printcolorhaveline("green","成功修改 "+str(id)+" 的資料","-")
-        return redirect("/user/profile2/")
-    else:
+def profileget(request,uid):
+    if request.method=="GET":
         # 查詢用戶
+        body=json.loads(request.body)
         uid=request.session["key"]
         row=UserProfile.objects.using("user").filter(id=uid).all()
         data=""
@@ -695,6 +609,61 @@ def profile(request):
         else:
             data=None
         return render(request,"edit_profile.html",{"form": data})
+    else:
+        printcolorhaveline("fail","method error","-")
+
+def profilepost(request):
+    if request.method=="POST":
+        # data
+        id=request.session["key"]
+        value=request.POST.get('value')  # 获取POST请求中的value参数
+        newvalue=request.POST.get('newValue')  # 获取POST请求中的newValue参数
+        # 根據 id 找到對應的記錄
+        query=UserProfile.objects.using("user").get(id=id)
+        setattr(query,value,newvalue) # 更新記錄的各個欄位
+        query.save()
+        printcolorhaveline("green","成功修改 "+str(id)+" 的資料","-")
+        return redirect("/user/profile/")
+    else:
+        printcolorhaveline("fail","method error","-")
+
+def user_setting(request):
+    if request.method=="POST":
+        body=json.loads(request.body)
+        method=body.get("method")
+        kwargs=body.get("kwargs")
+        uid=request.session["key"]
+        row=False
+        if method=="insert":
+            query=UserSettingEQ.objects.using("user").get_or_create(
+                UID_SETTING=uid,
+                defaults={
+                    'LANGUAGE': "ch",
+                    'SHOW_MODAL': "auto",
+                    'AUDIO_QUALITY': "auto",
+                    'AUDIO_AUTO_PLAY': 1,
+                    'WIFI_AUTO_DOWNLOAD': 1,
+                    'CREATED_AT': nowtime()
+                }
+            )
+            row=query
+        elif method=="update":
+            column=kwargs["column"]
+            newvalue=kwargs["new_value"]
+            printcolorhaveline("green",kwargs,"-")
+
+            query=UserSetting.objects.using("user").get(UID_SETTING=uid)
+            setattr(query,column,newvalue)
+            query.save()
+            row=query
+        elif method=="select":
+            row=UserSetting.objects.using("user").filter(UID_EQ=uid).all()
+        else:
+            printcolorhaveline("fail",f"the method {method} is not supported","-")
+
+        return JsonResponse({"data": row })
+    else:
+        return JsonResponse({"success": False})
 
 def user_eq(request):
     if request.method=="POST":
@@ -741,54 +710,8 @@ def user_eq(request):
     else:
         return JsonResponse({"success":False})
 
-def user_setting(request):
-    if request.method=="POST":
-        body=json.loads(request.body)
-        method=body.get("method")
-        kwargs=body.get("kwargs")
-        uid=request.session["key"]
-        row=False
-        if method=="insert":
-            query=UserSettingEQ.objects.using("user").get_or_create(
-                UID_SETTING=uid,
-                defaults={
-                    'LANGUAGE': "ch",
-                    'SHOW_MODAL': "auto",
-                    'AUDIO_QUALITY': "auto",
-                    'AUDIO_AUTO_PLAY': 1,
-                    'WIFI_AUTO_DOWNLOAD': 1,
-                    'CREATED_AT': nowtime()
-                }
-            )
-            row=query
-        elif method=="update":
-            column=kwargs["column"]
-            newvalue=kwargs["new_value"]
-            printcolorhaveline("green",kwargs,"-")
-
-            query=UserSetting.objects.using("user").get(UID_SETTING=uid)
-            setattr(query,column,newvalue)
-            query.save()
-            row=query
-        elif method=="select":
-            row=UserSetting.objects.using("user").filter(UID_EQ=uid).all()
-        else:
-            printcolorhaveline("fail",f"the method {method} is not supported","-")
-
-        return JsonResponse({"data": row })
-    else:
-        return JsonResponse({"success": False})
-
-printcolorhaveline("green","user app start!","#")
-
-# def create_user_music_list(request, uid):
-#     # 使用傳入的 uid 來動態生成模型
-#     UserMusicList = usermusiclist(uid)
-
-#     # 創建一個新的用戶音樂清單記錄
-#     music_list = UserMusicList(playlist='我的最愛', music_ID='歌曲ID', favorite=False)
-#     music_list.save()
-#     # 其他相關操作...
+def my_playlist():
+    pass
 
 # 註記
 # 只要函式後面有加sql都是sql函式
