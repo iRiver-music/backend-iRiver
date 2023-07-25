@@ -12,4 +12,6 @@ urlpatterns = [
          views.artist, name='artist'),
     path('album/<str:album>/',
          views.album, name='album'),
+    path('songs/<str:artist>/',
+         views.songs, name='songs'),
 ]

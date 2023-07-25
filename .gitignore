@@ -13,3 +13,5 @@ User/__pycache__/models.cpython-311.pyc
 Music/web_scutter/__pycache__/
 Music/sql/__pycache__/
 .venv
+*.pyc
+__pycache__/

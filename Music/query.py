@@ -1,10 +1,10 @@
 import MySQLdb
 import json
 import difflib
-from .models import Music
+from .models import Song
 from .models import Artist
 from .serializers import ArtistSerializer
-from .serializers import MusicSerializer
+from .serializers import SongSerializer
 
 
 def query(query):
@@ -50,7 +50,7 @@ def query_all_artist_song(artist):
     if matches is None:
         print('match is none')
         return None, 0
-    result = Music.objects.filter(
+    result = Song.objects.filter(
         artist__in=matches).order_by('-views')[:4]
     # print("result:", result)
     # result -> QureySet
@@ -59,7 +59,7 @@ def query_all_artist_song(artist):
 
 def query_song(song_name):
     # r = self.get_all_song(field='title')
-    r = list(Music.objects.values(
+    r = list(Song.objects.values(
         'title').all().order_by('-views'))
     # print('music:', r)
 
@@ -76,7 +76,7 @@ def query_song(song_name):
         return None, 0
     if not matches:
         return None, 0
-    result = Music.objects.filter(
+    result = Song.objects.filter(
         title__in=matches).order_by('-views')[:4]
     # print('query_song : ', result)
     # print('query_song : ', score)

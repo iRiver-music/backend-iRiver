@@ -13,12 +13,10 @@ import Music.sql.config
 from Music.query import query as query_music
 
 # import models
-from .models import Music
-from .models import Artist
+from .models import Song, Artist
 
 # import serializers
-from .serializers import MusicSerializer
-from .serializers import ArtistSerializer
+from .serializers import ArtistSerializer, SongSerializer
 
 # import clean_str
 from Music.clean_str import clear_str
@@ -58,7 +56,7 @@ def query_db_song(request, query):
     music_list = []
     # print("asdf", res)
     for row in res:
-        serializer = MusicSerializer(row)
+        serializer = SongSerializer(row)
         row = serializer.data
         # print('music after serializers : ', row)
         music_list.append(row)
@@ -92,7 +90,7 @@ def album(request, album):
     print('query_album_matches : ', matches)
     album_list = []
     for adbum in aldum_get:
-        serializer = MusicSerializer(adbum)
+        serializer = Song(adbum)
         album_list.append(serializer.data)
     # print(album_list)
     if album_list == []:
@@ -102,8 +100,16 @@ def album(request, album):
 
 
 @api_view(['GET'])
+def songs(request, artist):
+    songs_data = Song.objects.filter(
+        artist=artist).using("test").values().order_by('-views')
+
+    return Response(songs_data)
+
+
+@api_view(['GET'])
 def artist(request, artist):
-    songs_data = Music.objects.filter(
+    songs_data = Song.objects.filter(
         artist=artist).values().order_by('-views')
 
     artist_data = ArtistSerializer(Artist.objects.filter(

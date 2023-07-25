@@ -1,6 +1,18 @@
 from django.db import models
-from django.utils import timezone
-# Create your models here.
+
+
+class Album(models.Model):
+    artist = models.CharField(max_length=100, unique=True)
+    desc = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+
+    class Meta:
+        app_label = 'music'
+        db_table = 'album'
+
+    def __str__(self):
+        return self.title
+
 
 class Artist(models.Model):
     artist = models.CharField(max_length=255, unique=True)
@@ -8,13 +20,14 @@ class Artist(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        app_label = 'music'
+        app_label = 'Music'
         db_table = 'artists'
 
     def __str__(self):
         return self.artist
 
-class Music(models.Model):
+
+class Song(models.Model):
     artist = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     music_ID = models.CharField(max_length=255, unique=True)
@@ -40,8 +53,13 @@ class Music(models.Model):
         app_label = 'music'
         db_table = 'songs'
 
+    # def save(self, *args, **kwargs):
+    #     existing_song = Song.objects.using(
+    #         'test').filter(music_ID=self.music_ID).first()
+    #     if existing_song:
+    #         return
+
+    #     super().save(using='test', *args, **kwargs)
+
     def __str__(self):
         return self.music_ID
-
-def create_tables(ob):
-    ob.objects.create_table()
