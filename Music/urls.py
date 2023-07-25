@@ -10,6 +10,9 @@ urlpatterns = [
          views.query_web_song, name='web'),
     path('artist/<str:artist>/',
          views.artist, name='artist'),
+    path('artist_test/<str:artist>/',
+         views.artist_test, name='artist'),
+
     path('album/<str:album>/',
          views.album, name='album'),
     path('songs/<str:artist>/',

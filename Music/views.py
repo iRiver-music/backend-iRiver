@@ -98,6 +98,8 @@ def album(request, album):
 
     return JsonResponse({'success': True, 'album_list': album_list}, safe=False)
 
+# 49.213.238.75:5001
+
 
 @api_view(['GET'])
 def songs(request, artist):
@@ -114,6 +116,21 @@ def artist(request, artist):
 
     artist_data = ArtistSerializer(Artist.objects.filter(
         artist=artist).values(), many=True).data
+
+    response_data = {
+        'id': 1,
+        'artist': artist_data,
+        'songs': songs_data
+    }
+    return Response(response_data)
+
+
+@api_view(['GET'])
+def artist_test(request, artist):
+    songs_data = Song.objects.filter(
+        artist=artist).using("test").values().order_by('-views')
+    artist_data = ArtistSerializer(Artist.objects.filter(
+        artist=artist).using("test").values(), many=True).data
 
     response_data = {
         'id': 1,
