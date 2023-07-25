@@ -43,10 +43,6 @@ test = False
 
 
 def query_db_song(request, query):
-    # query = request.GET.get('query', '')
-    if test:
-        print('='*50)
-        print(f'get db {query} !!')
     # 資料庫
     try:
         # print(query)
@@ -67,7 +63,7 @@ def query_db_song(request, query):
         # print('music after serializers : ', row)
         music_list.append(row)
 
-    return JsonResponse({'success': True, 'music_list': music_list}, safe=False)
+    return JsonResponse(data=music_list, safe=False)
 
 
 def query_web_song(request, query):
@@ -107,11 +103,11 @@ def album(request, album):
 
 @api_view(['GET'])
 def artist(request, artist):
-    songs_data = Music.objects.using('test').filter(
-        artist='decajoins').values().order_by('-views')
+    songs_data = Music.objects.filter(
+        artist=artist).values().order_by('-views')
 
-    artist_data = ArtistSerializer(Artist.objects.using(
-        'test').filter(artist=artist).values(), many=True).data
+    artist_data = ArtistSerializer(Artist.objects.filter(
+        artist=artist).values(), many=True).data
 
     response_data = {
         'id': 1,
