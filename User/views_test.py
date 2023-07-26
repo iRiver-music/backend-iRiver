@@ -18,8 +18,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.db import connections
 
 # self import
-from .models import UserSocial,UserProfile,UserSettingEQ,UserSetting,UserMusicList
-from .form import RegisterForm,LoginForm
+from .models import Social,Profile,EQ,Setting,musicList
 
 # program START
 test=False # only for testing
@@ -210,25 +209,25 @@ def save_session(request,name,email,uid,userimageurl):
     # 創建 SQL 音樂實例
 
     # 獲取用戶播放列表
-    UserMusicList._meta.db_table=uid
-    miuscrow=UserMusicList.objects.using("usermusic").all()
+    musicList._meta.db_table=uid
+    miuscrow=musicList.objects.using("usermusic").all()
 
     if miuscrow:
-        UserMusicList._meta.db_table=uid
-        userplaylistrow=UserMusicList.objects.using("usermusic").values_list('playlist',flat=True).distinct()
+        musicList._meta.db_table=uid
+        userplaylistrow=musicList.objects.using("usermusic").values_list('playlist',flat=True).distinct()
     else:
         userplaylistrow=None
 
     request.session["user_playlist"]=userplaylistrow # 保存用戶播放列表
 
     # eq
-    UserMusicList._meta.db_table=uid
-    eqrow=UserSettingEQ.objects.using("user").filter(UID_EQ=uid).all()
+    musicList._meta.db_table=uid
+    eqrow=EQ.objects.using("user").filter(UID_EQ=uid).all()
     request.session["user_eq"]=eqrow  # 保存用戶均衡器設置
 
     # setting
-    UserMusicList._meta.db_table=uid
-    settingrow=UserSetting.objects.using("user").filter(UID_SETTING=uid).all()[0]
+    musicList._meta.db_table=uid
+    settingrow=Setting.objects.using("user").filter(UID_SETTING=uid).all()[0]
     setting={
         "UID_SETTING":settingrow[0],
         "LANGUAGE":settingrow[1],
@@ -296,26 +295,26 @@ def get_user_music_list(request):
             for music_ID in music_ID_list:
                 printcolorhaveline("green","add ",music_ID,"=> ",music_list," ")
                 # 查询数据库中是否已存在相同的 music_ID
-                UserMusicList._meta.db_table=uid
-                row=UserMusicList.objects.using("usermusic").filter(music_ID=music_ID,playlist=music_list).count()
+                musicList._meta.db_table=uid
+                row=musicList.objects.using("usermusic").filter(music_ID=music_ID,playlist=music_list).count()
                 if row==0: # 不存在则插入新数据
-                    UserMusicList._meta.db_table=uid
-                    UserMusicList.objects.using("usermusic").create(
+                    musicList._meta.db_table=uid
+                    musicList.objects.using("usermusic").create(
                         playlist=music_list,
                         music_ID=music_ID,
                         favorite=False
                     )
                 if music_list==playlist: # 如果是我的最愛或在最愛裡面，則將favorite設為true
-                    UserMusicList._meta.db_table=uid
-                    UserMusicList.objects.using("usermusic").filter(music_ID=music_ID).update(favorite=True)
+                    musicList._meta.db_table=uid
+                    musicList.objects.using("usermusic").filter(music_ID=music_ID).update(favorite=True)
             success=True
         except Exception as e:
             printcolorhaveline("fail",e,"-")
             success=False
         return JsonResponse(json.dumps({"success":success}),safe=False)
     elif method=="get": # 獲取播放列表中的音樂
-        UserMusicList._meta.db_table=uid
-        row=UserMusicList.objects.using("usermusic").filter(playlist=music_list).order_by('-created_at').values_list('music_ID',flat=True)
+        musicList._meta.db_table=uid
+        row=musicList.objects.using("usermusic").filter(playlist=music_list).order_by('-created_at').values_list('music_ID',flat=True)
         return JsonResponse(list(row),safe=False)
     elif method=="delete": # 從播放列表中刪除音樂
         try:
@@ -324,12 +323,12 @@ def get_user_music_list(request):
             music_ID_list=json.loads(music_ID_list) # 解析list
             # 删除每个id
             for music_ID in music_ID_list:
-                UserMusicList._meta.db_table=uid
-                UserMusicList.objects.using("usermusic").filter(playlist=music_list,music_ID=music_ID).delete()
+                musicList._meta.db_table=uid
+                musicList.objects.using("usermusic").filter(playlist=music_list,music_ID=music_ID).delete()
                 # 如果是我的最愛，則將favorite設為false
                 if music_list==1:
-                    UserMusicList._meta.db_table=uid
-                    UserMusicList.objects.using("usermusic").filter(music_ID=music_ID).update(favorite=False)
+                    musicList._meta.db_table=uid
+                    musicList.objects.using("usermusic").filter(music_ID=music_ID).update(favorite=False)
             success=True
         except Exception as e:
             printcolorhaveline("fail",e,"-")
@@ -338,8 +337,8 @@ def get_user_music_list(request):
     elif method=="delete_playlist": # 刪除播放列表
         try:
             playlist=data.get("playlist",playlist)
-            UserMusicList._meta.db_table=uid
-            UserMusicList.objects.using("usermusic").filter(playlist=playlist).delete()
+            musicList._meta.db_table=uid
+            musicList.objects.using("usermusic").filter(playlist=playlist).delete()
             success=True
         except Exception as e:
             printcolorhaveline("fail",e,"-")
@@ -348,8 +347,8 @@ def get_user_music_list(request):
     elif method=="create_playlist": # 創建播放列表
         playlist=data.get("playlist",playlist)
         try:
-            UserMusicList._meta.db_table=uid
-            UserMusicList.objects.using("usermusic").create(
+            musicList._meta.db_table=uid
+            musicList.objects.using("usermusic").create(
                 playlist=playlist,
                 music_ID="",
                 favorite="",
@@ -360,10 +359,10 @@ def get_user_music_list(request):
             success=False
         return JsonResponse(json.dumps({"success": success}),safe=False)
     elif method=="get_playlist": # 獲取所有播放列表
-        UserMusicList._meta.db_table=uid
-        countrow=UserMusicList.objects.using("usermusic").count()
-        UserMusicList._meta.db_table=uid
-        row=UserMusicList.objects.using("usermusic").exclude(playlist='我的最愛').values_list('playlist',flat=True).distinct().all()
+        musicList._meta.db_table=uid
+        countrow=musicList.objects.using("usermusic").count()
+        musicList._meta.db_table=uid
+        row=musicList.objects.using("usermusic").exclude(playlist='我的最愛').values_list('playlist',flat=True).distinct().all()
         if row:
             check=row
         else:
@@ -425,7 +424,7 @@ def logout(request,uid):
 
 # base 函式：處理用戶登入的基本操作
 def base(userid,email,name,userimageurl,request):
-    row=UserSocial.objects.using("user").filter(email=email).all()
+    row=Social.objects.using("user").filter(email=email).all()
 
     if len(row)>0:
         uid=row[0].uid
@@ -436,13 +435,13 @@ def base(userid,email,name,userimageurl,request):
         short_uid="a"+uid_str[:12]
         uid=short_uid
         # 創建帳號所需資料表及欄位
-        UserSocial.objects.using("user").create(
+        Social.objects.using("user").create(
             userid=userid,
             email=email,
             uid=uid
         ).save()
 
-        UserProfile.objects.using("user").create(
+        Profile.objects.using("user").create(
             id=uid,
             email=email,
             username=name,
@@ -455,7 +454,7 @@ def base(userid,email,name,userimageurl,request):
             level=0
         ).save()
 
-        UserSettingEQ.objects.using("user").create(
+        EQ.objects.using("user").create(
             UID_EQ=uid,
             ENGANCE_HIGH=False,
             ENGANCE_MIDDLE=False,
@@ -471,7 +470,7 @@ def base(userid,email,name,userimageurl,request):
             SPATIAL_AUDIO="null"
         ).save()
 
-        UserSetting.objects.using("user").create(
+        Setting.objects.using("user").create(
             UID_SETTING=uid,
             LANGUAGE="ch",
             SHOW_MODAL="auto",
@@ -622,7 +621,7 @@ def profileget(request,uid):
         # 查詢用戶
         body=json.loads(request.body)
         uid=request.session["key"]
-        row=UserProfile.objects.using("user").filter(id=uid).all()
+        row=Profile.objects.using("user").filter(id=uid).all()
         data=""
         if row:
             row=row[0]
@@ -654,7 +653,7 @@ def profilepost(request):
         value=data_dict.get('value')
         newvalue=data_dict.get('newValue')
         # 根據 id 找到對應的記錄
-        query=UserProfile.objects.using("user").get(id=id)
+        query=Profile.objects.using("user").get(id=id)
         setattr(query,value,newvalue) # 更新記錄的各個欄位
         query.save()
         printcolorhaveline("green","成功修改 "+str(id)+" 的資料","-")
@@ -672,7 +671,7 @@ def user_setting(request):
         newvalue=data_dict.get('newValue')
         print(value,newvalue)
         # query=""
-        query=UserSetting.objects.using("user").get(UID_SETTING=uid)
+        query=Setting.objects.using("user").get(UID_SETTING=uid)
         setattr(query,value,newvalue)
         query.save()
         # body=json.loads(request.body)
@@ -680,7 +679,7 @@ def user_setting(request):
     #     kwargs=body.get("kwargs")
     #     row=False
     #     if method=="insert":
-    #         query=UserSettingEQ.objects.using("user").get_or_create(
+    #         query=EQ.objects.using("user").get_or_create(
     #             UID_SETTING=uid,
     #             defaults={
     #                 'LANGUAGE': "ch",
@@ -697,12 +696,12 @@ def user_setting(request):
     #         newvalue=kwargs["new_value"]
     #         printcolorhaveline("green",kwargs,"-")
 
-    #         query=UserSetting.objects.using("user").get(UID_SETTING=uid)
+    #         query=Setting.objects.using("user").get(UID_SETTING=uid)
     #         setattr(query,column,newvalue)
     #         query.save()
     #         row=query
     #     elif method=="select":
-    #         row=UserSetting.objects.using("user").filter(UID_EQ=uid).all()
+    #         row=Setting.objects.using("user").filter(UID_EQ=uid).all()
     #     else:
     #         printcolorhaveline("fail",f"the method {method} is not supported","-")
         row=query
@@ -721,7 +720,7 @@ def user_eq(request):
         # column=kwargs["column"]
         # newvalue=kwargs["new_value"]
         # printcolorhaveline("green",kwargs,"-")
-        query=UserSettingEQ.objects.using("user").get(UID_EQ=uid)
+        query=EQ.objects.using("user").get(UID_EQ=uid)
         # 更新記錄的各個欄位
         setattr(query,value,newvalue)
         query.save()
@@ -732,7 +731,7 @@ def user_eq(request):
         # printcolorhaveline("green",kwargs)
         # row=False
         # if method=="insert":
-        #     query=UserSettingEQ.objects.using("user").get_or_create(
+        #     query=EQ.objects.using("user").get_or_create(
         #         UID_EQ=kwargs["UID_EQ"],
         #         defaults={
         #             'ENGANCE_HIGH': kwargs["ENGANCE_HIGH"],
@@ -754,13 +753,13 @@ def user_eq(request):
         #     column=kwargs["column"]
         #     newvalue=kwargs["new_value"]
         #     printcolorhaveline("green",kwargs,"-")
-        #     query=UserSettingEQ.objects.using("user").get(UID_EQ=kwargs["UID_EQ"])
+        #     query=EQ.objects.using("user").get(UID_EQ=kwargs["UID_EQ"])
         #     # 更新記錄的各個欄位
         #     setattr(query,column,newvalue)
         #     query.save()
         #     row=query
         # elif method=="select":
-        #     row=UserSettingEQ.objects.using("user").filter(UID_EQ=kwargs["UID_EQ"]).all()
+        #     row=EQ.objects.using("user").filter(UID_EQ=kwargs["UID_EQ"]).all()
         # else:
         #     printcolorhaveline("fail",f"the method {method} is not supported","-")
 
