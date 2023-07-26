@@ -115,12 +115,12 @@ def apple(request):
 
 def login(request):
     form=LoginForm()
-    print(form)
     if request.method == "POST":
         username=request.POST.get("username")
         password=request.POST.get("password")
+        data=json.loads(request.body)
         user=authenticate(request,username=username,password=password)
-        if user is not None:
+        if user!=None:
             login(request,user)
             print("成功登入")
             return redirect('/user/data/')  # 重新導向到首頁
@@ -370,6 +370,7 @@ def register(request):
     form=RegisterForm()
     if request.method == "POST":
         form=RegisterForm(request.POST)
+        data=json.loads(request.body)
         if form.is_valid():
             form.save()
             print("註冊成功")
@@ -421,7 +422,6 @@ def base(userid,email,name,userimageurl,request):
             level=0
         ).save()
 
-        # 創建新的 UserSettingEQ 記錄並使用 "user" 資料庫連線
         UserSettingEQ.objects.using("user").create(
             UID_EQ=uid,
             ENGANCE_HIGH=False,
@@ -438,7 +438,6 @@ def base(userid,email,name,userimageurl,request):
             SPATIAL_AUDIO="null"
         ).save()
 
-        # 註冊用戶設置
         UserSetting.objects.using("user").create(
             UID_SETTING=uid,
             LANGUAGE="ch",
@@ -450,7 +449,6 @@ def base(userid,email,name,userimageurl,request):
         ).save()
 
     save_session(request,name,email,uid,userimageurl)
-
     printcolorhaveline("green","finish baseing"," ")
 
 def usersavesession(request):
@@ -618,10 +616,10 @@ def profilepost(request):
     if request.method=="PUT":
         # data
         id=request.session["key"]
-        data = request.body.decode('utf-8')
-        data_dict = json.loads(data)
-        value = data_dict.get('value')
-        newvalue = data_dict.get('newValue')
+        data=request.body.decode('utf-8')
+        data_dict=json.loads(data)
+        value=data_dict.get('value')
+        newvalue=data_dict.get('newValue')
         # 根據 id 找到對應的記錄
         query=UserProfile.objects.using("user").get(id=id)
         setattr(query,value,newvalue) # 更新記錄的各個欄位
@@ -634,10 +632,11 @@ def profilepost(request):
 def user_setting(request):
     if request.method=="PUT":
         uid=request.session["key"]
-        data = request.body.decode('utf-8')
-        data_dict = json.loads(data)
-        value = data_dict.get('value')
-        newvalue = data_dict.get('newValue')
+        data=request.body.decode('utf-8')
+        # 是這樣拿值嗎?
+        data_dict=json.loads(data)
+        value=data_dict.get('value')
+        newvalue=data_dict.get('newValue')
         print(value,newvalue)
         # query=""
         query=UserSetting.objects.using("user").get(UID_SETTING=uid)
@@ -681,10 +680,11 @@ def user_setting(request):
 def user_eq(request):
     if request.method=="PUT":
         uid=request.session["key"]
-        data = request.body.decode('utf-8')
-        data_dict = json.loads(data)
-        value = data_dict.get('value')
-        newvalue = data_dict.get('newValue')
+        data=request.body.decode('utf-8')
+        data_dict=json.loads(data)
+        # 是這樣拿值嗎?
+        value=data_dict.get('value')
+        newvalue=data_dict.get('newValue')
         # column=kwargs["column"]
         # newvalue=kwargs["new_value"]
         # printcolorhaveline("green",kwargs,"-")
@@ -740,5 +740,4 @@ def my_playlist():
     return JsonResponse({"success":False,"data": row })
 
 # 註記
-# 只要函式後面有加sql都是sql函式
-# 話說我不知道這樣串接是否符合你們要的，有錯直接跟我說即可(之後會改成django sql 語法)
+# 如果有任何錯誤直接跟我說即可
