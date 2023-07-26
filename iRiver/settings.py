@@ -205,6 +205,17 @@ DATABASES = {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
     },
+    'djangouserlocal': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_user',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_ALL_TABLES',
+        }
+    },
 
 }
 

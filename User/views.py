@@ -113,23 +113,31 @@ def apple(request):
     applecallback(request)
     pass
 
-def login(request):
-    form=LoginForm()
-    if request.method == "POST":
-        username=request.POST.get("username")
-        password=request.POST.get("password")
+# 登入
+def userlogin(request):
+    if request.method=="POST": # (CSRF cookie not set.)
         data=json.loads(request.body)
-        user=authenticate(request,username=username,password=password)
+        """
+        假定json格式為
+        {
+            "username": str,
+            "password": str
+        }
+        """
+        user=authenticate(username=data["username"],password=data["password"])
         if user!=None:
+            success=True
             login(request,user)
-            print("成功登入")
+            printcolorhaveline("green","register success!","-")
             return redirect('/user/data/')  # 重新導向到首頁
         else:
-            print("登入錯誤")
-    context={
-        'form': form
-    }
-    return render(request,'registration/login.html',context)
+            success=False
+            printcolorhaveline("fail","register fail","-")
+
+        return HttpResponse(json.dumps({
+            "success": success,
+            "data": data
+        }))# 要回傳什麼?
 
 # switch_key 函式：根據鍵的格式返回對應的鍵值
 def switch_key(tkey):
@@ -365,24 +373,49 @@ def get_user_music_list(request):
         return JsonResponse({"success": False})
 
 
-# 註冊
+# 註冊(已完成)
 def register(request):
-    form=RegisterForm()
-    if request.method == "POST":
-        form=RegisterForm(request.POST)
+    if request.method=="GET":
+        print(request.body)
         data=json.loads(request.body)
-        if form.is_valid():
-            form.save()
-            print("註冊成功")
-            return redirect('/user/login/')  # 重新導向到登入畫面
+        print(data)
+        row=User.objects.using("djangouserlocal").filter(username=data["username"]).all()
+        success=True
+        body=""
+        if len(row)==0:
+            """
+            假定json格式為
+            {
+                "username": str,
+                "email": str,
+                "password": str
+            }
+            """
+            user=User.objects.using("djangouserlocal").create(
+                is_speruser=0,
+                username=data["username"],
+                first_name="",
+                last_name="",
+                email=data["eail"],
+                is_staff=0,
+                is_active=1,
+            )
+            user.set_password(data["password"])
+            user.save()
+            success=True
+            body=data
+            printcolorhaveline("green","register success!","-")
         else:
-            print("註冊錯誤")
-    context={
-        'form': form
-    }
-    return render(request,'registration/register.html',context)
+            success=False
+            body=""
+            printcolorhaveline("fail","register fail(register duplicate)","-")
 
-# 登出
+        return HttpResponse(json.dumps({
+            "success": success,
+            "data": body
+        }))# 要回傳什麼?
+
+# 登出(已完成)
 def logout(request,uid):
     # logout(request)
     request.session['isLogin']=False
