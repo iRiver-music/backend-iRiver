@@ -21,8 +21,8 @@ from .serializers import ArtistSerializer, SongSerializer
 # import clean_str
 from Music.clean_str import clear_str
 
-# import user_view
-import User.views as user_views
+# # import user_view
+# import User.views as user_views
 
 from Music.web_scutter.youtube import query_youtube
 

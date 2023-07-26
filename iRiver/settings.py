@@ -174,7 +174,7 @@ DATABASES = {
     },
     'user': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'iriver_user_data',
+        'NAME': 'user',
         'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
         'PASSWORD': 'JABmQsQhpj05F6WI',
         'HOST': '49.213.238.75',
