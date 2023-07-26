@@ -41,4 +41,5 @@ def discover(request):
 
         superset.append(
             {'id': i+100, 'set': album_set, 'title': set_title[i]})
+
     return Response(superset)
