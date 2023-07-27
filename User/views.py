@@ -4,64 +4,43 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-<<<<<<< HEAD
 from User.serializers import SettingSerializer, ProfileSerializer, EQSerializer, PlaylistSerializer
 from .models import Profile, Setting, EQ, Playlist
 
 # get all user data
 
-=======
-from .serializers import SettingSerializer,ProfileSerializer,EQSerializer
-from .models import Profile,Setting,EQ
-
-# get all user data
-
-class UserAPIView(APIView):
-    def get(self,request,uid):
-        try:
-            data={
-                "profile": ProfileSerializer(Profile.objects.using("user").get(id=uid)).data,
-                "setting": SettingSerializer(Setting.objects.using("user").get(id=uid)).data,
-                "eq": EQSerializer(EQ.objects.using("user").get(id=uid)).data
-            }
-
-        except Profile.DoesNotExist:
-            return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)
-
-        return Response(data)
->>>>>>> 4b657f735fae7a3dcc73711850eae71dffcef26b
 
 class ProfileAPIView(APIView):
-    def get(self,request,uid):
+    def get(self, request, uid):
         try:
-            profile=Profile.objects.using("user").get(id=uid)
-            data={
+            profile = Profile.objects.using("user").get(id=uid)
+            data = {
                 "profile": ProfileSerializer(profile).data,
             }
         except Profile.DoesNotExist:
-            return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(data)
 
-    def put(self,request,uid):
+    def put(self, request, uid):
         try:
-            profile=Profile.objects.using("user").get(id=uid)
+            profile = Profile.objects.using("user").get(id=uid)
         except Profile.DoesNotExist:
-            return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # 使用 ProfileSerializer 反序列化請求的資料
-        serializer=ProfileSerializer(profile,data=request.data)
+        serializer = ProfileSerializer(profile, data=request.data)
 
         if serializer.is_valid():
             serializer.save()  # 儲存更新後的資料至資料庫
             return Response({"mes": "ok"}, status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SettingAPIView(APIView):
-    def get(self,request,uid):
+    def get(self, request, uid):
         try:
-<<<<<<< HEAD
             setting = Setting.objects.using("user").get(id=uid)
             data = {
                 "setting": SettingSerializer(setting).data
@@ -69,14 +48,6 @@ class SettingAPIView(APIView):
             return Response(data)
         except Setting.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-=======
-            data={
-                "setting": SettingSerializer(Setting.objects.using("user").get(id=uid)).data,
-            }
-
-        except Profile.DoesNotExist:
-            return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)
->>>>>>> 4b657f735fae7a3dcc73711850eae71dffcef26b
 
     def put(self, request, uid):
         try:
@@ -96,22 +67,13 @@ class SettingAPIView(APIView):
 # handle request with EQ
 
 class EQAPIView(APIView):
-    def get(self,request,uid):
+    def get(self, request, uid):
         try:
-<<<<<<< HEAD
             eq = EQ.objects.using("user").get(id=uid)
             serializer = EQSerializer(eq)
             return Response(serializer.data)
         except EQ.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-=======
-            data={
-                "eq": EQSerializer(EQ.objects.using("user").get(id=uid)).data
-            }
-
-        except Profile.DoesNotExist:
-            return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)
->>>>>>> 4b657f735fae7a3dcc73711850eae71dffcef26b
 
     def put(self, request, uid):
         try:
@@ -208,17 +170,18 @@ class PlaylistAPIView(APIView):
             except Playlist.DoesNotExist:
                 return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
 class UserRegistrationAPIView(APIView):
-    def post(self,request,uid):
+    def post(self, request, uid):
         # Deserialize the data from the request body using the UserSerializer
-        serializer=ProfileSerializer(data=request.data)
+        serializer = ProfileSerializer(data=request.data)
 
         if serializer.is_valid():
             # Save the new user profile to the database
             serializer.save()
 
             # Return a success response
-            return Response({"message": "User registered successfully"},status=status.HTTP_201_CREATED)
+            return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         else:
             # Return an error response with validation errors
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
