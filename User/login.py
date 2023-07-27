@@ -54,6 +54,7 @@ else:
     urlline=url+"/complete/line/"
     urlapple=url+"/complete/apple/"
 
+
 # 登入
 def loginsql(request,method,email,password,token=""):
     if method=="google":
@@ -81,6 +82,32 @@ def apple(request):
     appleurl(request)
     applecallback(request)
     pass
+
+# 登入
+def userlogin(request):
+    if request.method=="POST": # (CSRF cookie not set.)
+        data=json.loads(request.body)
+        """
+        假定json格式為
+        {
+            "username": str,
+            "password": str
+        }
+        """
+        user=authenticate(username=data["username"],password=data["password"])
+        if user!=None:
+            success=True
+            login(request,user)
+            function.printcolorhaveline("green","register success!","-")
+            return redirect('/user/data/')  # 重新導向到首頁
+        else:
+            success=False
+            function.printcolorhaveline("fail","register fail","-")
+
+        return HttpResponse(json.dumps({
+            "success": success,
+            "data": data
+        }))# 要回傳什麼?
 
 def getusetemail(accesstoken,channel):
     # 獲取 id_token
@@ -307,31 +334,6 @@ def get_user_music_list(request):
     else:
         return JsonResponse({"success": False})
 
-# 登入
-def userlogin(request):
-    if request.method=="POST": # (CSRF cookie not set.)
-        data=json.loads(request.body)
-        """
-        假定json格式為
-        {
-            "username": str,
-            "password": str
-        }
-        """
-        user=authenticate(username=data["username"],password=data["password"])
-        if user!=None:
-            success=True
-            login(request,user)
-            function.printcolorhaveline("green","register success!","-")
-            return redirect('/user/data/')  # 重新導向到首頁
-        else:
-            success=False
-            function.printcolorhaveline("fail","register fail","-")
-
-        return HttpResponse(json.dumps({
-            "success": success,
-            "data": data
-        }))# 要回傳什麼?
 
 # 註冊(已完成)
 def register(request):
@@ -377,20 +379,10 @@ def register(request):
 
 # 登出(已完成)
 def logout(request,uid):
+    # logout(request)
     request.session['isLogin']=False
     request.session.save()
     function.printcolorhaveline("green",str(uid)+" 登出成功"," ")
-    return redirect('/user/login')
-
-# 刪除帳號
-def delaccount(request,uid):
-    Profile.objects.using("user").filter(id=uid).delete()
-    Setting.objects.using("user").filter(id=uid).delete()
-    EQ.objects.using("user").filter(id=uid).delete()
-    Social.objects.using("user").filter(uid=uid).delete()
-    request.session['isLogin']=False
-    request.session.save()
-    function.printcolorhaveline("green",str(uid)+"刪除成功"," ")
     return redirect('/user/login')
 
 # base 函式：處理用戶登入的基本操作
