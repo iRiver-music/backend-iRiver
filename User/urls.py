@@ -1,4 +1,9 @@
 from django.urls import path, include
+from User.model.EQAPIView import EQAPIView
+from User.model.PlaylistAPIView import PlaylistAPIView
+from User.model.ProfileAPIView import ProfileAPIView
+
+from User.model.SettingAPIView import SettingAPIView
 
 from .model.UserAPIView import UserAPIView
 from . import views
@@ -16,15 +21,15 @@ app_name = 'User'
 urlpatterns = [
     path('<str:uid>/', UserAPIView.as_view(), name='user'),
 
-    path('setting/<str:uid>/', views.SettingAPIView.as_view(), name='setting'),
-    path('eq/<str:uid>/', views.EQAPIView.as_view(), name='eq'),
-    path('profile/<str:uid>/', views.ProfileAPIView.as_view(), name='profile'),
+    path('setting/<str:uid>/', SettingAPIView.as_view(), name='setting'),
+    path('eq/<str:uid>/', EQAPIView.as_view(), name='eq'),
+    path('profile/<str:uid>/', ProfileAPIView.as_view(), name='profile'),
 
     # handle request with playlist
-    path('playlist/<str:uid>/<str:playlist>/', views.PlaylistAPIView.as_view(),
+    path('playlist/<str:uid>/<str:playlist>/', PlaylistAPIView.as_view(),
          name='playlist'),
 
-    path('playlist/<str:uid>/', views.PlaylistAPIView.as_view(),
+    path('playlist/<str:uid>/', PlaylistAPIView.as_view(),
          name='playlist'),
 
 
