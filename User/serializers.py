@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, Setting, EQ
+from .models import Profile, Setting, EQ, Playlist
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -17,4 +17,10 @@ class SettingSerializer(serializers.ModelSerializer):
 class EQSerializer(serializers.ModelSerializer):
     class Meta:
         model = EQ
+        exclude = ['created_at']
+
+
+class PlaylistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Playlist
         exclude = ['created_at']

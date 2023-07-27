@@ -1,4 +1,6 @@
 from django.urls import path, include
+
+from .model.UserAPIView import UserAPIView
 from . import views
 
 # 異步版本
@@ -12,13 +14,19 @@ from rest_framework.response import Response
 
 app_name = 'User'
 urlpatterns = [
-    path('<str:uid>/', views.UserAPIView.as_view(), name='user'),
+    path('<str:uid>/', UserAPIView.as_view(), name='user'),
 
     path('setting/<str:uid>/', views.SettingAPIView.as_view(), name='setting'),
     path('eq/<str:uid>/', views.EQAPIView.as_view(), name='eq'),
     path('profile/<str:uid>/', views.ProfileAPIView.as_view(), name='profile'),
 
-    path('register/<str:uid>/', views.UserAPIView.as_view(), name='register'),
+    # handle request with playlist
+    path('playlist/<str:uid>/<str:playlist>/', views.PlaylistAPIView.as_view(),
+         name='playlist'),
+
+    path('playlist/<str:uid>/', views.PlaylistAPIView.as_view(),
+         name='playlist'),
+
 
 
     #     path('test/', views.test123, name='test123'),

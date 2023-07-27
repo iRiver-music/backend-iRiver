@@ -1,12 +1,7 @@
+import uuid
 import datetime
 from django.db import models
-from django.contrib.auth.models import User
-from django import forms
-from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MaxLengthValidator
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 
 # 國家清單
@@ -103,9 +98,11 @@ class Social(models.Model):
     class Meta:
         app_label = "User"
         db_table = "social"
+#
 
 
-class musicList(models.Model):
+class Playlist(models.Model):
+    uid = models.CharField(max_length=36, default='null')
     playlist = models.CharField(max_length=255)
     music_ID = models.CharField(max_length=32)
     favorite = models.PositiveSmallIntegerField(default=0)
@@ -113,3 +110,4 @@ class musicList(models.Model):
 
     class Meta:
         app_label = "User"
+        db_table = "playlist"
