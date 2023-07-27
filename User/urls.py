@@ -29,7 +29,7 @@ urlpatterns = [
 
 
 
-    #     path('test/', views.test123, name='test123'),
+    # path('test/', views.test123, name='test123'),
     # path('register/', views.register, name='register'),
     # path('login/', views.login, name='login'),
     # path('logout/<str:uid>/', views.logout, name='logout'),
