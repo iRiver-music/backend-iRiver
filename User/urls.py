@@ -32,6 +32,11 @@ urlpatterns = [
     path('playlist/<str:uid>/', PlaylistAPIView.as_view(),
          name='playlist'),
 
+    # 紀錄播放紀錄
+    path('listeningHistory/<str:music_ID>/', views.listeningHistory,
+         name='listeningHistory'),
+
+
 
 
     # path('test/', views.test123, name='test123'),

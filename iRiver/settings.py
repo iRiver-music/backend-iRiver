@@ -39,13 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # api
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+
+    # 跨網域
+    'corsheaders',
+
+    # app
     'Music',
     'User',
     'Token',
     'Discover',
-    # 'corsheaders',
+    'System'
 ]
 
 REST_FRAMEWORK = {
@@ -99,6 +106,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
+
+    # admin
+    'http://localhost:5001',
+
     # 其他允許的來源
 ]
 CORS_ALLOW_CREDENTIALS = True
@@ -150,6 +161,9 @@ DATABASES = {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
     },
+
+    # about music data
+
     'music': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'music',
@@ -161,28 +175,9 @@ DATABASES = {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
     },
-    'test': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'music',
-        'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
-        'PASSWORD': 'JABmQsQhpj05F6WI',
-        'HOST': '49.213.238.75',
-        'PORT': '3306',
-        'OPTIONS': {
-            'sql_mode': 'STRICT_ALL_TABLES',
-        }
-    },
-    'local': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'sql_mode': 'STRICT_ALL_TABLES',
-        }
-    },
+
+    # user data
+
     'user': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'user',
@@ -194,9 +189,12 @@ DATABASES = {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
     },
-    'usermusic': {
+
+    # admin
+
+    'admin': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'iriver_user_music_list',
+        'NAME': 'admin',
         'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
         'PASSWORD': 'JABmQsQhpj05F6WI',
         'HOST': '49.213.238.75',
@@ -205,9 +203,12 @@ DATABASES = {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
     },
-    'djangouser': {
+
+    # test
+
+    'test': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_user',
+        'NAME': 'music',
         'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
         'PASSWORD': 'JABmQsQhpj05F6WI',
         'HOST': '49.213.238.75',
@@ -216,7 +217,9 @@ DATABASES = {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
     },
+
     # localhost
+
     'local': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'music',
@@ -283,3 +286,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# for system app
+FORDERED_PATH = "/Users/hungwei/Desktop/code/iRiver-music/back/django-test-for-phone/test_phone/media"

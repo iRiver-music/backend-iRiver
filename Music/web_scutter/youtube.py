@@ -64,7 +64,7 @@ def query_youtube(query: str) -> json:
             # video["artist_img_url"] = artist_img_url.get_attribute("src")
             video["artist_img_url"] = artist_img_url
 
-            if Song.objects.filter(music_ID=video["music_ID"]).exists():
+            if Song.objects.filter(music_ID=video["music_ID"]).using("music").exists():
                 continue
             music_list.append(video)
         except NoSuchElementException as e:
