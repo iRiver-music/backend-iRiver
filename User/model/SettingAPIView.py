@@ -11,7 +11,7 @@ from User.models import Profile, Setting, EQ, Playlist
 class SettingAPIView(APIView):
     def get(self, request, uid):
         try:
-            setting = Setting.objects.using("user").get(id=uid)
+            setting = Setting.objects.using("user").get(uid=uid)
             data = {
                 "setting": SettingSerializer(setting).data
             }
@@ -21,14 +21,16 @@ class SettingAPIView(APIView):
 
     def put(self, request, uid):
         try:
-            setting = Setting.objects.using("user").get(id=uid)
+            setting = Setting.objects.using("user").get(uid=uid)
         except Setting.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = SettingSerializer(setting, data=request.data)
+        # 使用 request.data 中的欄位動態更新 EQ Model 的資料
+        for key, value in request.data.items():
+            setattr(setting, key, value)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"mes": "ok"}, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            setting.save(using="user")
+            return Response({"message": "setting updated successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "Failed to update setting"}, status=status.HTTP_400_BAD_REQUEST)

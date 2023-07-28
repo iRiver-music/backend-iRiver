@@ -11,7 +11,7 @@ from User.models import Profile, Setting, EQ, Playlist
 class EQAPIView(APIView):
     def get(self, request, uid):
         try:
-            eq = EQ.objects.using("user").get(id=uid)
+            eq = EQ.objects.using("user").get(uid=uid)
             serializer = EQSerializer(eq)
             return Response(serializer.data)
         except EQ.DoesNotExist:
@@ -19,7 +19,7 @@ class EQAPIView(APIView):
 
     def put(self, request, uid):
         try:
-            eq = EQ.objects.using("user").get(id=uid)
+            eq = EQ.objects.using("user").get(uid=uid)
         except EQ.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 

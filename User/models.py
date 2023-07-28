@@ -33,8 +33,8 @@ def custom_default_date():
 
 
 class Profile(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
-    email = models.CharField(max_length=24)
+    uid = models.CharField(max_length=36, primary_key=True, unique=True)
+    email = models.CharField(max_length=24, default=None, null=True)
     username = models.CharField(max_length=24)
     phone = models.CharField(max_length=16, default=0)
     country = models.CharField(max_length=2, null=True, default=None)
@@ -49,12 +49,12 @@ class Profile(models.Model):
 
 
 class Setting(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
-    LANGUAGE = models.CharField(max_length=255)
-    SHOW_MODAL = models.CharField(max_length=255)
-    AUDIO_QUALITY = models.CharField(max_length=255)
-    AUDIO_AUTO_PLAY = models.BooleanField()
-    WIFI_AUTO_DOWNLOAD = models.BooleanField()
+    uid = models.CharField(max_length=36, primary_key=True, unique=True)
+    LANGUAGE = models.CharField(max_length=255, default="ch")
+    SHOW_MODAL = models.CharField(max_length=255, default="auto")
+    AUDIO_QUALITY = models.CharField(max_length=255, default="auto")
+    AUDIO_AUTO_PLAY = models.BooleanField(default=True)
+    WIFI_AUTO_DOWNLOAD = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=custom_default_date)
 
     class Meta:
@@ -63,7 +63,7 @@ class Setting(models.Model):
 
 
 class EQ(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
+    uid = models.CharField(max_length=36, primary_key=True, unique=True)
     ENGANCE_HIGH = models.BooleanField(null=True, blank=True, default=False)
     ENGANCE_MIDDLE = models.BooleanField(null=True, blank=True, default=False)
     ENGANCE_LOW = models.BooleanField(null=True, blank=True, default=False)
@@ -91,7 +91,7 @@ class EQ(models.Model):
 
 
 class Social(models.Model):
-    uid = models.CharField(max_length=36, primary_key=True)
+    uid = models.CharField(max_length=36, unique=True)
     email = models.CharField(max_length=24)
     uid = models.CharField(max_length=24)
     created_at = models.DateTimeField(default=custom_default_date)
@@ -143,6 +143,18 @@ class AdminCount(models.Model):
     class Meta:
         app_label = 'User'
         db_table = 'Count'
+
+    def __str__(self):
+        return self.title
+
+
+class Contract(models.Model):
+    uid = models.CharField(max_length=36,  unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'User'
+        db_table = 'contract'
 
     def __str__(self):
         return self.title

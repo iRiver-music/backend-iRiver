@@ -11,7 +11,7 @@ from User.models import Profile, Setting, EQ, Playlist
 class ProfileAPIView(APIView):
     def get(self, request, uid):
         try:
-            profile = Profile.objects.using("user").get(id=uid)
+            profile = Profile.objects.using("user").get(uid=uid)
             data = {
                 "profile": ProfileSerializer(profile).data,
             }
@@ -22,15 +22,16 @@ class ProfileAPIView(APIView):
 
     def put(self, request, uid):
         try:
-            profile = Profile.objects.using("user").get(id=uid)
+            profile = Profile.objects.using("user").get(uid=uid)
         except Profile.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # 使用 ProfileSerializer 反序列化請求的資料
-        serializer = ProfileSerializer(profile, data=request.data)
+        # 使用 request.data 中的欄位動態更新 EQ Model 的資料
+        for key, value in request.data.items():
+            setattr(profile, key, value)
 
-        if serializer.is_valid():
-            serializer.save()  # 儲存更新後的資料至資料庫
-            return Response({"mes": "ok"}, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            profile.save(using="user")  #
+            return Response({"message": "profile updated successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "Failed to update profile"}, status=status.HTTP_400_BAD_REQUEST)
