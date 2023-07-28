@@ -8,14 +8,11 @@ from User.serializers import SettingSerializer, ProfileSerializer, EQSerializer,
 from .models import Profile, Setting, EQ, Playlist, ListeningHistory
 
 # 異步版本
-
 from drfa.decorators import api_view, APIView
 from asgiref.sync import sync_to_async
 
-
 def login(request):
     return True
-
 
 @api_view(["GET"])
 def listeningHistory(request, music_ID):

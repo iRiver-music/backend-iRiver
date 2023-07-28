@@ -590,7 +590,6 @@ def applecallback(request):
 def profileget(request,uid):
     if request.method=="GET":
         # 查詢用戶
-        body=json.loads(request.body)
         uid=request.session["key"]
         row=Profile.objects.using("user").filter(id=uid).all()
         data=""
@@ -615,7 +614,7 @@ def profileget(request,uid):
     else:
         function.printcolorhaveline("fail","method error","-")
 
-def profilepost(request):
+def profileput(request):
     if request.method=="PUT":
         # data
         id=request.session["key"]

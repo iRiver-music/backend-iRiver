@@ -108,7 +108,7 @@ class Playlist(models.Model):
     music_ID = models.CharField(max_length=32)
     favorite = models.PositiveSmallIntegerField(default=0)
     count = models.PositiveSmallIntegerField(default=0)
-    created_at = models.DateTimeField(default=custom_default_date)
+    created_at = models.DateTimeField(default=custom_default_date())
 
     class Meta:
         app_label = "User"
