@@ -108,10 +108,13 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
 
     # admin
-    'http://localhost:5001',
+    'http://0.0.0.0:5001',
+    'http://0.0.0.0:8005',
+    'http://localhost:8005',
 
     # 其他允許的來源
 ]
+
 CORS_ALLOW_CREDENTIALS = True
 
 
@@ -123,6 +126,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # core
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'iRiver.urls'
