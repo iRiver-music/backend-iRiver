@@ -84,7 +84,6 @@ def query_web_song(request, query):
 def album(request, album):
     search_album = Music.objects.all()
     matches = difflib.get_close_matches(
-
         album, [x.album for x in search_album], n=6, cutoff=0.06)
     aldum_get = Music.objects.filter(album__in=matches)
     print('query_album_matches : ', matches)
