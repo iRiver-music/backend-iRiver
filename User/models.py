@@ -41,6 +41,10 @@ class Profile(models.Model):
     birthday = models.DateField(null=True, default=datetime.datetime.now)
     gender = models.CharField(max_length=1, null=True, default="K")
     level = models.PositiveSmallIntegerField(default=0, null=True)
+    invitation_code = models.CharField(
+        max_length=255, default=uuid.uuid4, editable=False)
+    invited_by_code = models.CharField(
+        max_length=255, null=True, default=None)
     created_at = models.DateTimeField(default=custom_default_date)
 
     class Meta:
@@ -78,11 +82,13 @@ class EQ(models.Model):
     EQ_ZIP = models.IntegerField(null=True, default=0)
     SPATIAL_AUDIO = models.CharField(
         max_length=255, null=True, blank=True, default="auto")
+
     _60HZ = models.IntegerField(null=True, default=0)
     _230HZ = models.IntegerField(null=True, default=0)
     _910HZ = models.IntegerField(null=True, default=0)
     _4kHZ = models.IntegerField(null=True, default=0)
     _14kHZ = models.IntegerField(null=True, default=0)
+
     created_at = models.DateTimeField(default=custom_default_date)
 
     class Meta:
@@ -99,7 +105,6 @@ class Social(models.Model):
     class Meta:
         app_label = "User"
         db_table = "social"
-#
 
 
 class Playlist(models.Model):
@@ -108,7 +113,7 @@ class Playlist(models.Model):
     music_ID = models.CharField(max_length=32)
     favorite = models.PositiveSmallIntegerField(default=0)
     count = models.PositiveSmallIntegerField(default=0)
-    created_at = models.DateTimeField(default=custom_default_date())
+    created_at = models.DateTimeField(default=custom_default_date)
 
     class Meta:
         app_label = "User"
@@ -128,6 +133,19 @@ class ListeningHistory(models.Model):
         return f"{self.user} 在 {self.listening_time} 聽了 {self.song}"
 
 
+class SearchHistory(models.Model):
+    uid = models.CharField(max_length=36)
+    query = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'User'
+        db_table = 'searchHistory'
+
+    def __str__(self):
+        return self.title
+
+
 class AdminCount(models.Model):
     # music
     artist = models.IntegerField()
@@ -142,7 +160,7 @@ class AdminCount(models.Model):
 
     class Meta:
         app_label = 'User'
-        db_table = 'Count'
+        db_table = 'adminCount'
 
     def __str__(self):
         return self.title

@@ -19,7 +19,7 @@ from rest_framework.response import Response
 @api_view(['GET'])
 def discover(request):
     album_data = AlbumSerializer(
-        Album.objects.using('music').all(), many=True).data
+        Album.objects.all(), many=True).data
 
     num_albums = len(album_data)
     num_groups = (num_albums + 5) // 6  # 计算分组数量

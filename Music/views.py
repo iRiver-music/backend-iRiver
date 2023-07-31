@@ -82,11 +82,11 @@ def query_web_song(request, query):
 
 
 def album(request, album):
-    search_album = Music.objects.using('test').all()
+    search_album = Music.objects.all()
     matches = difflib.get_close_matches(
 
         album, [x.album for x in search_album], n=6, cutoff=0.06)
-    aldum_get = Music.objects.using('test').filter(album__in=matches)
+    aldum_get = Music.objects.filter(album__in=matches)
     print('query_album_matches : ', matches)
     album_list = []
     for adbum in aldum_get:
@@ -104,7 +104,7 @@ def album(request, album):
 @api_view(['GET'])
 def songs(request, artist):
     songs_data = Song.objects.filter(
-        artist=artist).using("test").values().order_by('-views')
+        artist=artist).values().order_by('-views')
 
     return Response(songs_data)
 
@@ -128,9 +128,9 @@ def artist(request, artist):
 @api_view(['GET'])
 def artist_test(request, artist):
     songs_data = Song.objects.filter(
-        artist=artist).using("test").values().order_by('-views')
+        artist=artist).values().order_by('-views')
     artist_data = ArtistSerializer(Artist.objects.filter(
-        artist=artist).using("test").values(), many=True).data
+        artist=artist).values(), many=True).data
 
     response_data = {
         'id': 1,

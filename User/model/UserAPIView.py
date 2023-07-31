@@ -12,9 +12,9 @@ class UserAPIView(APIView):
     def get(self, request, uid):
         try:
             data = {
-                "profile": ProfileSerializer(Profile.objects.using("user").get(uid=uid)).data,
-                "setting": SettingSerializer(Setting.objects.using("user").get(uid=uid)).data,
-                "eq": EQSerializer(EQ.objects.using("user").get(uid=uid)).data
+                "profile": ProfileSerializer(Profile.objects.get(uid=uid)).data,
+                "setting": SettingSerializer(Setting.objects.get(uid=uid)).data,
+                "eq": EQSerializer(EQ.objects.get(uid=uid)).data
             }
 
         except Profile.DoesNotExist:
@@ -25,10 +25,10 @@ class UserAPIView(APIView):
     def post(self, request, uid):
         try:
 
-            Profile.objects.using("user").create(
+            Profile.objects.create(
                 uid=uid, username=request.data.get('username'))
-            Setting.objects.using("user").create(uid=uid)
-            EQ.objects.using("user").create(uid=uid)
+            Setting.objects.create(uid=uid)
+            EQ.objects.create(uid=uid)
 
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -36,16 +36,16 @@ class UserAPIView(APIView):
 
     def delete(self, request, uid):
         try:
-            profile = Profile.objects.using("user").get(uid=uid)
-            setting = Setting.objects.using("user").get(uid=uid)
-            eq = EQ.objects.using("user").get(uid=uid)
+            profile = Profile.objects.get(uid=uid)
+            setting = Setting.objects.get(uid=uid)
+            eq = EQ.objects.get(uid=uid)
 
             # Delete the related objects (Setting and EQ) first
-            setting.delete(using="user")
-            eq.delete(using="user")
+            setting.delete()
+            eq.delete()
 
             # Delete the Profile object
-            profile.delete(using="user")
+            profile.delete()
 
             return Response({"message": "User and related information deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 

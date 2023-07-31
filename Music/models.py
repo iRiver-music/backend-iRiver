@@ -26,7 +26,7 @@ class Album(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        app_label = 'music'
+        app_label = 'Music'
         db_table = 'album'
 
     def __str__(self):
@@ -51,7 +51,7 @@ class Artist(models.Model):
             self.artist = illegal_chars_pattern.sub('', self.artist)
 
     class Meta:
-        app_label = 'music'
+        app_label = 'Music'
         db_table = 'artists'
 
     def __str__(self):
@@ -103,16 +103,14 @@ class Song(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        app_label = 'music'
+        app_label = 'Music'
         db_table = 'songs'
 
     # def save(self, *args, **kwargs):
     #     existing_song = Song.objects.using(
     #         'test').filter(music_ID=self.music_ID).first()
     #     if existing_song:
-    #         return
-
-    #     super().save(using='test', *args, **kwargs)
+    #         ret
 
     def __str__(self):
         return self.music_ID
@@ -163,7 +161,7 @@ class Style(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        app_label = 'music'
+        app_label = 'Music'
         db_table = 'style'
 
     def __str__(self):
@@ -177,8 +175,12 @@ class StyleTitle(models.Model):
     name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        self.clean()  # 在保存數據前先進行過濾
+        super().save(*args, **kwargs)
+
     class Meta:
-        app_label = 'music'
+        app_label = 'Music'
         db_table = 'styleTitle'
 
     def __str__(self):
@@ -207,8 +209,12 @@ class DowARtist(models.Model):
             self.artist = emoji_pattern.sub('', self.artist)
             self.artist = illegal_chars_pattern.sub('', self.artist)
 
+    def save(self, *args, **kwargs):
+        self.clean()  # 在保存數據前先進行過濾
+        super().save(*args, **kwargs)
+
     class Meta:
-        app_label = 'music'
+        app_label = 'Music'
         db_table = 'dow'
 
     def __str__(self):

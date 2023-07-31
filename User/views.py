@@ -11,19 +11,20 @@ from .models import Profile, Setting, EQ, Playlist, ListeningHistory
 from drfa.decorators import api_view, APIView
 from asgiref.sync import sync_to_async
 
+
 def login(request):
     return True
+
 
 @api_view(["GET"])
 def listeningHistory(request, music_ID):
     try:
-        listening_record = ListeningHistory.objects.using(
-            "user").get(music_ID=music_ID)
+        listening_record = ListeningHistory.objects.get(music_ID=music_ID)
     except ListeningHistory.DoesNotExist:
         return Response({"message": "找不到指定的聽歌紀錄"}, status=404)
 
     # 將找到的聽歌紀錄的 count 屬性加一
     listening_record.count += 1
-    listening_record.save(using="user")
+    listening_record.save()
 
     return Response({"message": "聽歌紀錄的 count 屬性已經加一"}, status=200)

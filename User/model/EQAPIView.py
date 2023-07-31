@@ -11,7 +11,7 @@ from User.models import Profile, Setting, EQ, Playlist
 class EQAPIView(APIView):
     def get(self, request, uid):
         try:
-            eq = EQ.objects.using("user").get(uid=uid)
+            eq = EQ.objects.get(uid=uid)
             serializer = EQSerializer(eq)
             return Response(serializer.data)
         except EQ.DoesNotExist:
@@ -19,7 +19,7 @@ class EQAPIView(APIView):
 
     def put(self, request, uid):
         try:
-            eq = EQ.objects.using("user").get(uid=uid)
+            eq = EQ.objects.get(uid=uid)
         except EQ.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -28,7 +28,7 @@ class EQAPIView(APIView):
             setattr(eq, key, value)
 
         try:
-            eq.save(using="user")  # 儲存更新後的資料至指定的資料庫
+            eq.save()  # 儲存更新後的資料至指定的資料庫
             return Response({"message": "EQ updated successfully"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "Failed to update EQ"}, status=status.HTTP_400_BAD_REQUEST)

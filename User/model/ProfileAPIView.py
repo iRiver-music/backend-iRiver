@@ -11,7 +11,7 @@ from User.models import Profile, Setting, EQ, Playlist
 class ProfileAPIView(APIView):
     def get(self, request, uid):
         try:
-            profile = Profile.objects.using("user").get(uid=uid)
+            profile = Profile.objects.get(uid=uid)
             data = {
                 "profile": ProfileSerializer(profile).data,
             }
@@ -22,7 +22,7 @@ class ProfileAPIView(APIView):
 
     def put(self, request, uid):
         try:
-            profile = Profile.objects.using("user").get(uid=uid)
+            profile = Profile.objects.get(uid=uid)
         except Profile.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -31,7 +31,7 @@ class ProfileAPIView(APIView):
             setattr(profile, key, value)
 
         try:
-            profile.save(using="user")  #
+            profile.save()  #
             return Response({"message": "profile updated successfully"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "Failed to update profile"}, status=status.HTTP_400_BAD_REQUEST)

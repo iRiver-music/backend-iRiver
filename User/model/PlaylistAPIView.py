@@ -10,14 +10,14 @@ from User.models import Profile, Setting, EQ, Playlist
 
 class PlaylistAPIView(APIView):
     def get(self, request, uid, playlist=None):
+        print(uid)
         if playlist is None:
-            playlists = Playlist.objects.using("user").all()
+            playlists = Playlist.objects.filter(uid=uid)
             serializer = PlaylistSerializer(playlists, many=True)
             return Response(serializer.data)
         else:
             try:
-                playlist = Playlist.objects.using(
-                    "user").get(playlist=playlist)
+                playlist = Playlist.objects.get(playlist=playlist)
                 serializer = PlaylistSerializer(playlist)
                 return Response(serializer.data)
             except Playlist.DoesNotExist:
@@ -25,8 +25,7 @@ class PlaylistAPIView(APIView):
 
     def put(self, request, uid, playlist=None):
         try:
-            playlists = Playlist.objects.using(
-                "user").filter(playlist=playlist, uid=uid)
+            playlists = Playlist.objects.filter(playlist=playlist, uid=uid)
         except Playlist.DoesNotExist:
             return Response({"error": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -41,7 +40,7 @@ class PlaylistAPIView(APIView):
         try:
             # Save the updated data to the specified database
             for playlist in playlists:
-                playlist.save(using="user")
+                playlist.save()
             return Response({"message": "Playlist updated successfully"}, status=status.HTTP_200_OK)
         except:
             return Response({"error": "Failed to update playlist"}, status=status.HTTP_400_BAD_REQUEST)
@@ -53,7 +52,8 @@ class PlaylistAPIView(APIView):
         # Check if the 'music_ID' already exists in the same playlist
         if playlist is not None:
             try:
-                existing_playlist = Playlist.objects.using('user').get(uid=uid, playlist=playlist, music_ID=playlist_data['music_ID'])
+                existing_playlist = Playlist.objects.get(
+                    uid=uid, playlist=playlist, music_ID=playlist_data['music_ID'])
                 return Response({"error": "Playlist with the same 'music_ID' already exists in the same playlist"}, status=status.HTTP_400_BAD_REQUEST)
             except Playlist.DoesNotExist:
                 pass
@@ -62,7 +62,7 @@ class PlaylistAPIView(APIView):
             playlist = Playlist(**playlist_data)
 
             # Save the playlist object to the specified database
-            playlist.save(using='user')
+            playlist.save()
             return Response({"message": "Playlist uploaded successfully"}, status=status.HTTP_201_CREATED)
         except ValidationError as ve:
             return Response({"error": "Failed to create playlist. Validation error: {}".format(ve)}, status=status.HTTP_400_BAD_REQUEST)
@@ -71,11 +71,11 @@ class PlaylistAPIView(APIView):
 
     def delete(self, request, uid, playlist=None):
         if playlist is not None:
-            playlist = Playlist.objects.using("user").get(id=uid, playlist=playlist)
+            playlist = Playlist.objects.get(id=uid, playlist=playlist)
             playlist.delete()
         else:
             try:
-                playlist = Playlist.objects.using("user").get(
+                playlist = Playlist.objects.get(
                     playlist=request.data["playlist"], music_ID=request.data["music_ID"])
                 playlist.delete()
                 return Response({"message": "Playlist deleted successfully"})

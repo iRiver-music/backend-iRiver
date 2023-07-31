@@ -11,7 +11,7 @@ from User.models import Profile, Setting, EQ, Playlist
 class SettingAPIView(APIView):
     def get(self, request, uid):
         try:
-            setting = Setting.objects.using("user").get(uid=uid)
+            setting = Setting.objects.get(uid=uid)
             data = {
                 "setting": SettingSerializer(setting).data
             }
@@ -21,7 +21,7 @@ class SettingAPIView(APIView):
 
     def put(self, request, uid):
         try:
-            setting = Setting.objects.using("user").get(uid=uid)
+            setting = Setting.objects.get(uid=uid)
         except Setting.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -30,7 +30,7 @@ class SettingAPIView(APIView):
             setattr(setting, key, value)
 
         try:
-            setting.save(using="user")
+            setting.save()
             return Response({"message": "setting updated successfully"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "Failed to update setting"}, status=status.HTTP_400_BAD_REQUEST)
