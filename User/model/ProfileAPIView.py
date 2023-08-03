@@ -11,8 +11,8 @@ from User.models import Profile, Setting, EQ, Playlist
 class ProfileAPIView(APIView):
     def get(self, request, uid):
         try:
-            profile = Profile.objects.get(uid=uid)
-            data = {
+            profile=Profile.objects.get(uid=uid)
+            data={
                 "profile": ProfileSerializer(profile).data,
             }
         except Profile.DoesNotExist:
@@ -22,7 +22,7 @@ class ProfileAPIView(APIView):
 
     def put(self, request, uid):
         try:
-            profile = Profile.objects.get(uid=uid)
+            profile=Profile.objects.get(uid=uid)
         except Profile.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 

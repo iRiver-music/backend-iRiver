@@ -11,7 +11,7 @@ from User.serializers import SettingSerializer, ProfileSerializer, EQSerializer,
 class UserAPIView(APIView):
     def get(self, request, uid):
         try:
-            data = {
+            data={
                 "profile": ProfileSerializer(Profile.objects.get(uid=uid)).data,
                 "setting": SettingSerializer(Setting.objects.get(uid=uid)).data,
                 "eq": EQSerializer(EQ.objects.get(uid=uid)).data
@@ -24,9 +24,7 @@ class UserAPIView(APIView):
 
     def post(self, request, uid):
         try:
-
-            Profile.objects.create(
-                uid=uid, username=request.data.get('username'))
+            Profile.objects.create(uid=uid, username=request.data.get('username'))
             Setting.objects.create(uid=uid)
             EQ.objects.create(uid=uid)
 
@@ -36,9 +34,9 @@ class UserAPIView(APIView):
 
     def delete(self, request, uid):
         try:
-            profile = Profile.objects.get(uid=uid)
-            setting = Setting.objects.get(uid=uid)
-            eq = EQ.objects.get(uid=uid)
+            profile=Profile.objects.get(uid=uid)
+            setting=Setting.objects.get(uid=uid)
+            eq=EQ.objects.get(uid=uid)
 
             # Delete the related objects (Setting and EQ) first
             setting.delete()
