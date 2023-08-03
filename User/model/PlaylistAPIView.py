@@ -52,8 +52,7 @@ class PlaylistAPIView(APIView):
         # Check if the 'music_ID' already exists in the same playlist
         if playlist is not None:
             try:
-                existing_playlist = Playlist.objects.get(
-                    uid=uid, playlist=playlist, music_ID=playlist_data['music_ID'])
+                existing_playlist = Playlist.objects.get(uid=uid, playlist=playlist, music_ID=playlist_data['music_ID'])
                 return Response({"error": "Playlist with the same 'music_ID' already exists in the same playlist"}, status=status.HTTP_400_BAD_REQUEST)
             except Playlist.DoesNotExist:
                 pass
@@ -75,8 +74,7 @@ class PlaylistAPIView(APIView):
             playlist.delete()
         else:
             try:
-                playlist = Playlist.objects.get(
-                    playlist=request.data["playlist"], music_ID=request.data["music_ID"])
+                playlist = Playlist.objects.get(playlist=request.data["playlist"], music_ID=request.data["music_ID"])
                 playlist.delete()
                 return Response({"message": "Playlist deleted successfully"})
             except Playlist.DoesNotExist:

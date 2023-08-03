@@ -19,6 +19,7 @@ COUNTRY_CHOICES = (
     ("PH", "Philippines"),
     ("ID", "Indonesia"),
 )
+
 # 性別清單
 GENDER = {
     ("U", "不透露"),
@@ -41,10 +42,8 @@ class Profile(models.Model):
     birthday = models.DateField(null=True, default=datetime.datetime.now)
     gender = models.CharField(max_length=1, null=True, default="K")
     level = models.PositiveSmallIntegerField(default=0, null=True)
-    invitation_code = models.CharField(
-        max_length=255, default=uuid.uuid4, editable=False)
-    invited_by_code = models.CharField(
-        max_length=255, null=True, default=None)
+    invitation_code = models.CharField(max_length=255, default=uuid.uuid4, editable=False)
+    invited_by_code = models.CharField(max_length=255, null=True, default=None)
     created_at = models.DateTimeField(default=custom_default_date)
 
     class Meta:
@@ -72,16 +71,14 @@ class EQ(models.Model):
     ENGANCE_MIDDLE = models.BooleanField(null=True, blank=True, default=False)
     ENGANCE_LOW = models.BooleanField(null=True, blank=True, default=False)
     ENGANCE_HEAVY = models.BooleanField(null=True, blank=True, default=False)
-    STYLE = models.CharField(max_length=255, null=True,
-                             blank=True, default="auto")
+    STYLE = models.CharField(max_length=255, null=True, blank=True, default="auto")
     EQ_HIGH = models.IntegerField(null=True, default=0)
     EQ_MIDDLE = models.IntegerField(null=True, default=0)
     EQ_LOW = models.IntegerField(null=True, default=0)
     EQ_HEAVY = models.IntegerField(null=True, default=0)
     EQ_DISTORTION = models.IntegerField(null=True, default=0)
     EQ_ZIP = models.IntegerField(null=True, default=0)
-    SPATIAL_AUDIO = models.CharField(
-        max_length=255, null=True, blank=True, default="auto")
+    SPATIAL_AUDIO = models.CharField(max_length=255, null=True, blank=True, default="auto")
 
     _60HZ = models.IntegerField(null=True, default=0)
     _230HZ = models.IntegerField(null=True, default=0)
