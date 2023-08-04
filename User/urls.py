@@ -3,7 +3,8 @@ from User.model.EQAPIView import EQAPIView
 from User.model.PlaylistAPIView import PlaylistAPIView
 from User.model.ProfileAPIView import ProfileAPIView
 from User.model.SettingAPIView import SettingAPIView
-from .model.UserAPIView import UserAPIView
+from User.model.UserAPIView import UserAPIView
+from User.model.MyPlayListAPIView import MyPlayListAPIView
 from . import views
 
 # 異步版本
@@ -34,7 +35,7 @@ urlpatterns=[
     # path("register/",views.register,name="register"),
     path("login/",views.login,name="login"),
     path("logout/<str:uid>/",views.logout,name="logout"), # 登出
-    # path("my_playList/<str:uid>/",views.my_playlist,name="my_playList"),
+    path("my_playList/<str:uid>/",MyPlayListAPIView.as_view(),name="my_playList"),
     # path("profile/<str:uid>/",views.profileget,name="profile"),
     # path("user_setting",views.user_setting,name="user_setting"),
     # path("user_eq",views.user_eq,name="user_eq"),
