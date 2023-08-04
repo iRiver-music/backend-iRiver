@@ -103,18 +103,7 @@ def logout(request,uid):
     request.session['isLogin']=False
     request.session.save()
     function.printcolorhaveline("green",str(uid)+" 登出成功"," ")
-    return redirect('/user/login')
-
-# 刪除帳號(未測試)
-def delaccount(request,uid):
-    Profile.objects.using("user").filter(id=uid).delete()
-    Setting.objects.using("user").filter(id=uid).delete()
-    EQ.objects.using("user").filter(id=uid).delete()
-    Social.objects.using("user").filter(uid=uid).delete()
-    request.session['isLogin']=False
-    request.session.save()
-    function.printcolorhaveline("green",str(uid)+"刪除成功"," ")
-    return redirect('/user/login')
+    return Response({"message": "User logout successfully"},status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 def listeningHistory(request,music_ID):

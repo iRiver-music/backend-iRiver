@@ -9,6 +9,7 @@ from User.serializers import SettingSerializer,ProfileSerializer,EQSerializer
 
 
 class UserAPIView(APIView):
+    # 取得帳號資料
     def get(self,request,uid):
         try:
             data={
@@ -16,12 +17,11 @@ class UserAPIView(APIView):
                 "setting": SettingSerializer(Setting.objects.get(uid=uid)).data,
                 "eq": EQSerializer(EQ.objects.get(uid=uid)).data
             }
-
+            return Response(data)
         except Profile.DoesNotExist:
             return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)
 
-        return Response(data)
-
+    # 註冊?
     def post(self,request,uid):
         try:
             Profile.objects.create(uid=uid,username=request.data.get('username'))
@@ -32,20 +32,13 @@ class UserAPIView(APIView):
         except Exception as e:
             return Response({"message": "User registered {}".format(e)},status=status.HTTP_404_NOT_FOUND)
 
+    # 刪除帳號
     def delete(self,request,uid):
         try:
-            profile=Profile.objects.get(uid=uid)
-            setting=Setting.objects.get(uid=uid)
-            eq=EQ.objects.get(uid=uid)
-
-            # Delete the related objects (Setting and EQ) first
-            setting.delete()
-            eq.delete()
-
-            # Delete the Profile object
-            profile.delete()
-
+            # 刪除物件
+            Setting.objects.get(uid=uid).delete()
+            EQ.objects.get(uid=uid).delete()
+            Profile.objects.get(uid=uid).delete()
             return Response({"message": "User and related information deleted successfully"},status=status.HTTP_204_NO_CONTENT)
-
         except Profile.DoesNotExist:
             return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)

@@ -68,12 +68,10 @@ class PlaylistAPIView(APIView):
 
     def delete(self,request,uid,playlist=None):
         if playlist is not None:
-            playlist=Playlist.objects.get(id=uid,playlist=playlist)
-            playlist.delete()
+            Playlist.objects.get(id=uid,playlist=playlist).delete()
         else:
             try:
-                playlist=Playlist.objects.get(playlist=request.data["playlist"],music_ID=request.data["music_ID"])
-                playlist.delete()
+                Playlist.objects.get(playlist=request.data["playlist"],music_ID=request.data["music_ID"]).delete()
                 return Response({"message": "Playlist deleted successfully"})
             except Playlist.DoesNotExist:
                 return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)

@@ -34,7 +34,7 @@ class ProfileAPIView(APIView):
             setattr(profile,key,value)
 
         try:
-            profile.save()  #
+            profile.save()
             return Response({"message": "profile updated successfully"},status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "Failed to update profile"},status=status.HTTP_400_BAD_REQUEST)
