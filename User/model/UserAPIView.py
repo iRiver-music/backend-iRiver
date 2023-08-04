@@ -3,13 +3,13 @@ from django.forms import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from User.models import Setting, EQ, Profile
 
-from User.serializers import SettingSerializer, ProfileSerializer, EQSerializer, PlaylistSerializer
+from User.models import Setting,EQ,Profile
+from User.serializers import SettingSerializer,ProfileSerializer,EQSerializer
 
 
 class UserAPIView(APIView):
-    def get(self, request, uid):
+    def get(self,request,uid):
         try:
             data={
                 "profile": ProfileSerializer(Profile.objects.get(uid=uid)).data,
@@ -18,21 +18,21 @@ class UserAPIView(APIView):
             }
 
         except Profile.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)
 
         return Response(data)
 
-    def post(self, request, uid):
+    def post(self,request,uid):
         try:
-            Profile.objects.create(uid=uid, username=request.data.get('username'))
+            Profile.objects.create(uid=uid,username=request.data.get('username'))
             Setting.objects.create(uid=uid)
             EQ.objects.create(uid=uid)
 
-            return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "User registered successfully"},status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response({"message": "User registered {}".format(e)}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "User registered {}".format(e)},status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request, uid):
+    def delete(self,request,uid):
         try:
             profile=Profile.objects.get(uid=uid)
             setting=Setting.objects.get(uid=uid)
@@ -45,7 +45,7 @@ class UserAPIView(APIView):
             # Delete the Profile object
             profile.delete()
 
-            return Response({"message": "User and related information deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": "User and related information deleted successfully"},status=status.HTTP_204_NO_CONTENT)
 
         except Profile.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)

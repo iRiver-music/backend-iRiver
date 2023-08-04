@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from User.serializers import SettingSerializer,ProfileSerializer,EQSerializer,PlaylistSerializer
-from User.models import Profile,Setting,EQ,Playlist
+from User.serializers import EQSerializer
+from User.models import EQ
 
 
 class EQAPIView(APIView):
@@ -16,6 +16,9 @@ class EQAPIView(APIView):
             return Response(serializer.data)
         except EQ.DoesNotExist:
             return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)
+
+    def post(self,request):
+        pass
 
     def put(self,request,uid):
         try:

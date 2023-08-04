@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Profile, Setting, EQ, Playlist, AdminCount
 
+# 轉成json格式(捨棄`created_at`字段)
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
