@@ -26,15 +26,23 @@ urlpatterns = [
     path('profile/<str:uid>/', ProfileAPIView.as_view(), name='profile'),
 
     # handle request with playlist
+
     path('playlist/<str:uid>/<str:playlist>/',
          PlaylistAPIView.as_view(), name='playlist'),
 
     path('playlist/<str:uid>/', PlaylistAPIView.as_view(), name='playlist'),
 
     # 紀錄播放紀錄
+
     path('listeningHistory/<str:music_ID>/',
          views.listeningHistory, name='listeningHistory'),
 
+
+
+    # 檢查邀請碼
+
+    path('valid_invitation_code/<str:invitation_code>/',
+         views.valid_invitation_code, name='valid_invitation_code'),
 
 
 
