@@ -5,6 +5,7 @@ from User.model.ProfileAPIView import ProfileAPIView
 from User.model.SettingAPIView import SettingAPIView
 from User.model.UserAPIView import UserAPIView
 from User.model.MyPlayListAPIView import MyPlayListAPIView
+from User.model.UserLoginAPIView import UserLoginAPIView
 from . import views
 
 # 異步版本
@@ -33,7 +34,7 @@ urlpatterns=[
 
     # path("test/",views.test123,name="test123"),
     # path("register/",views.register,name="register"),
-    path("login/",views.login,name="login"),
+    path("login/",UserLoginAPIView.as_view(),name="login"),
     path("logout/<str:uid>/",views.logout,name="logout"), # 登出
     path("my_playList/<str:uid>/",MyPlayListAPIView.as_view(),name="my_playList"),
     # path("profile/<str:uid>/",views.profileget,name="profile"),

@@ -30,32 +30,6 @@ import function
 from drfa.decorators import api_view,APIView
 from asgiref.sync import sync_to_async
 
-# 登入(未測試)
-def login(request):
-    if request.method=="POST": # (CSRF cookie not set.)
-        data=json.loads(request.body)
-        """
-        假定json格式為
-        {
-            "username": str,
-            "password": str
-        }
-        """
-        user=authenticate(username=data["username"],password=data["password"])
-        if user!=None:
-            success=True
-            login(request,user)
-            function.printcolorhaveline("green","register success!","-")
-            return redirect('/user/data/')  # 重新導向到首頁
-        else:
-            success=False
-            function.printcolorhaveline("fail","register fail","-")
-
-        return HttpResponse(json.dumps({
-            "success": success,
-            "data": data
-        }))# 要回傳什麼?
-
 # 註冊(未測試)
 def register(request):
     if request.method=="GET":
