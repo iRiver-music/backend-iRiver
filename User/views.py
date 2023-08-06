@@ -92,9 +92,8 @@ def listeningHistory(request,music_ID):
 
     return Response({"message": "聽歌紀錄的 count 屬性已經加一"},status=200)
 
-
 @api_view(["GET"])
-def valid_invitation_code(request, invitation_code):
+def valid_invitation_code(request,invitation_code):
     if Profile.objects.filter(invitation_code=invitation_code).exists():
         return Response({"message": "check"}, status=status.HTTP_202_ACCEPTED)
     else:
