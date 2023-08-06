@@ -31,6 +31,12 @@ urlpatterns=[
 
 
 
+    # 檢查邀請碼
+
+    path('valid_invitation_code/<str:invitation_code>/',
+         views.valid_invitation_code, name='valid_invitation_code'),
+
+
 
     # path("test/",views.test123,name="test123"),
     # path("register/",views.register,name="register"),
