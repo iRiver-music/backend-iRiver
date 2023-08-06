@@ -19,7 +19,7 @@ from django.db import connections
 
 # self import
 from .models import Social,Profile,EQ,Setting,musicList
-import function
+from .function import printcolorhaveline,nowtime,switch_key
 
 # program START
 test=False # only for testing

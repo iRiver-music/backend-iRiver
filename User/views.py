@@ -24,7 +24,7 @@ from rest_framework import status
 
 from .serializers import SettingSerializer,ProfileSerializer,EQSerializer,PlaylistSerializer
 from .models import Profile,Setting,EQ,Playlist,ListeningHistory,Social
-import function
+from .function import printcolorhaveline,nowtime,switch_key
 
 # 異步版本
 from drfa.decorators import api_view,APIView
