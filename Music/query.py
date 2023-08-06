@@ -1,6 +1,8 @@
 import MySQLdb
 import json
 import difflib
+from fuzzywuzzy import fuzz, process
+
 from .models import Song
 from .models import Artist
 from .serializers import ArtistSerializer
@@ -81,3 +83,19 @@ def query_song(song_name):
     # print('query_song : ', result)
     # print('query_song : ', score)
     return result, score
+
+def new_query_song(song_name) : 
+    end_query_list = []
+    # 迴圈開啟1~10的json檔
+    for i in range(10) : 
+        # 開啟
+        jsonFile = open(f'music_db.music_db{i}.json', 'w')
+        # 將json轉成dict
+        song_json = json.load(jsonFile)
+        # 將json中的音樂陣列取出來
+        song_list = song_json['data']
+        # 使用fuzzywuzzy 中的ratio 演算法對陣列中的每一個音樂做相似度評分及大到小排序
+        results = process.extract(song_name, song_list['title'], limit=20, scorer=fuzz.ratio)
+        # 將評分並排序完的music list 推入list中
+        end_query_list.append(results)
+    return end_query_list

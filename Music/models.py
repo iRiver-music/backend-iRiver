@@ -149,7 +149,7 @@ class Style(models.Model):
         if self.title:
             self.title = emoji_pattern.sub('', self.title)
             self.title = illegal_chars_pattern.sub('', self.title)
-          # 過濾 artist 欄位
+        # 過濾 artist 欄位
         if self.artist:
             self.artist = emoji_pattern.sub('', self.artist)
             self.artist = illegal_chars_pattern.sub('', self.artist)
