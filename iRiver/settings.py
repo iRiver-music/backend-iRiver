@@ -181,6 +181,28 @@ DATABASES = {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
     },
+    'user': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'iriver_user_data',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_ALL_TABLES',
+        }
+    },
+    'usermusiclist': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'iriver_user_music_list',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_ALL_TABLES',
+        }
+    },
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
     #     'NAME': 'music',
