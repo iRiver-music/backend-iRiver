@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from firebase_admin import credentials
+import firebase_admin
 from pathlib import Path
 import os
 from datetime import timedelta
@@ -157,30 +159,30 @@ WSGI_APPLICATION = 'iRiver.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'music',
-    #     'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
-    #     'PASSWORD': 'JABmQsQhpj05F6WI',
-    #     'HOST': '49.213.238.75',
-    #     'PORT': '3306',
-    #     'OPTIONS': {
-    #         'sql_mode': 'STRICT_ALL_TABLES',
-    #     }
-    # },
-    # localhost
-
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'music',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
+        'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'PASSWORD': 'ZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'HOST': '49.213.238.75',
         'PORT': '3306',
         'OPTIONS': {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
     },
+    # localhost
+
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'music',
+    #     'USER': 'root',
+    #     'PASSWORD': '',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '3306',
+    #     'OPTIONS': {
+    #         'sql_mode': 'STRICT_ALL_TABLES',
+    #     }
+    # },
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
     #     'NAME': 'music',
@@ -240,3 +242,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # for system app
 FORDERED_PATH = "/Users/hungwei/Desktop/code/iRiver-music/back/django-test-for-phone/test_phone/media"
+
+
+# fire base settings
+
+FIREBASE_AUTH = {
+    'FIREBASE_ACCOUNT_KEY_FILE': 'iRiver/iside-bf18c-firebase-adminsdk-o5z7t-8ccbc22def.json',
+}

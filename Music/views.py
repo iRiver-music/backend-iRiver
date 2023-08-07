@@ -61,7 +61,14 @@ def query_db_song(request, query):
         # print('music after serializers : ', row)
         music_list.append(row)
 
-    return JsonResponse(data=music_list, safe=False)
+    data = {
+        "song": [],
+        "artist": [],
+        "album": [],
+        "style": [],
+    }
+
+    return JsonResponse(data=data)
 
 
 def query_web_song(request, query):
