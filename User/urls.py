@@ -5,7 +5,6 @@ from User.model.ProfileAPIView import ProfileAPIView
 from User.model.SettingAPIView import SettingAPIView
 from User.model.UserAPIView import UserAPIView
 from User.model.MyPlayListAPIView import MyPlayListAPIView
-from User.model.UserLoginAPIView import UserLoginAPIView
 from . import views
 
 # 異步版本
@@ -21,8 +20,8 @@ urlpatterns=[
     # 檢查邀請碼
     path('valid_invitation_code/<str:invitation_code>/',views.valid_invitation_code,name='valid_invitation_code'),
 
-    path("logout/<str:uid>/",views.logout,name="logout"), # 登出
-    path("login/",UserLoginAPIView.as_view(),name="login"),
+    # path("logout/<str:uid>/",views.logout,name="logout"), # 登出
+    # path("login/",UserLoginAPIView.as_view(),name="login"),
 
     path("listeningHistory/<str:music_ID>/",views.listeningHistory,name="listeningHistory"), # 紀錄播放紀錄
     path("my_playList/<str:uid>/",MyPlayListAPIView.as_view(),name="my_playList"),
