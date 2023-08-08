@@ -64,25 +64,25 @@ def register(request):
             user.save()
             success = True
             body = data
-            function.printcolorhaveline("green", "register success!", "-")
+            printcolorhaveline("green", "register success!", "-")
         else:
             success = False
             body = ""
-            function.printcolorhaveline(
-                "fail", "register fail(register duplicate)", "-")
+            printcolorhaveline("fail", "register fail(register duplicate)", "-")
 
         return HttpResponse(json.dumps({
             "success": success,
             "data": body
         }))  # 要回傳什麼?
 
-# 登出(未測試)
 
 
-def logout(request, uid):
+# 登出已完成)
+@api_view(['GET'])  # 根據你的需求，指定適當的 HTTP 方法
+def logout(request,uid):
     request.session['isLogin'] = False
     request.session.save()
-    function.printcolorhaveline("green", str(uid)+" 登出成功", " ")
+    printcolorhaveline("green", str(uid)+" 登出成功", " ")
     return Response({"message": "User logout successfully"}, status=status.HTTP_200_OK)
 
 

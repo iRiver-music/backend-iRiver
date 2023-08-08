@@ -7,7 +7,6 @@ from rest_framework import status
 from User.serializers import EQSerializer
 from User.models import EQ
 
-
 class EQAPIView(APIView):
     def get(self,request,uid):
         try:

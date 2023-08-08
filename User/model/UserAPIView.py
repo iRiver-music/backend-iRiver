@@ -18,19 +18,19 @@ class UserAPIView(APIView):
     # authentication_classes = [FirebaseAuthentication]
 
     # 取得帳號資料
-    def get(self, request, uid):
+    def get(self,request,uid):
         try:
             data = {
-                "profile": ProfileSerializer(Profile.objects.get(uid=uid)).data,
-                "setting": SettingSerializer(Setting.objects.get(uid=uid)).data,
-                "eq": EQSerializer(EQ.objects.get(uid=uid)).data
+                "profile": ProfileSerializer(Profile.objects.using("user").get(uid=uid)).data,
+                "setting": SettingSerializer(Setting.objects.using("user").get(uid=uid)).data,
+                "eq": EQSerializer(EQ.objects.using("user").get(uid=uid)).data
             }
 
             return Response(data)
         except Profile.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # 註冊?
+    # 註冊
     def post(self, request, uid):
         # 使用新的序列化器来验证和处理请求数据
         serializer = self.CreateUserSerializer(data=request.data)
