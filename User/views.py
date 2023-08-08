@@ -30,62 +30,6 @@ from .function import printcolorhaveline, nowtime, switch_key
 from drfa.decorators import api_view, APIView
 from asgiref.sync import sync_to_async
 
-# 註冊(未測試)
-
-
-def register(request):
-    if request.method == "GET":
-        print(request.body)
-        data = json.loads(request.body)
-        print(data)
-        row = User.objects.using("djangouserlocal").filter(
-            username=data["username"]).all()
-        success = True
-        body = ""
-        if len(row) == 0:
-            """
-            假定json格式為
-            {
-                "username": str,
-                "email": str,
-                "password": str
-            }
-            """
-            user = User.objects.using("djangouserlocal").create(
-                is_speruser=0,
-                username=data["username"],
-                first_name="",
-                last_name="",
-                email=data["eail"],
-                is_staff=0,
-                is_active=1,
-            )
-            user.set_password(data["password"])
-            user.save()
-            success = True
-            body = data
-            printcolorhaveline("green", "register success!", "-")
-        else:
-            success = False
-            body = ""
-            printcolorhaveline("fail", "register fail(register duplicate)", "-")
-
-        return HttpResponse(json.dumps({
-            "success": success,
-            "data": body
-        }))  # 要回傳什麼?
-
-
-
-# 登出已完成)
-@api_view(['GET'])  # 根據你的需求，指定適當的 HTTP 方法
-def logout(request,uid):
-    request.session['isLogin'] = False
-    request.session.save()
-    printcolorhaveline("green", str(uid)+" 登出成功", " ")
-    return Response({"message": "User logout successfully"}, status=status.HTTP_200_OK)
-
-
 @api_view(["GET"])
 def listeningHistory(request, music_ID):
     try:
