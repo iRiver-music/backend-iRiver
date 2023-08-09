@@ -27,11 +27,9 @@ GENDER={
     ("F","女"),
 }
 
-
 def custom_default_date():
     # Custom logic to set the default date and time
     return timezone.now()  # You can replace this with your own logic if needed
-
 
 class Profile(models.Model):
     uid=models.CharField(max_length=36,primary_key=True,unique=True)
@@ -50,7 +48,6 @@ class Profile(models.Model):
         app_label="User"
         db_table="profile"
 
-
 class Setting(models.Model):
     uid=models.CharField(max_length=36,primary_key=True,unique=True)
     LANGUAGE=models.CharField(max_length=255,default="ch")
@@ -63,7 +60,6 @@ class Setting(models.Model):
     class Meta:
         app_label="User"
         db_table="setting"
-
 
 class EQ(models.Model):
     uid=models.CharField(max_length=36,primary_key=True,unique=True)
@@ -92,7 +88,6 @@ class EQ(models.Model):
         app_label="User"
         db_table="eq"
 
-
 class Social(models.Model):
     uid=models.CharField(max_length=36,unique=True)
     email=models.CharField(max_length=24)
@@ -102,7 +97,6 @@ class Social(models.Model):
     class Meta:
         app_label="User"
         db_table="social"
-
 
 class Playlist(models.Model):
     uid=models.CharField(max_length=36,default='null')
@@ -116,7 +110,6 @@ class Playlist(models.Model):
         app_label="User"
         db_table="playlist"
 
-
 class ListeningHistory(models.Model):
     music_ID=models.CharField(max_length=200,unique=True)
     count=models.IntegerField(null=True)
@@ -129,7 +122,6 @@ class ListeningHistory(models.Model):
     def __str__(self):
         return f"{self.user} 在 {self.listening_time} 聽了 {self.song}"
 
-
 class SearchHistory(models.Model):
     uid=models.CharField(max_length=36)
     query=models.CharField(max_length=255)
@@ -141,7 +133,6 @@ class SearchHistory(models.Model):
 
     def __str__(self):
         return self.title
-
 
 class AdminCount(models.Model):
     # music
@@ -161,7 +152,6 @@ class AdminCount(models.Model):
 
     def __str__(self):
         return self.title
-
 
 class Contract(models.Model):
     uid=models.CharField(max_length=36, unique=True)

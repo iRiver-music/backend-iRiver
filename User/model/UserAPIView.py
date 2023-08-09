@@ -9,9 +9,7 @@ from User.serializers import SettingSerializer, ProfileSerializer, EQSerializer
 # firebase
 from User.Authentication.authentication import FirebaseAuthentication
 
-
 #  ----------------------------------------------------------------
-
 
 class UserAPIView(APIView):
     # authentication_firebase
