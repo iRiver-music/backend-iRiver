@@ -33,7 +33,7 @@ class PlaylistAPIView(APIView):
                 existing_playlist=Playlist.objects.get(uid=uid,playlist=playlist,music_ID=playlist_data['music_ID'])
                 return Response({"error": "Playlist with the same 'music_ID' already exists in the same playlist"},status=status.HTTP_400_BAD_REQUEST)
             except Playlist.DoesNotExist:
-                pass
+                return Response({"error": "palylist not found."},status=status.HTTP_404_BAD_REQUEST)
         try:
             playlist=Playlist(**playlist_data)
             # Save the playlist object to the specified database
