@@ -11,12 +11,13 @@ from User.Authentication.authentication import FirebaseAuthentication
 
 #  ----------------------------------------------------------------
 
+
 class UserAPIView(APIView):
     # authentication_firebase
-    # authentication_classes = [FirebaseAuthentication]
+    authentication_classes = [FirebaseAuthentication]
 
     # 取得帳號資料
-    def get(self,request,uid):
+    def get(self, request, uid):
         try:
             data = {
                 "profile": ProfileSerializer(Profile.objects.using("user").get(uid=uid)).data,
@@ -31,7 +32,7 @@ class UserAPIView(APIView):
     # 註冊
     def post(self, request, uid):
         # 使用新的序列化器来验证和处理请求数据
-        serializer = self.CreateUserSerializer(data=request.data)
+        serializer = ProfileSerializer(data=request.data)
         if serializer.is_valid():
             try:
                 if not Profile.objects.filter(uid=uid).exists():
