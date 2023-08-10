@@ -65,7 +65,7 @@ class PlaylistAPIView(APIView):
                 playlist.save()
             return Response({"message": "Playlist updated successfully"}, status=status.HTTP_200_OK)
         except:
-            return Response({"error": "Failed to update playlist"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Failed to update playlist"}, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, uid, playlist=None):
         if playlist is not None:
@@ -77,6 +77,3 @@ class PlaylistAPIView(APIView):
                 return Response({"message": "Playlist deleted successfully"})
             except Playlist.DoesNotExist:
                 return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-
-
-ˋ
