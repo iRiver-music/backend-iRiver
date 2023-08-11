@@ -66,7 +66,7 @@ def playlistSet(request, uid):
 
 
 @api_view(["GET"])
-# @authentication_classes([FirebaseAuthentication])
+@authentication_classes([FirebaseAuthentication])
 def contract(request, uid):
     try:
         if Profile.objects.filter(uid=uid).exists():
