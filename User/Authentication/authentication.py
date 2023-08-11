@@ -25,9 +25,11 @@ firebase_admin.initialize_app(cred)
 class FirebaseAuthentication(BaseAuthentication):
     def authenticate(self, request):
         token = request.headers.get("Authorization")
+        print(token)
 
         try:
             decoded_token = auth.verify_id_token(token)
+            print(decoded_token)
             uid = decoded_token["uid"]
             email = decoded_token["email"]
 

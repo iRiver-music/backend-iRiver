@@ -15,6 +15,26 @@ import concurrent.futures
 from rest_framework import generics
 from rest_framework.response import Response
 
+# models
+from Music.models import Style, StyleTitle
+# =================================================================
+
+
+@api_view(['GET'])
+def web_discover(request, uid=None):
+    # 獲取特別專輯
+    title = ["最新上架及熱門歌曲", "台灣音樂", "香港音樂", "K-Pop hits", "J-Pop hits"]
+    style = ["J-Rock!", "放克流行金曲"]
+    song_style = ["us-pop", "tw-pop"]
+    style_super_set = StyleTitle.objects.all().values()
+    return
+
+
+@api_view(['GET'])
+def phone_discover(request, uid=None):
+    # 所有曲風
+    pass
+
 
 @api_view(['GET'])
 def discover(request):

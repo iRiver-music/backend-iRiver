@@ -13,10 +13,10 @@ import Music.sql.config
 from Music.query import query as query_music
 
 # import models
-from .models import Song, Artist
+from .models import Song, Artist, Style
 
 # import serializers
-from .serializers import ArtistSerializer, SongSerializer
+from .serializers import ArtistSerializer, SongSerializer, StyleSerializer
 
 # import clean_str
 from Music.clean_str import clear_str
@@ -35,9 +35,6 @@ from asgiref.sync import sync_to_async
 # rest_framework
 from rest_framework import generics
 from rest_framework.response import Response
-
-# test value
-test = False
 
 
 @api_view(['GET'])
@@ -132,6 +129,22 @@ def artist(request, artist):
         'songs': songs_data
     }
     return Response(response_data)
+
+
+# style =================================================================
+
+
+@api_view(['GET'])
+def style(request, style):
+    obj = Style.objects.filter(style=style)
+
+    if obj.exists():
+        serializer = StyleSerializer(obj, many=True)
+        return Response(serializer.data)
+    else:
+        return Response({"error": "Style not found"}, status=404)
+
+# test ==============================================
 
 
 @api_view(['GET'])

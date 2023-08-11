@@ -7,21 +7,39 @@ from rest_framework import status
 from User.serializers import PlaylistSerializer
 from User.models import Playlist
 from Music.models import Song
+from Music.serializers import SongSerializer
 
 
 class PlaylistAPIView(APIView):
     def get(self, request, uid, playlist=None):
         if playlist is None:
-            playlists = Playlist.objects.filter(uid=uid)
-            serializer = PlaylistSerializer(playlists, many=True)
-            return Response(serializer.data)
+            obj = Playlist.objects.filter(uid=uid).values()
+
+            music_info_list = []
+
+            for item in obj:
+                try:
+                    music = Song.objects.get(music_ID=item["music_ID"])
+                    music_info = SongSerializer(music).data
+                    music_info_list.append(music_info)
+                except Song.DoesNotExist:
+                    return Response({"mes": "song not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            return Response(music_info_list)
         else:
-            try:
-                playlist = Playlist.objects.get(playlist=playlist)
-                serializer = PlaylistSerializer(playlist)
-                return Response(serializer.data)
-            except Playlist.DoesNotExist:
-                return Response({"mes": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND)
+            obj = Playlist.objects.filter(uid=uid, playlist=playlist).values()
+
+            music_info_list = []
+
+            for item in obj:
+                try:
+                    music = Song.objects.get(music_ID=item["music_ID"])
+                    music_info = SongSerializer(music).data
+                    music_info_list.append(music_info)
+                except Song.DoesNotExist:
+                    return Response({"mes": "song not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            return Response(music_info_list)
 
     def post(self, request, uid, playlist=None):
         # Access the data from the request data directly

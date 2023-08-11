@@ -75,7 +75,6 @@ def contract(request, uid):
         else:
             return Response({"mes": "uid not exist"}, status=404)
     except Exception as e:
-        print(e)
         return Response({"error": str(e)}, status=404)
 
 
