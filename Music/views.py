@@ -40,6 +40,7 @@ from rest_framework.response import Response
 test = False
 
 
+@api_view(['GET'])
 def query_db_song(request, query):
     # 資料庫
     try:
@@ -71,6 +72,7 @@ def query_db_song(request, query):
     return JsonResponse(data=data)
 
 
+@api_view(['GET'])
 def query_web_song(request, query):
     # query = request.GET.get('query', '')
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
@@ -88,6 +90,7 @@ def query_web_song(request, query):
     return JsonResponse({'success': True, 'music_list': music_list}, safe=False)
 
 
+@api_view(['GET'])
 def album(request, album):
     search_album = Music.objects.all()
     matches = difflib.get_close_matches(

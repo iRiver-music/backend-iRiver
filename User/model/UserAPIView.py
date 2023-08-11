@@ -14,37 +14,40 @@ from User.Authentication.authentication import FirebaseAuthentication
 
 class UserAPIView(APIView):
     # authentication_firebase
-    authentication_classes = [FirebaseAuthentication]
+    # authentication_classes = [FirebaseAuthentication]
 
     # 取得帳號資料
     def get(self, request, uid):
         try:
             data = {
-                "profile": ProfileSerializer(Profile.objects.using("user").get(uid=uid)).data,
-                "setting": SettingSerializer(Setting.objects.using("user").get(uid=uid)).data,
-                "eq": EQSerializer(EQ.objects.using("user").get(uid=uid)).data
+                "profile": ProfileSerializer(Profile.objects.get(uid=uid)).data,
+                "setting": SettingSerializer(Setting.objects.get(uid=uid)).data,
+                "eq": EQSerializer(EQ.objects.get(uid=uid)).data
             }
 
             return Response(data)
-        except Profile.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
     # 註冊
     def post(self, request, uid):
-        # 使用新的序列化器来验证和处理请求数据
-        serializer = ProfileSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
+        # 檢查是否邀請碼正確
+        try:
+            if not Profile.objects.filter(invited_by_code=request.data["invited_by_code"]).exists():
+                return Response({"mes": "error invited_by_code"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = ProfileSerializer(data=request.data)
+            if serializer.is_valid():
+
                 if not Profile.objects.filter(uid=uid).exists():
                     Profile.objects.create(
-                        uid=uid, username=serializer.validated_data['username'])
+                        **request.data)
                 if not Setting.objects.filter(uid=uid).exists():
                     Setting.objects.create(uid=uid)
                 if not EQ.objects.filter(uid=uid).exists():
                     EQ.objects.create(uid=uid)
 
-                return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
-            except Exception as e:
-                return Response({"message": "User registered {}".format(e)}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"mes": "User registered successfully"}, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"mes": str(e)}, status=status.HTTP_404_NOT_FOUND)

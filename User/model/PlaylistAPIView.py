@@ -6,11 +6,11 @@ from rest_framework import status
 
 from User.serializers import PlaylistSerializer
 from User.models import Playlist
+from Music.models import Song
 
 
 class PlaylistAPIView(APIView):
     def get(self, request, uid, playlist=None):
-        print(uid)
         if playlist is None:
             playlists = Playlist.objects.filter(uid=uid)
             serializer = PlaylistSerializer(playlists, many=True)
@@ -21,35 +21,39 @@ class PlaylistAPIView(APIView):
                 serializer = PlaylistSerializer(playlist)
                 return Response(serializer.data)
             except Playlist.DoesNotExist:
-                return Response({"error": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"mes": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, uid, playlist=None):
         # Access the data from the request data directly
         playlist_data = request.data
 
         # Check if the 'music_ID' already exists in the same playlist
-        if playlist is not None:
+        if playlist is None and not Playlist.objects.filter(uid=uid, playlist="fav", music_ID=playlist_data["music_ID"]).exists():
             try:
-                existing_playlist = Playlist.objects.get(
-                    uid=uid, playlist=playlist, music_ID=playlist_data['music_ID'])
-                return Response({"error": "Playlist with the same 'music_ID' already exists in the same playlist"}, status=status.HTTP_400_BAD_REQUEST)
+                existing_playlist = Playlist.objects.create(
+                    uid=uid, playlist="fav", music_ID=playlist_data['music_ID'], favorite=True)
+                return Response({"mes": "OK"}, status=status.HTTP_200_OK)
             except Playlist.DoesNotExist:
-                return Response({"error": "palylist not found."},status=status.HTTP_404_BAD_REQUEST)
+                return Response({"mes": "palylist error."}, status=status.HTTP_404_NOT_FOUND)
         try:
-            playlist = Playlist(**playlist_data)
-            # Save the playlist object to the specified database
-            playlist.save()
-            return Response({"message": "Playlist uploaded successfully"}, status=status.HTTP_201_CREATED)
+            if playlist:
+                playlist = Playlist(uid=uid, ** playlist_data)
+                # Save the playlist object to the specified database
+                playlist.save()
+                return Response({"mes": "Playlist uploaded successfully"}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"mes": "Failed to create playlist"}, status=status.HTTP_400_BAD_REQUEST)
+
         except ValidationError as ve:
-            return Response({"error": "Failed to create playlist. Validation error: {}".format(ve)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"mes": "Failed to create playlist. Validation error: {}".format(ve)}, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
-            return Response({"error": "Failed to create playlist. The 'id' field may already exist."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"mes": "Failed to create playlist. The 'id' field may already exist."}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, uid, playlist=None):
         try:
             playlists = Playlist.objects.filter(playlist=playlist, uid=uid)
         except Playlist.DoesNotExist:
-            return Response({"error": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"mes": "Playlist not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Access the data from the request data directly
         playlist_data = request.data
@@ -63,20 +67,32 @@ class PlaylistAPIView(APIView):
             # Save the updated data to the specified database
             for playlist in playlists:
                 playlist.save()
-            return Response({"message": "Playlist updated successfully"}, status=status.HTTP_200_OK)
+            return Response({"mes": "Playlist updated successfully"}, status=status.HTTP_200_OK)
         except:
-            return Response({"error": "Failed to update playlist"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"mes": "Failed to update playlist"}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, uid, playlist=None):
-        if playlist is not None:
-            Playlist.objects.get(id=uid, playlist=playlist).delete()
+        if len(request.data) == 0:
+            # 刪除我的最愛
+            try:
+                if playlist is None:
+                    Playlist.objects.filter(uid=uid, playlist="fav").delete()
+                    return Response({"mes": "Playlist deleted successfully"})
+                else:
+                    Playlist.objects.filter(uid=uid,
+                                            playlist=playlist).delete()
+                    return Response({"mes": "Playlist deleted successfully"})
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
         else:
             try:
-                Playlist.objects.get(
-                    playlist=request.data["playlist"], music_ID=request.data["music_ID"]).delete()
-                return Response({"message": "Playlist deleted successfully"})
-            except Playlist.DoesNotExist:
-                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-
-
-ˋ
+                if playlist is None:
+                    Playlist.objects.filter(
+                        uid=uid, playlist="fav", music_ID=request.data["music_ID"]).delete()
+                    return Response({"mes": "Playlist deleted successfully"})
+                else:
+                    Playlist.objects.get(uid=uid,
+                                         playlist=playlist, music_ID=request.data["music_ID"]).delete()
+                    return Response({"mes": "Playlist deleted successfully"})
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
