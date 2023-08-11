@@ -50,3 +50,15 @@ def valid_invitation_code(request, invitation_code):
         return Response({"message": "check"}, status=status.HTTP_202_ACCEPTED)
     else:
         return Response({"message": "empty"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(["POST"])
+def contract(request,uid):
+    pass
+    # try:
+    #     contract = request.data["contract"]
+    #     if Profile.objects.filter(contract=contract).exists():
+    #         return Response({"message": "check"}, status=status.HTTP_202_ACCEPTED)
+    #     else:
+    #         return Response({"message": "uid not exist"}, status=status.HTTP_404_NOT_FOUND)
+    # except:
+    #     return Response({"message": "uid not exist"}, status=status.HTTP_404_NOT_FOUND)

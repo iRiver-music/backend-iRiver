@@ -22,6 +22,7 @@ urlpatterns=[
 
     # path("logout/<str:uid>/",views.logout,name="logout"), # 登出
     # path("login/",UserLoginAPIView.as_view(),name="login"),
+    path("contract/<str:uid>/",views.contract,name="contract"), # 紀錄播放紀錄
 
     path("listeningHistory/<str:music_ID>/",views.listeningHistory,name="listeningHistory"), # 紀錄播放紀錄
     path("my_playList/<str:uid>/",MyPlayListAPIView.as_view(),name="my_playList"),
