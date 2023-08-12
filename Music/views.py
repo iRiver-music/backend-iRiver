@@ -144,6 +144,7 @@ def style(request, style):
     else:
         return Response({"error": "Style not found"}, status=404)
 
+
 # test ==============================================
 
 

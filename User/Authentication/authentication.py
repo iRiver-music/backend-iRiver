@@ -16,6 +16,12 @@ from firebase_admin import auth
 #  ----------------------------------------------------------------
 
 
+# firebase
+cred = credentials.Certificate(
+    "iRiver/iside-bf18c-firebase-adminsdk-o5z7t-8ccbc22def.json")
+firebase_admin.initialize_app(cred)
+
+
 class FirebaseAuthentication(BaseAuthentication):
     def authenticate(self, request):
         header = request.headers.get("Authorization")
@@ -27,10 +33,11 @@ class FirebaseAuthentication(BaseAuthentication):
                 decoded_token = auth.verify_id_token(token)
                 uid = decoded_token["uid"]
                 email = decoded_token["email"]
+                print(email)
 
                 # 返回驗證成功的用戶
                 return (uid, None)
             except Exception as e:
                 raise AuthenticationFailed(str(e))
 
-        return None  # 返回 None 表示無法驗證身份
+        return None
