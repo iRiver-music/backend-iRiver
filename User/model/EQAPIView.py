@@ -11,8 +11,7 @@ class EQAPIView(APIView):
     def get(self,request,uid):
         try:
             eq=EQ.objects.get(uid=uid)
-            serializer=EQSerializer(eq)
-            return Response(serializer.data)
+            return Response({ "eq":EQSerializer(eq).data })
         except EQ.DoesNotExist:
             return Response({"error": "User not found"},status=status.HTTP_404_NOT_FOUND)
 
