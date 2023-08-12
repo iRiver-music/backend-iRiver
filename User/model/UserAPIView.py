@@ -13,8 +13,8 @@ from User.Authentication.authentication import FirebaseAuthentication
 
 
 class UserAPIView(APIView):
-    # authentication_firebase
-    # authentication_classes = [FirebaseAuthentication]
+    authentication_firebase
+    authentication_classes = [FirebaseAuthentication]
 
     # 取得帳號資料
     def get(self, request, uid):

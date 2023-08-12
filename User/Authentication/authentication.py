@@ -12,6 +12,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
 
+#cred = credentials.Certificate('path_to_your_serviceAccountKey.json')
+#firebase_admin.initialize_app(cred)
 
 #  ----------------------------------------------------------------
 
@@ -22,12 +24,12 @@ class FirebaseAuthentication(BaseAuthentication):
 
         if header and header.startswith("Bearer "):
             token = header.replace("Bearer ", "")
-
+            print("token=>",token)
             try:
                 decoded_token = auth.verify_id_token(token)
                 uid = decoded_token["uid"]
                 email = decoded_token["email"]
-
+                print("uid=>",uid)
                 # 返回驗證成功的用戶
                 return (uid, None)
             except Exception as e:
