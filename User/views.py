@@ -80,7 +80,7 @@ def contract(request, uid):
 
 @api_view(['GET'])
 def creat_test_user(request):
-    Profile.objects.create(uid="123")
+    Profile.objects.create(uid="1231")
     EQ.objects.create(uid="123")
     Setting.objects.create(uid="123")
 

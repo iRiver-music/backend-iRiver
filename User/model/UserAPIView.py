@@ -46,7 +46,13 @@ class UserAPIView(APIView):
                 if not EQ.objects.filter(uid=uid).exists():
                     EQ.objects.create(uid=uid)
 
-                return Response({"mes": "User registered successfully"}, status=status.HTTP_200_OK)
+                    data = {
+                        "profile": ProfileSerializer(Profile.objects.get(uid=uid)).data,
+                        "setting": SettingSerializer(Setting.objects.get(uid=uid)).data,
+                        "eq": EQSerializer(EQ.objects.get(uid=uid)).data
+                    }
+
+                return Response(data)
             else:
                 return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:

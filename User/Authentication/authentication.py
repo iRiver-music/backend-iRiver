@@ -30,12 +30,10 @@ class FirebaseAuthentication(BaseAuthentication):
 
         if header and header.startswith("Bearer "):
             token = header.replace("Bearer ", "")
-            print("token=>", token)
             try:
                 decoded_token = auth.verify_id_token(token)
                 uid = decoded_token["uid"]
                 email = decoded_token["email"]
-                print(email)
 
                 # 返回驗證成功的用戶
                 return (uid, None)
