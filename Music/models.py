@@ -176,7 +176,7 @@ class StyleTitle(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        self.clean()  # 在保存數據前先進行過濾
+        self.clean()
         super().save(*args, **kwargs)
 
     class Meta:
