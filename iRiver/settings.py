@@ -173,11 +173,22 @@ DATABASES = {
     # },
     # localhost
 
-    'default': {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'music',
+    #     'USER': 'root',
+    #     'PASSWORD': '',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '3306',
+    #     'OPTIONS': {
+    #         'sql_mode': 'STRICT_ALL_TABLES',
+    #     }
+    # },
+        'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'music',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'PASSWORD': 'ZkyaanAP5cXQqE8hkX5hnmYYhcMr',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
