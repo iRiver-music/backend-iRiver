@@ -24,8 +24,11 @@ from rest_framework import status
 
 from User.Authentication.authentication import FirebaseAuthentication
 
-from .serializers import PlaylistSetSerializer, SettingSerializer, ProfileSerializer, EQSerializer, PlaylistSerializer
-from .models import Profile, Setting, EQ, Playlist, ListeningHistory, Social, Contract, SearchHistory
+
+# models
+from Music.models import Artist, Song
+from .models import Profile, Setting, EQ, Playlist, ListeningHistory, Social, Contract, SearchHistory, LastUsersong
+from .serializers import PlaylistSetSerializer, SettingSerializer, ProfileSerializer, EQSerializer, PlaylistSerializer, LastUsersongSerializer
 from .function import printcolorhaveline, nowtime, switch_key
 
 # 異步版本
@@ -76,6 +79,35 @@ def contract(request, uid):
             return Response({"mes": "uid not exist"}, status=404)
     except Exception as e:
         return Response({"error": str(e)}, status=404)
+
+
+# last song  =================================================================================================
+
+
+class LastuserSongAPIView(APIView):
+    # authentication_firebase
+    def get(slef, request,  uid):
+        try:
+            obj = LastUsersong.objects.get(uid=uid)
+            data = LastUsersongSerializer(obj).data
+            return Response(data)
+
+        except Exception as e:
+            return Response({"mes": str(e)}, status=404)
+
+    def post(self, request, uid):
+        try:
+            # delete old
+            LastUsersong.objects.delete(uid=uid)
+
+            # create new
+            obj = Song.objects.get(music_ID=request.data["music_ID"])
+            LastUsersong.objects.create(
+                uid=uid, artist=obj.artist, music_ID=request.data["music_ID"])
+
+            return Response({"mes": "ok"})
+        except Exception as e:
+            return Response({"mes": str(e)}, status=404)
 
 
 @api_view(['GET'])

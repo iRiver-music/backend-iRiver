@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, Setting, EQ, Playlist, AdminCount
+from .models import Profile, Setting, EQ, Playlist, AdminCount, LastUsersong
 
 # 轉成json格式(捨棄`created_at`字段)
 
@@ -38,3 +38,9 @@ class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminCount
         exclude = ["created_at"]
+
+
+class LastUsersongSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LastUsersong
+        exclude = ["created_at", "uid"]

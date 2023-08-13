@@ -176,3 +176,19 @@ class Contract(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# last song
+
+class LastUsersong(models.Model):
+    uid = models.CharField(max_length=36, unique=True, default=True)
+    artist = models.CharField(max_length=100)
+    music_ID = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'User'
+        db_table = 'lastUsersong'
+
+    def __str__(self):
+        return self.title
