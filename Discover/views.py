@@ -16,7 +16,9 @@ from rest_framework import generics
 from rest_framework.response import Response
 
 # models
-from Music.models import Style, StyleTitle
+from Music.models import Style
+from User.model.PlaylistAPIView import get_uid_fav_song
+from User.models import Playlist
 from .models import DiscoverTitle
 
 # =================================================================
@@ -24,6 +26,27 @@ from .models import DiscoverTitle
 
 @api_view(['GET'])
 def discover(request, uid=None):
+    obj = DiscoverTitle.objects.all().values()
+
+    playlist = []
+    # fav
+    if Playlist.objects.filter(uid=uid,  playlist="fav").exists():
+        playlist.append({"title": "我的最愛", "name": "fav",
+                         "data": get_uid_fav_song(uid)})
+
+    for discover in obj:
+        obj_song_data = Style.objects.filter(
+            style=discover["name"]).values()
+
+        data = SongSerializer(obj_song_data, many=True).data
+        playlist.append({"title": discover['show_title'], "name": discover["name"],
+                         "data": data})
+
+    return Response(playlist)
+
+
+@api_view(['GET'])
+def push_discover(request, uid=None):
     # 獲取特別專輯
     show_title = ["最近新增", "最新熱門", "台灣歌曲", "韓國歌曲", "日本歌曲", "放克音樂", "金典音樂"]
     super_title_name = ["已發行", "熱門歌曲清單",
@@ -36,32 +59,3 @@ def discover(request, uid=None):
         DiscoverTitle.objects.create(name=name, show_title=title)
 
     return Response({"message": "sdsds"})
-
-
-# @api_view(['GET'])
-# def discover(request, uid=None):
-#     album_data = AlbumSerializer(
-#         Album.objects.all(), many=True).data
-
-#     num_albums = len(album_data)
-#     num_groups = (num_albums + 5) // 6  # 计算分组数量
-
-#     superset = []
-#     set_title = ["最新上架及熱門歌曲", "台灣音樂", "香港音樂", "K-Pop hits", "J-Pop hits"]
-
-#     for i in range(num_groups):
-#         start = i * 6
-#         end = min((i + 1) * 6, num_albums)
-#         subset = album_data[start:end]
-
-#         album_set = []
-#         count = 0
-#         for album in subset:
-#             count += 1
-#             album_set.append(
-#                 {'id': i + count, 'album': album})
-
-#         superset.append(
-#             {'id': i+100, 'set': album_set, 'title': set_title[i]})
-
-#     return Response(superset)

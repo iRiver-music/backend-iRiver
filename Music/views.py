@@ -36,6 +36,8 @@ from asgiref.sync import sync_to_async
 from rest_framework import generics
 from rest_framework.response import Response
 
+test = False
+
 
 @api_view(['GET'])
 def query_db_song(request, query):

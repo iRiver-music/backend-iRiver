@@ -10,20 +10,26 @@ from Music.models import Song
 from Music.serializers import SongSerializer
 
 
+def get_uid_fav_song(uid):
+    obj = Playlist.objects.filter(uid=uid, playlist="fav").values()
+    music_info_list = []
+
+    for item in obj:
+        music = Song.objects.get(music_ID=item["music_ID"])
+        music_info = SongSerializer(music).data
+        music_info_list.append(music_info)
+
+    return music_info_list
+
+
 class PlaylistAPIView(APIView):
     def get(self, request, uid, playlist=None):
         if playlist is None:
-            obj = Playlist.objects.filter(uid=uid).values()
+            try:
+                return Response(get_uid_fav_song(uid=uid))
 
-            music_info_list = []
-
-            for item in obj:
-                try:
-                    music = Song.objects.get(music_ID=item["music_ID"])
-                    music_info = SongSerializer(music).data
-                    music_info_list.append(music_info)
-                except Song.DoesNotExist:
-                    return Response({"mes": "song not found"}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response({"mes": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
             return Response(music_info_list)
         else:
