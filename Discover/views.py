@@ -25,22 +25,22 @@ from .models import DiscoverTitle
 
 
 @api_view(['GET'])
-def discover(request, uid=None):
+def discover(request, uid):
     obj = DiscoverTitle.objects.all().values()
 
     playlist = []
     # fav
     if Playlist.objects.filter(uid=uid,  playlist="fav").exists():
-        playlist.append({"title": "我的最愛", "name": "fav",
-                         "data": get_uid_fav_song(uid)})
+        playlist.append({"title": "我的最愛", "style": "fav",
+                         "songs": get_uid_fav_song(uid)})
 
     for discover in obj:
         obj_song_data = Style.objects.filter(
             style=discover["name"]).values()
 
         data = SongSerializer(obj_song_data, many=True).data
-        playlist.append({"title": discover['show_title'], "name": discover["name"],
-                         "data": data})
+        playlist.append({"title": discover['show_title'], "style": discover["name"],
+                         "songs": data})
 
     return Response(playlist)
 

@@ -10,7 +10,7 @@ from Music.models import Song
 from Music.serializers import SongSerializer
 
 
-def get_uid_fav_song(uid):
+def get_uid_fav_song(uid: str) -> list:
     obj = Playlist.objects.filter(uid=uid, playlist="fav").values()
     music_info_list = []
 
