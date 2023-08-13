@@ -4,6 +4,6 @@ from . import views
 app_name = 'Discover'
 
 urlpatterns = [
-    path('',
+    path('<str:uid>/',
          views.discover, name='discover'),
 ]

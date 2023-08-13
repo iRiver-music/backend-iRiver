@@ -33,27 +33,24 @@ class UserAPIView(APIView):
     def post(self, request, uid):
         # 檢查是否邀請碼正確
         try:
-            if not Profile.objects.filter(invited_by_code=request.data["invited_by_code"]).exists():
+            if not Profile.objects.filter(invitation_code=request.data["invited_by_code"]).exists():
                 return Response({"mes": "error invited_by_code"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = ProfileSerializer(data=request.data)
-            if serializer.is_valid():
 
-                if not Profile.objects.filter(uid=uid).exists():
-                    Profile.objects.create(
-                        **request.data)
-                if not Setting.objects.filter(uid=uid).exists():
-                    Setting.objects.create(uid=uid)
-                if not EQ.objects.filter(uid=uid).exists():
-                    EQ.objects.create(uid=uid)
+            if Profile.objects.filter(uid=uid).exists():
+                return Response({"mes": "uid exists"}, status=status.HTTP_404_NOT_FOUND)
 
-                    data = {
-                        "profile": ProfileSerializer(Profile.objects.get(uid=uid)).data,
-                        "setting": SettingSerializer(Setting.objects.get(uid=uid)).data,
-                        "eq": EQSerializer(EQ.objects.get(uid=uid)).data
-                    }
+            Profile.objects.create(
+                **request.data)
+            Setting.objects.create(uid=uid)
+            EQ.objects.create(uid=uid)
 
-                return Response(data)
-            else:
-                return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+            data = {
+                "profile": ProfileSerializer(Profile.objects.get(uid=uid)).data,
+                "setting": SettingSerializer(Setting.objects.get(uid=uid)).data,
+                "eq": EQSerializer(EQ.objects.get(uid=uid)).data
+            }
+
+            return Response(data)
+
         except Exception as e:
             return Response({"mes": str(e)}, status=status.HTTP_404_NOT_FOUND)
