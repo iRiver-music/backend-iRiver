@@ -3,6 +3,10 @@ import json
 from math import ceil
 from ..serializers import SongSerializer
 
+import os
+from django.conf import settings
+from django.http import JsonResponse
+
 
 def jsonTest():
     a = Song.objects.using('test').all()
@@ -33,3 +37,34 @@ def cutjson():
         beWrite = {'data': data_array}
         json.dump(beWrite, jsonFile)
         count += 1
+
+def count_file(data) : 
+    count = data.count() / 10000 + 1 if data.count() % 10000 > 0 else data.count() / 10000
+
+def make_json_file(request):
+    try : 
+        data = Song.objects.all()
+        file_total = count_file(data)
+        row = []
+        count = 0
+        file_count = 0
+        for index, i in enumerate(data): 
+            serializer = SongSerializer(i)
+            row.append(serializer.data)
+            count += 1
+            if count >= 10000 or index == len(data) - 1: 
+                input = {'data': row}
+                json_object = json.dumps(input, indent=4)
+                absolute_path = os.path.join(settings.BASE_DIR, 'Music', 'music_db',f'music_db{file_count}.json')
+                with open(absolute_path, 'w') as json_file:
+                    json_file.write(json_object)
+                count = 0
+                row = []
+                file_count += 1
+        # Writing to sample.json)
+        return JsonResponse({'make file' : True})
+    except Exception as e :
+            print('Error in writeJson : ')
+            print(e)
+            return JsonResponse({'make_file' : False})
+        

@@ -5,7 +5,7 @@ from .models import Song, Album, Artist, Style
 class SongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
-        exclude = ['created_at']
+        fields = '__all__'
 
 
 class AlbumSerializer(serializers.ModelSerializer):

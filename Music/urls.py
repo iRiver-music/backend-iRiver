@@ -1,8 +1,11 @@
 from django.urls import path, include
 from . import views
-from Music.music_db.writeJson import jsonTest
+from Music.music_db.writeJson import make_json_file
+from Music.query import new_query
 
 app_name = 'Music'
+
+
 urlpatterns = [
 
     path('query/db/<str:query>/',
@@ -24,6 +27,12 @@ urlpatterns = [
     path('style/<str:style>/',
          views.style, name='style'),
     # test
-    path('test', jsonTest)
+
+    path('album/<str:album>/',
+             views.album, name='album'),
+    path('songs/<str:artist>/',
+             views.songs, name='songs'),
+    path('update_music/', make_json_file, name='update'),
+    path('test/<str:query>', new_query, name='test')
 
 ]
