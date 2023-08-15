@@ -139,6 +139,7 @@ def new_query(request, query) :
                 search_list.append(i)
 
         results = sorted(search_list, key=lambda song: custom_sort(song, query), reverse=True)
+        print('finish second sort')
     except Exception as e:
         print('Error in new_query : ')
         print(e)

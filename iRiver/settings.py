@@ -160,17 +160,17 @@ WSGI_APPLICATION = 'iRiver.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'music',
-    #     'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
-    #     'PASSWORD': 'ZkyaanAP5cXQqE8hkX5hnmYYhcMr',
-    #     'HOST': '49.213.238.75',
-    #     'PORT': '3306',
-    #     'OPTIONS': {
-    #         'sql_mode': 'STRICT_ALL_TABLES',
-    #     }
-    # },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'music',
+        'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'PASSWORD': 'ZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'HOST': '49.213.238.75',
+        'PORT': '3306',
+        'OPTIONS': {
+            'sql_mode': 'STRICT_ALL_TABLES',
+        }
+    },
     # localhost
 
     # 'default': {
@@ -184,17 +184,17 @@ DATABASES = {
     #         'sql_mode': 'STRICT_ALL_TABLES',
     #     }
     # },
-        'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'music',
-        'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
-        'PASSWORD': 'ZkyaanAP5cXQqE8hkX5hnmYYhcMr',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'sql_mode': 'STRICT_ALL_TABLES',
-        }
-    },
+    #     'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'music',
+    #     'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+    #     'PASSWORD': 'ZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '3306',
+    #     'OPTIONS': {
+    #         'sql_mode': 'STRICT_ALL_TABLES',
+    #     }
+    # },
 
 
 }

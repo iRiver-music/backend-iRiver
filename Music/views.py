@@ -7,8 +7,6 @@ import concurrent.futures
 
 
 # import sql相關
-import Music.sql.config
-
 # import query function
 from Music.query import query as query_music
 
