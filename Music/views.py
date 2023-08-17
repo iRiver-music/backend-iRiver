@@ -161,3 +161,9 @@ def artist_test(request, artist):
         'songs': songs_data
     }
     return Response(response_data)
+
+
+def change(request):
+    obj = Style.objects.all().values()
+    print(obj)
+    return JsonResponse({"success": True})

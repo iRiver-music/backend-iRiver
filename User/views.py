@@ -110,6 +110,17 @@ class LastuserSongAPIView(APIView):
             return Response({"mes": str(e)}, status=404)
 
 
+# user music_ID =============================================================
+
+
+@api_view(['GET'])
+def music_ID(request, uid):
+    obj = Playlist.objects.filter(
+        uid=uid, playlist="fav").values('music_ID', "id").distinct()
+
+    return Response(obj)
+
+
 @api_view(['GET'])
 def creat_test_user(request):
     Profile.objects.create(uid="123")

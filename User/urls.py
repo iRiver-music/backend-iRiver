@@ -38,8 +38,12 @@ urlpatterns = [
     path("playlist/<str:uid>/<str:playlist>/",
          PlaylistAPIView.as_view(), name="playlist"),
     path("playlist/<str:uid>/", PlaylistAPIView.as_view(), name="playlist"),
+
     # get playlist
     path("playlistSet/<str:uid>/", views.playlistSet, name="playlistSet"),
+
+    # get user music_ID
+    path("music_ID/<str:uid>/", views.music_ID, name="music_ID"),
 
     # last user song
     path("lastUserSong/<str:uid>/",

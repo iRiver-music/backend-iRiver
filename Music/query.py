@@ -1,3 +1,4 @@
+import concurrent.futures
 import MySQLdb
 import json
 import difflib
@@ -9,10 +10,9 @@ from django.http import JsonResponse
 
 from .models import Song
 from .models import Artist
-from .serializers import ArtistSerializer
-from .serializers import SongSerializer
 
 from multiprocessing import Process, Manager
+
 
 def query(query):
     artist_song_res, artist_song_sorce = query_all_artist_song(
@@ -39,7 +39,7 @@ def query(query):
 
 def query_all_artist_song(artist):
     # r =self.get_all_artist()
-    
+
     # print(r)z
 
     try:
@@ -91,58 +91,101 @@ def query_song(song_name):
     return result, score
 
 
-def count_file() -> list : 
-    absolute_path = os.path.join(settings.BASE_DIR, 'Music', 'music_db','*.json')
+def count_file() -> list:
+    absolute_path = os.path.join(
+        settings.BASE_DIR, 'Music', 'music_db', '*.json')
     json_files = glob.glob(absolute_path)
 
     return json_files
 
-def custom_sort(song, query):
-        return fuzz.ratio(query, song['title'])
 
-def search_music(file_name, query, results_list) -> list : 
+def custom_sort(song, query):
+    return fuzz.ratio(query, song['title'])
+
+
+def search_music(file_name, query, results_list) -> list:
 
     # open json file
-    with open(file_name, 'r') as jsonFile : 
+    with open(file_name, 'r') as jsonFile:
         song_json = json.load(jsonFile)
 
     song_list = song_json['data']
     # use radio algorithnm in fuzzywuzzy to sort music by rate (high to low)
-    
-    results = sorted(song_list, key=lambda song: custom_sort(song, query), reverse=True)
+
+    results = sorted(song_list, key=lambda song: custom_sort(
+        song, query), reverse=True)
     results = results[:20]
     # print(type(results))
     # print(results)
-    # push music_list into the querylist 
+    print(len(results))
+    # push music_list into the querylist
     print("finish sorted")
     results_list.append(results)
 
-def new_query(request, query) : 
+    return results_list
+
+# 異步
+
+
+def new_query(request, query):
     processes = []
     manager = Manager()
     first_results = manager.list()
-    try :
+    try:
         file_list = count_file()
-        print('file_list : ', file_list)
+        print('file_list : ', len(file_list))
+
         # search_music(file_list[0], query, processes)
         # print(processes)
-        for file in file_list : 
-            p = Process(target=search_music, args=(file, query, first_results))
-            processes.append(p)
-            p.start()
+        # for file in file_list:
+        #     p = Process(target=search_music, args=(file, query, first_results))
+        #     processes.append(p)
+        #     p.start()
 
-        for p in processes : 
-            p.join()
-        search_list = []
-        for result_list in first_results : 
-            for i in result_list : 
-                search_list.append(i)
+        # for p in processes:
+        #     p.join()
 
-        results = sorted(search_list, key=lambda song: custom_sort(song, query), reverse=True)
+        # search_list = []
+
+        # for result_list in first_results:
+        #     for i in result_list:
+        #         search_list.append(i)
+
+        search_results = []
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(file_list)) as executor:
+            future_to_file = {executor.submit(
+                search_music, file, query, first_results): file for file in file_list}
+            for future in concurrent.futures.as_completed(future_to_file):
+                file = future_to_file[future]
+                try:
+                    result = future.result()
+                    search_results.extend(result)
+                except Exception as exc:
+                    print(f'An error occurred for file {file}: {exc}')
+
+        lista = []
+
+        for result_list in first_results:
+            for i in result_list:
+                lista.append(i)
+
+        print(search_results[0])
+
+        print(type(search_results))
+
+        try:
+            results = sorted(lista,  key=lambda song: custom_sort(
+                song, query), reverse=True)
+        except Exception as e:
+            print(e)
+
+        print(len(results))
+
         print('finish second sort')
     except Exception as e:
         print('Error in new_query : ')
         print(e)
         return JsonResponse({'error': str(e)}, status=500)
-    
-    return JsonResponse({'data' : results})
+
+    return JsonResponse({'data': results})

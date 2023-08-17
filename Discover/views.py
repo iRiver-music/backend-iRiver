@@ -29,9 +29,10 @@ def discover(request, uid):
     obj = DiscoverTitle.objects.all().values()
 
     playlist = []
+    id = 10000
     # fav
     if Playlist.objects.filter(uid=uid,  playlist="fav").exists():
-        playlist.append({"title": "我的最愛", "style": "fav",
+        playlist.append({"id": id, "title": "我的最愛", "style": "fav",
                          "songs": get_uid_fav_song(uid)})
 
     for discover in obj:
@@ -39,7 +40,8 @@ def discover(request, uid):
             style=discover["name"]).values()
 
         data = SongSerializer(obj_song_data, many=True).data
-        playlist.append({"title": discover['show_title'], "style": discover["name"],
+        id = id + 1
+        playlist.append({"id": id,  "title": discover['show_title'], "style": discover["name"],
                          "songs": data})
 
     return Response(playlist)

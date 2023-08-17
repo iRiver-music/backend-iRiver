@@ -15,9 +15,12 @@ def get_uid_fav_song(uid: str) -> list:
     music_info_list = []
 
     for item in obj:
-        music = Song.objects.get(music_ID=item["music_ID"])
-        music_info = SongSerializer(music).data
-        music_info_list.append(music_info)
+        try:
+            music = Song.objects.get(music_ID=item["music_ID"])
+            music_info = SongSerializer(music).data
+            music_info_list.append(music_info)
+        except:
+            pass
 
     return music_info_list
 
