@@ -58,7 +58,7 @@ def search_music(file_name, query) -> list:
 # 異步
 
 
-def new_query(request, query):
+def new_query(query):
     processes = []
     manager = Manager()
     search_results = manager.list()
@@ -79,7 +79,9 @@ def new_query(request, query):
 
         music_results = sorted(search_results,  key=lambda song: song_search(
                 song, query), reverse=True)
-        
+        print(type(music_results))
+        search_results = []
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(file_list)) as executor:
             future_to_file = {executor.submit(
                 search_music, file, query): file for file in file_list}
@@ -93,6 +95,8 @@ def new_query(request, query):
 
         artist_results = sorted(search_results,  key=lambda song: artist_search(
                 song, query), reverse=True)
+        print(type(artist_results))
+        search_results = []
         
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(file_list)) as executor:
             future_to_file = {executor.submit(
@@ -107,6 +111,8 @@ def new_query(request, query):
 
         album_results = sorted(search_results,  key=lambda song: aldum_search(
                 song, query), reverse=True)
+        print(type(album_results))
+        
 
         data = {
             'song' : music_results, 
@@ -119,4 +125,4 @@ def new_query(request, query):
         print(e)
         return JsonResponse({'error': str(e)}, status=500)
 
-    return JsonResponse({'data': data})
+    return data
