@@ -8,7 +8,7 @@ import concurrent.futures
 
 # import sql相關
 # import query function
-from Music.query import query as query_music
+from Music.query import new_query as query_music
 
 # import models
 from .models import Song, Artist, Style
@@ -40,32 +40,40 @@ test = False
 @api_view(['GET'])
 def query_db_song(request, query):
     # 資料庫
+    # try:
+    #     # print(query)
+    #     res = query_music(query=query)
+    #     # print(res)
+    #     if res is None:
+    #         print("the res is empty")
+    #         return JsonResponse({'isLogin': False})
+    # except Exception as e:
+    #     print(f'the res is {e}')
+    #     return JsonResponse({'isLogin': False})
+
+    # music_list = []
+    # # print("asdf", res)
+    # for row in res:
+    #     serializer = SongSerializer(row)
+    #     row = serializer.data
+    #     # print('music after serializers : ', row)
+    #     music_list.append(row)
+
+    # data = {
+    #     "song": [],
+    #     "artist": [],
+    #     "album": [],
+    #     "style": [],
+    # }
     try:
         # print(query)
-        res = query_music(query=query)
-        # print(res)
-        if res is None:
+        data = query_music
+        if data is None:
             print("the res is empty")
             return JsonResponse({'isLogin': False})
     except Exception as e:
         print(f'the res is {e}')
         return JsonResponse({'isLogin': False})
-
-    music_list = []
-    # print("asdf", res)
-    for row in res:
-        serializer = SongSerializer(row)
-        row = serializer.data
-        # print('music after serializers : ', row)
-        music_list.append(row)
-
-    data = {
-        "song": [],
-        "artist": [],
-        "album": [],
-        "style": [],
-    }
-
     return JsonResponse(data=data)
 
 
@@ -89,10 +97,10 @@ def query_web_song(request, query):
 
 @api_view(['GET'])
 def album(request, album):
-    search_album = Music.objects.all()
+    search_album = Song.objects.all()
     matches = difflib.get_close_matches(
         album, [x.album for x in search_album], n=6, cutoff=0.06)
-    aldum_get = Music.objects.filter(album__in=matches)
+    aldum_get = Song.objects.filter(album__in=matches)
     print('query_album_matches : ', matches)
     album_list = []
     for adbum in aldum_get:
