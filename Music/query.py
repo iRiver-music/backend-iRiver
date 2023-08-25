@@ -13,6 +13,7 @@ from .models import Artist
 
 from multiprocessing import Process, Manager
 
+
 def count_file() -> list:
     absolute_path = os.path.join(
         settings.BASE_DIR, 'Music', 'music_db', '*.json')
@@ -24,11 +25,14 @@ def count_file() -> list:
 def song_search(song, query):
     return fuzz.ratio(query, song['title'])
 
+
 def artist_search(artist, query):
     return fuzz.ratio(query, artist['artist'])
 
+
 def aldum_search(aldum, query):
     return fuzz.ratio(query, aldum['title'])
+
 
 def style_search(style, query):
     return fuzz.ratio(query, style['style'])
@@ -51,7 +55,6 @@ def search_music(file_name, query) -> list:
     print(len(results))
     # push music_list into the querylist
     print("finish sorted")
-    
 
     return results
 
@@ -78,7 +81,7 @@ def new_query(query):
                     print(f'An error occurred for file {file}: {exc}')
 
         music_results = sorted(search_results,  key=lambda song: song_search(
-                song, query), reverse=True)
+            song, query), reverse=True)
         print(type(music_results))
         search_results = []
 
@@ -94,10 +97,10 @@ def new_query(query):
                     print(f'An error occurred for file {file}: {exc}')
 
         artist_results = sorted(search_results,  key=lambda song: artist_search(
-                song, query), reverse=True)
+            song, query), reverse=True)
         print(type(artist_results))
         search_results = []
-        
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(file_list)) as executor:
             future_to_file = {executor.submit(
                 search_music, file, query): file for file in file_list}
@@ -110,14 +113,13 @@ def new_query(query):
                     print(f'An error occurred for file {file}: {exc}')
 
         album_results = sorted(search_results,  key=lambda song: aldum_search(
-                song, query), reverse=True)
+            song, query), reverse=True)
         print(type(album_results))
-        
 
         data = {
-            'song' : music_results, 
-            'artist' : artist_results, 
-            'album' : album_results, 
+            'song': music_results,
+            'artist': artist_results,
+            'album': album_results,
         }
         print('finish second sort')
     except Exception as e:

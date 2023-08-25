@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'User',
     'Token',
     'Discover',
-    'System'
 ]
 
 REST_FRAMEWORK = {
@@ -160,30 +159,30 @@ WSGI_APPLICATION = 'iRiver.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'music',
-    #     'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
-    #     'PASSWORD': 'ZkyaanAP5cXQqE8hkX5hnmYYhcMr',
-    #     'HOST': '49.213.238.75',
-    #     'PORT': '3306',
-    #     'OPTIONS': {
-    #         'sql_mode': 'STRICT_ALL_TABLES',
-    #     }
-    # },
-    # localhost
-
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'music',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
+        'USER': 'gWvPZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'PASSWORD': 'ZkyaanAP5cXQqE8hkX5hnmYYhcMr',
+        'HOST': '49.213.238.75',
         'PORT': '3306',
         'OPTIONS': {
             'sql_mode': 'STRICT_ALL_TABLES',
         }
     },
+    # localhost
+
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'music',
+    #     'USER': 'root',
+    #     'PASSWORD': '',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '3306',
+    #     'OPTIONS': {
+    #         'sql_mode': 'STRICT_ALL_TABLES',
+    #     }
+    # },
     #     'default': {
     #     'ENGINE': 'django.db.backends.mysql',
     #     'NAME': 'music',
@@ -251,3 +250,7 @@ FORDERED_PATH = "/Users/hungwei/Desktop/code/iRiver-music/back/django-test-for-p
 FIREBASE_AUTH = {
     'FIREBASE_ACCOUNT_KEY_FILE': 'iRiver/iside-bf18c-firebase-adminsdk-o5z7t-8ccbc22def.json',
 }
+
+
+# user
+# AUTH_USER_MODEL = 'User.AdminUser'

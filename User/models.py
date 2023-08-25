@@ -1,3 +1,4 @@
+from typing import AbstractSet
 import uuid
 import datetime
 from django.db import models
@@ -192,3 +193,26 @@ class LastUsersong(models.Model):
 
     def __str__(self):
         return self.title
+
+
+#  admin =================================================================
+
+class AdminUser(AbstractSet):
+    code = models.CharField(max_length=100)
+    level = models.IntegerField(default=1)
+
+    class Meta:
+        app_label = 'User'
+        db_table = 'adminUser'
+
+    def __str__(self):
+        return self.username
+
+
+class Level(models.Model):
+    regName = models.CharField(max_length=100)
+    code = models.CharField(default=uuid.uuid4, max_length=100)
+    level = models.IntegerField()
+
+    def __str__(self):
+        return str(self.code)

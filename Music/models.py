@@ -113,7 +113,7 @@ class Song(models.Model):
     #         ret
 
     def __str__(self):
-        return self.music_ID
+        return self.artist
 
 
 class Style(models.Model):
@@ -218,4 +218,15 @@ class DowARtist(models.Model):
         db_table = 'dow'
 
     def __str__(self):
+
         return self.artist
+
+
+class FailSong(models.Model):
+    artist = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+    music_ID = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        app_label = 'Music'
+        db_table = 'failSong'

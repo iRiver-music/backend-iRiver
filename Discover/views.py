@@ -32,8 +32,10 @@ def discover(request, uid):
     id = 10000
     # fav
     if Playlist.objects.filter(uid=uid,  playlist="fav").exists():
-        playlist.append({"id": id, "title": "我的最愛", "style": "fav",
-                         "songs": get_uid_fav_song(uid)})
+        songs = get_uid_fav_song(uid)
+        if len(songs) > 0:
+            playlist.append({"id": id, "title": "我的最愛", "style": "fav",
+                            "songs": songs})
 
     for discover in obj:
         obj_song_data = Style.objects.filter(

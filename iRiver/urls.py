@@ -25,5 +25,4 @@ urlpatterns = [
     path('api/discover/', include('Discover.urls', namespace='Discover')),
     path('api/token/', include('Token.urls', namespace='Token')),
     # 監測  電腦效能
-    path('api/system/', include('System.urls', namespace='system')),
 ]
