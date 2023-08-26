@@ -1,0 +1,256 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "title": "\u6700\u65b0\u4e0a\u67b6\u53ca\u71b1\u9580\u6b4c\u66f2",
+            "style": "\u5df2\u767c\u884c",
+            "desc": "\u672c\u9031\u6700\u65b0\u6b4c\u66f2",
+            "name": "\u5df2\u767c\u884c"
+        },
+        {
+            "id": 2,
+            "title": "\u6700\u65b0\u4e0a\u67b6\u53ca\u71b1\u9580\u6b4c\u66f2",
+            "style": "\u71b1\u9580\u6b4c\u66f2\u6e05\u55ae",
+            "desc": "\u542b\u6709 50 \u9996\u66f2\u76ee",
+            "name": "\u71b1\u9580\u6b4c\u66f2\u6e05\u55ae"
+        },
+        {
+            "id": 3,
+            "title": "\u6700\u65b0\u4e0a\u67b6\u53ca\u71b1\u9580\u6b4c\u66f2",
+            "style": "Mando Flow",
+            "desc": "\u5168\u65b0\u71b1\u9580\u6b4c\u66f2",
+            "name": "Mando Flow"
+        },
+        {
+            "id": 4,
+            "title": "\u6700\u65b0\u4e0a\u67b6\u53ca\u71b1\u9580\u6b4c\u66f2",
+            "style": "Canto Flow",
+            "desc": "\u542b\u6709 60 \u9996\u66f2\u76ee",
+            "name": "Canto Flow"
+        },
+        {
+            "id": 5,
+            "title": "\u6700\u65b0\u4e0a\u67b6\u53ca\u71b1\u9580\u6b4c\u66f2",
+            "style": "Pop Certified",
+            "desc": "\u6700\u71b1\u9580\u7684\u83ef\u8a9e\u4e3b\u6253\u6b4c\u90fd\u5728\u9019",
+            "name": "Pop Certified"
+        },
+        {
+            "id": 6,
+            "title": "\u6700\u65b0\u4e0a\u67b6\u53ca\u71b1\u9580\u6b4c\u66f2",
+            "style": "On Everything",
+            "desc": "\u542b\u6709 70 \u9996\u66f2\u76ee",
+            "name": "On Everything"
+        },
+        {
+            "id": 7,
+            "title": "\u53f0\u7063\u97f3\u6a02",
+            "style": "\u597d\u807d\u7684\u83ef\u8a9e\u6292\u60c5\u6b4c",
+            "desc": "Sentimental and romantic Mandopop Ballad favorites",
+            "name": "\u597d\u807d\u7684\u83ef\u8a9e\u6292\u60c5\u6b4c"
+        },
+        {
+            "id": 8,
+            "title": "\u53f0\u7063\u97f3\u6a02",
+            "style": "\u7405\u7405\u4e0a\u53e3\u7684\u83ef\u8a9e\u6b4c",
+            "desc": "\u542b\u6709 69 \u9996\u66f2\u76ee",
+            "name": "\u7405\u7405\u4e0a\u53e3\u7684\u83ef\u8a9e\u6b4c"
+        },
+        {
+            "id": 9,
+            "title": "\u53f0\u7063\u97f3\u6a02",
+            "style": "\u8f15\u9b06\u6109\u5feb\u7684\u83ef\u8a9e\u97f3\u6a02",
+            "desc": "\u901a\u52e4\u8def\u4e0a\u597d\u5fc3\u60c5",
+            "name": "\u8f15\u9b06\u6109\u5feb\u7684\u83ef\u8a9e\u97f3\u6a02"
+        },
+        {
+            "id": 10,
+            "title": "\u53f0\u7063\u97f3\u6a02",
+            "style": "\u8abf\u9ad8\u97f3\u91cf! \u83ef\u8a9e\u563b\u54c8",
+            "desc": "\u542b\u6709 69 \u9996\u66f2\u76ee",
+            "name": "\u8abf\u9ad8\u97f3\u91cf! \u83ef\u8a9e\u563b\u54c8"
+        },
+        {
+            "id": 11,
+            "title": "\u53f0\u7063\u97f3\u6a02",
+            "style": "\u83ef\u8a9e\u821e\u66f2\u6d3e\u5c0d\u5927\u5408\u8f2f",
+            "desc": "Mandopop to put you in a happy mood",
+            "name": "\u83ef\u8a9e\u821e\u66f2\u6d3e\u5c0d\u5927\u5408\u8f2f"
+        },
+        {
+            "id": 12,
+            "title": "\u53f0\u7063\u97f3\u6a02",
+            "style": "\u63d0\u632f\u7cbe\u795e\u7684\u83ef\u8a9e\u563b\u54c8",
+            "desc": "\u542b\u6709 70 \u9996\u66f2\u76ee",
+            "name": "\u63d0\u632f\u7cbe\u795e\u7684\u83ef\u8a9e\u563b\u54c8"
+        },
+        {
+            "id": 13,
+            "title": "\u9999\u6e2f\u97f3\u6a02",
+            "style": "\u9999\u6e2f\u60c5\u6b4c\u5408\u8f2f",
+            "desc": "The best Hong Kong love songs",
+            "name": "\u9999\u6e2f\u60c5\u6b4c\u5408\u8f2f"
+        },
+        {
+            "id": 14,
+            "title": "\u9999\u6e2f\u97f3\u6a02",
+            "style": "\u4ee4\u4eba\u632f\u596e\u7684\u9999\u6e2f\u97f3\u6a02",
+            "desc": "\u542b\u6709 50 \u9996\u66f2\u76ee",
+            "name": "\u4ee4\u4eba\u632f\u596e\u7684\u9999\u6e2f\u97f3\u6a02"
+        },
+        {
+            "id": 15,
+            "title": "\u9999\u6e2f\u97f3\u6a02",
+            "style": "\u67d4\u548c\u751c\u7f8e\u7684\u9999\u6e2f\u6292\u60c5\u6b4c",
+            "desc": "",
+            "name": "\u67d4\u548c\u751c\u7f8e\u7684\u9999\u6e2f\u6292\u60c5\u6b4c"
+        },
+        {
+            "id": 16,
+            "title": "\u9999\u6e2f\u97f3\u6a02",
+            "style": "\u8abf\u9ad8\u97f3\u91cf\uff01\u9999\u6e2f\u563b\u54c8\u97f3\u6a02",
+            "desc": "\u542b\u6709 59 \u9996\u66f2\u76ee",
+            "name": "\u8abf\u9ad8\u97f3\u91cf\uff01\u9999\u6e2f\u563b\u54c8\u97f3\u6a02"
+        },
+        {
+            "id": 17,
+            "title": "\u9999\u6e2f\u97f3\u6a02",
+            "style": "\u9999\u6e2f\u9ad8\u80fd\u91cf\u6a02\u66f2\u5408\u8f2f",
+            "desc": "\u6700\u611b\u9999\u6e2f\u6292\u60c5\u6b4c",
+            "name": "\u9999\u6e2f\u9ad8\u80fd\u91cf\u6a02\u66f2\u5408\u8f2f"
+        },
+        {
+            "id": 18,
+            "title": "\u9999\u6e2f\u97f3\u6a02",
+            "style": "\u9999\u6e2f\u8def\u8dd1\u97f3\u6a02\u5408\u8f2f",
+            "desc": "\u542b\u6709 50 \u9996\u66f2\u76ee",
+            "name": "\u9999\u6e2f\u8def\u8dd1\u97f3\u6a02\u5408\u8f2f"
+        },
+        {
+            "id": 19,
+            "title": "Pop playlists",
+            "style": "\u5feb\u6a02\u6d41\u884c\u6b4c\u66f2\u7cbe\u9078",
+            "desc": "\u4e00\u5b9a\u80fd\u4ee4\u4f60\u958b\u5fc3\u7684\u6d41\u884c\u66f2",
+            "name": "\u5feb\u6a02\u6d41\u884c\u6b4c\u66f2\u7cbe\u9078"
+        },
+        {
+            "id": 20,
+            "title": "Pop playlists",
+            "style": "\u8f15\u9b06\u6b61\u6a02\u7684\u6d41\u884c\u91d1\u66f2",
+            "desc": "\u542b\u6709 60 \u9996\u66f2\u76ee",
+            "name": "\u8f15\u9b06\u6b61\u6a02\u7684\u6d41\u884c\u91d1\u66f2"
+        },
+        {
+            "id": 21,
+            "title": "Pop playlists",
+            "style": "\u5c31\u8981\u5927\u8072\u5531\u51fa\u4f86\u7684\u71b1\u9580\u91d1\u66f2",
+            "desc": "\u900f\u904e\u8fd1\u5e74\u4f86\u6700\u653e\u514b\u7684\u6d41\u884c\u6a02\u63d0\u632f\u7cbe\u795e\uff0c\u4fdd\u6301\u6d3b\u529b\u3002",
+            "name": "\u5c31\u8981\u5927\u8072\u5531\u51fa\u4f86\u7684\u71b1\u9580\u91d1\u66f2"
+        },
+        {
+            "id": 22,
+            "title": "Pop playlists",
+            "style": "\u653e\u514b\u6d41\u884c\u91d1\u66f2",
+            "desc": "\u542b\u6709 58 \u9996\u66f2\u76ee",
+            "name": "\u653e\u514b\u6d41\u884c\u91d1\u66f2"
+        },
+        {
+            "id": 23,
+            "title": "Pop playlists",
+            "style": "\u6b61\u5feb\u7684\u7bc0\u594f\u85cd\u8abf\u6d41\u884c\u6b4c\u66f2",
+            "desc": "\u8ddf\u8457\u9019\u4e9b\u9b45\u529b\u56db\u5c04\u7684\u5973\u6b4c\u624b\u4e00\u8d77\u653e\u8072\u9ad8\u6b4c\u3002",
+            "name": "\u6b61\u5feb\u7684\u7bc0\u594f\u85cd\u8abf\u6d41\u884c\u6b4c\u66f2"
+        },
+        {
+            "id": 24,
+            "title": "Pop playlists",
+            "style": "00 \u5e74\u4ee3\u7405\u7405\u4e0a\u53e3\u7684\u6b4c\u66f2",
+            "desc": "\u542b\u6709 50 \u9996\u66f2\u76ee",
+            "name": "00 \u5e74\u4ee3\u7405\u7405\u4e0a\u53e3\u7684\u6b4c\u66f2"
+        },
+        {
+            "id": 25,
+            "title": "K-Pop hits",
+            "style": "K.iNG",
+            "desc": "\u4f60\u7684K-Pop\u6307\u5357\uff0c\u5168\u65b9\u4f4d\u4e86\u89e3\u97d3\u570b\u6a02\u58c7",
+            "name": "K.iNG"
+        },
+        {
+            "id": 26,
+            "title": "K-Pop hits",
+            "style": "K-HITLIST",
+            "desc": "\u542b\u6709 121 \u9996\u66f2\u76ee",
+            "name": "K-HITLIST"
+        },
+        {
+            "id": 27,
+            "title": "K-Pop hits",
+            "style": "K-RISING",
+            "desc": "\u6700\u71b1\u9580\u7684\u97d3\u570b\u97f3\u6a02\u90fd\u5728\u9019\u88e1",
+            "name": "K-RISING"
+        },
+        {
+            "id": 28,
+            "title": "K-Pop hits",
+            "style": "BEAT ON",
+            "desc": "\u542b\u6709 108 \u9996\u66f2\u76ee",
+            "name": "BEAT ON"
+        },
+        {
+            "id": 29,
+            "title": "K-Pop hits",
+            "style": "SWAG ON",
+            "desc": "\u4e00\u89bd\u97d3\u570b\u6d41\u884c\u6a02\u58c7\u7684\u71b1\u9580\u5718\u9ad4\u548c\u5d1b\u8d77\u65b0\u79c0\u3002",
+            "name": "SWAG ON"
+        },
+        {
+            "id": 30,
+            "title": "K-Pop hits",
+            "style": "\uac10\uc131 On",
+            "desc": "\u542b\u6709 69 \u9996\u66f2\u76ee",
+            "name": "\uac10\uc131 On"
+        },
+        {
+            "id": 31,
+            "title": "J-Pop hits",
+            "style": "J-Hits!",
+            "desc": "\u6700\u71b1\u9580\u7684J-Pop\u6b4c\u55ae",
+            "name": "J-Hits!"
+        },
+        {
+            "id": 32,
+            "title": "J-Pop hits",
+            "style": "J-Rock!",
+            "desc": "\u542b\u6709 56 \u9996\u66f2\u76ee",
+            "name": "J-Rock!"
+        },
+        {
+            "id": 33,
+            "title": "J-Pop hits",
+            "style": "J-Rap Flows",
+            "desc": "\u6700\u65b0\u6700\u71b1\u9580\u7684\u65e5\u672c\u6416\u6efe\u6a02\u90fd\u5728\u9019",
+            "name": "J-Rap Flows"
+        },
+        {
+            "id": 34,
+            "title": "J-Pop hits",
+            "style": "Boys Group Japan",
+            "desc": "\u542b\u6709 53 \u9996\u66f2\u76ee",
+            "name": "Boys Group Japan"
+        },
+        {
+            "id": 35,
+            "title": "J-Pop hits",
+            "style": "Idol Japan",
+            "desc": "\u6700\u71b1\u9580\u7684\u65e5\u672c\u563b\u54c8\u97f3\u6a02\u90fd\u5728\u9019",
+            "name": "Idol Japan"
+        },
+        {
+            "id": 36,
+            "title": "J-Pop hits",
+            "style": "Groove City",
+            "desc": "\u542b\u6709 50 \u9996\u66f2\u76ee",
+            "name": "Groove City"
+        }
+    ]
+}

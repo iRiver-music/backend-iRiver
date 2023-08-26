@@ -8,13 +8,13 @@ import concurrent.futures
 
 # import sql相關
 # import query function
-from Music.query import new_query as query_music
+from Music.query import query as query_music
 
 # import models
 from .models import Song, Artist, Style
 
 # import serializers
-from .serializers import ArtistSerializer, SongSerializer, StyleSerializer
+from .serializers import ArtistSerializer, SongSerializer, StyleTitleSerializer
 
 # import clean_str
 from Music.clean_str import clear_str
@@ -39,32 +39,6 @@ test = False
 
 @api_view(['GET'])
 def query_db_song(request, query):
-    # 資料庫
-    # try:
-    #     # print(query)
-    #     res = query_music(query=query)
-    #     # print(res)
-    #     if res is None:
-    #         print("the res is empty")
-    #         return JsonResponse({'isLogin': False})
-    # except Exception as e:
-    #     print(f'the res is {e}')
-    #     return JsonResponse({'isLogin': False})
-
-    # music_list = []
-    # # print("asdf", res)
-    # for row in res:
-    #     serializer = SongSerializer(row)
-    #     row = serializer.data
-    #     # print('music after serializers : ', row)
-    #     music_list.append(row)
-
-    # data = {
-    #     "song": [],
-    #     "artist": [],
-    #     "album": [],
-    #     "style": [],
-    # }
     try:
         # print(query)
         data = query_music(query)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Song, Album, Artist, Style
+from .models import Song, Album, Artist, StyleTitle
 
 
 class SongSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class ArtistSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class StyleSerializer(serializers.ModelSerializer):
+class StyleTitleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Style
+        model = StyleTitle
         exclude = ['created_at']
