@@ -120,7 +120,7 @@ def multiprocess_music(query, music_file_list) -> list :
                 song, query), reverse=True)
     print(type(music_results))
     print("finish music sorted")
-    # music_results.append({'who am I ' : 'music'})
+    music_results.append({'who am I ' : 'music'})
     results = music_results[:20]
     results.append(music_results[-1])
     return results
@@ -144,7 +144,7 @@ def multiprocess_artist(query, music_file_list) -> list :
             song, query), reverse=True)
     print(type(artist_results))
     print("finish artist sorted")
-    # artist_results.append({'who am I ' : 'artist'})
+    artist_results.append({'who am I ' : 'artist'})
     results = artist_results[:10]
     results.append(artist_results[-1])
     return results
@@ -167,7 +167,7 @@ def multiprocess_album(query, music_file_list) -> list :
             song, query), reverse=True)
     print(type(album_results))
     print("finish album sorted")
-    # album_results.append({'who am I ' : 'album'})
+    album_results.append({'who am I ' : 'album'})
     results = album_results[:10]
     results.append(album_results[-1])
     return results
@@ -190,7 +190,7 @@ def multiprocess_style(query, music_file_list) -> list :
             song, query), reverse=True)
     print(type(album_results))
     print("finish style sorted")
-    # album_results.append({'who am I ' : 'style'})
+    album_results.append({'who am I ' : 'style'})
     results = album_results[:10]
     results.append(album_results[-1])
     return results
@@ -227,6 +227,10 @@ def query(query):
                 elif result[-1]['who am I '] == 'style' : 
                     style_results.extend(result)
 
+        del music_results[-1]
+        del artist_results[-1]
+        del album_results[-1]
+        del style_results[-1]
         data = {
             'song' : music_results, 
             'artist' : artist_results, 
