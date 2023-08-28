@@ -18,7 +18,6 @@ class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
         exclude = ['created_at']
-        fields = '__all__'
 
 
 class StyleTitleSerializer(serializers.ModelSerializer):

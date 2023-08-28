@@ -224,7 +224,6 @@ class DowARtist(models.Model):
 
 class FailSong(models.Model):
     artist = models.CharField(max_length=255)
-    title = models.CharField(max_length=255)
     music_ID = models.CharField(max_length=255, unique=True)
 
     class Meta:
