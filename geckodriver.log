@@ -157,3 +157,109 @@ Read port: 63213
 [GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
 DevTools listening on ws://127.0.0.1:63198/devtools/browser/b1c65c5c-57cc-4bac-9814-9f9df713c326
 1693241641840	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+1693242082538	geckodriver	INFO	Listening on 127.0.0.1:65190
+1693242083045	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" MOZ_NO_REMOTE="1" "/App ... s" "localhost" "-foreground" "-no-remote" "-profile" "/var/folders/cq/fm5jpxyd0cdg6lm8wsw93jqr0000gn/T/rust_mozprofile9mf8ff"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1693242083338	Marionette	INFO	Marionette enabled
+console.error: "Warning: unrecognized command line flag" "-detach"
+console.error: "Warning: unrecognized command line flag" "-disable-dev-shm-usage"
+console.error: "Warning: unrecognized command line flag" "-disable-extensions"
+console.error: "Warning: unrecognized command line flag" "-disable-background-networking"
+console.error: "Warning: unrecognized command line flag" "-disable-ipc-flooding-protection"
+console.error: "Warning: unrecognized command line flag" "-enable-features"
+console.error: "Warning: unrecognized command line flag" "-force-color-profile"
+console.error: "Warning: unrecognized command line flag" "-hide-scrollbars"
+console.error: "Warning: unrecognized command line flag" "-mute-audio"
+console.error: "Warning: unrecognized command line flag" "-no-first-run"
+console.error: "Warning: unrecognized command line flag" "-disable-popup-blocking"
+console.error: "Warning: unrecognized command line flag" "-start-minimized"
+console.error: "Warning: unrecognized command line flag" "-remote-allow-hosts"
+1693242083513	Marionette	INFO	Listening on port 65206
+WebDriver BiDi listening on ws://127.0.0.1:65191
+Read port: 65206
+1693242083638	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+DevTools listening on ws://127.0.0.1:65191/devtools/browser/7fab380b-dde4-4fa2-8823-ec0dc7e8ad7a
+1693242090419	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+[Child 22145, MediaDecoderStateMachine #1] WARNING: Decoder=10146d900 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /builds/worker/checkouts/gecko/dom/media/MediaDecoderStateMachine.cpp:372
+[Child 22145, MediaDecoderStateMachine #1] WARNING: Decoder=10146d900 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006) - static MP4Metadata::ResultAndByteBuffer mozilla::MP4Metadata::Metadata(ByteStream *): Cannot parse metadata: file /builds/worker/checkouts/gecko/dom/media/MediaDecoderStateMachineBase.cpp:166
+1693242146771	geckodriver	INFO	Listening on 127.0.0.1:49160
+1693242147298	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" MOZ_NO_REMOTE="1" "/App ... s" "localhost" "-foreground" "-no-remote" "-profile" "/var/folders/cq/fm5jpxyd0cdg6lm8wsw93jqr0000gn/T/rust_mozprofileBRylpn"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1693242147644	Marionette	INFO	Marionette enabled
+console.error: "Warning: unrecognized command line flag" "-detach"
+console.error: "Warning: unrecognized command line flag" "-disable-dev-shm-usage"
+console.error: "Warning: unrecognized command line flag" "-disable-extensions"
+console.error: "Warning: unrecognized command line flag" "-disable-background-networking"
+console.error: "Warning: unrecognized command line flag" "-disable-ipc-flooding-protection"
+console.error: "Warning: unrecognized command line flag" "-enable-features"
+console.error: "Warning: unrecognized command line flag" "-force-color-profile"
+console.error: "Warning: unrecognized command line flag" "-hide-scrollbars"
+console.error: "Warning: unrecognized command line flag" "-mute-audio"
+console.error: "Warning: unrecognized command line flag" "-no-first-run"
+console.error: "Warning: unrecognized command line flag" "-disable-popup-blocking"
+console.error: "Warning: unrecognized command line flag" "-start-minimized"
+console.error: "Warning: unrecognized command line flag" "-remote-allow-hosts"
+1693242147832	Marionette	INFO	Listening on port 49177
+WebDriver BiDi listening on ws://127.0.0.1:49161
+Read port: 49177
+1693242147947	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+DevTools listening on ws://127.0.0.1:49161/devtools/browser/afb7f277-d889-453c-98da-24860ebdb643
+1693242155718	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+1693242216638	geckodriver	INFO	Listening on 127.0.0.1:49533
+1693242217149	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" MOZ_NO_REMOTE="1" "/App ... s" "localhost" "-foreground" "-no-remote" "-profile" "/var/folders/cq/fm5jpxyd0cdg6lm8wsw93jqr0000gn/T/rust_mozprofileIv4Efw"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1693242217445	Marionette	INFO	Marionette enabled
+console.error: "Warning: unrecognized command line flag" "-detach"
+console.error: "Warning: unrecognized command line flag" "-disable-dev-shm-usage"
+console.error: "Warning: unrecognized command line flag" "-disable-extensions"
+console.error: "Warning: unrecognized command line flag" "-disable-background-networking"
+console.error: "Warning: unrecognized command line flag" "-disable-ipc-flooding-protection"
+console.error: "Warning: unrecognized command line flag" "-enable-features"
+console.error: "Warning: unrecognized command line flag" "-force-color-profile"
+console.error: "Warning: unrecognized command line flag" "-hide-scrollbars"
+console.error: "Warning: unrecognized command line flag" "-mute-audio"
+console.error: "Warning: unrecognized command line flag" "-no-first-run"
+console.error: "Warning: unrecognized command line flag" "-disable-popup-blocking"
+console.error: "Warning: unrecognized command line flag" "-start-minimized"
+console.error: "Warning: unrecognized command line flag" "-remote-allow-hosts"
+1693242217638	Marionette	INFO	Listening on port 49549
+WebDriver BiDi listening on ws://127.0.0.1:49534
+Read port: 49549
+1693242217757	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+DevTools listening on ws://127.0.0.1:49534/devtools/browser/8dc1f6c3-cede-4842-b5da-381e27935f92
+1693242223976	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+1693242239590	geckodriver	INFO	Listening on 127.0.0.1:49694
+1693242240111	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" MOZ_NO_REMOTE="1" "/App ... s" "localhost" "-foreground" "-no-remote" "-profile" "/var/folders/cq/fm5jpxyd0cdg6lm8wsw93jqr0000gn/T/rust_mozprofilechsdSr"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1693242240395	Marionette	INFO	Marionette enabled
+console.error: "Warning: unrecognized command line flag" "-detach"
+console.error: "Warning: unrecognized command line flag" "-disable-dev-shm-usage"
+console.error: "Warning: unrecognized command line flag" "-disable-extensions"
+console.error: "Warning: unrecognized command line flag" "-disable-background-networking"
+console.error: "Warning: unrecognized command line flag" "-disable-ipc-flooding-protection"
+console.error: "Warning: unrecognized command line flag" "-enable-features"
+console.error: "Warning: unrecognized command line flag" "-force-color-profile"
+console.error: "Warning: unrecognized command line flag" "-hide-scrollbars"
+console.error: "Warning: unrecognized command line flag" "-mute-audio"
+console.error: "Warning: unrecognized command line flag" "-no-first-run"
+console.error: "Warning: unrecognized command line flag" "-disable-popup-blocking"
+console.error: "Warning: unrecognized command line flag" "-start-minimized"
+console.error: "Warning: unrecognized command line flag" "-remote-allow-hosts"
+1693242240635	Marionette	INFO	Listening on port 49710
+WebDriver BiDi listening on ws://127.0.0.1:49695
+Read port: 49710
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+1693242240868	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:49695/devtools/browser/7ed534bd-b34e-41fe-b20a-35b26fa97330
+1693242248478	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.

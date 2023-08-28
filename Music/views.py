@@ -58,16 +58,14 @@ def query_db_song(request, query):
 @api_view(['GET'])
 def query_web_song(request, query):
     # query = request.GET.get('query', '')
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        future_youtube = executor.submit(query_youtube, query)
-    # 網路
-    if test:
-        print('='*50)
-        print(f'get  {query}  !!')
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    #     future_youtube = executor.submit(query_youtube, query)
+    # # 網路
+    # if test:
+    #     print('='*50)
+    #     print(f'get  {query}  !!')
     try:
-        youtube_result = json.loads(future_youtube.result())
-        music_list = youtube_result['music_list']
-        statistics = youtube_result['statistics']
+        music_list = query_youtube(query=query)
     except Exception as e:
         print(e)
         return Response({"mes": str(e)}, status=404)

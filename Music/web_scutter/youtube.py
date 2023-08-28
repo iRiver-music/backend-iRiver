@@ -92,21 +92,11 @@ def query_youtube(query: str) -> json:
         video['title'] = clear_str(
             title=video['title'], artist=video['artist'])
 
-    statistics = {
-        'most_common_artist': most_common_artist,
-        'most_common_artist_url': most_common_artist_url,
-        'most_common_artist_img_url': most_common_artist_img_url,
-    }
-    # 合併
-    result = {
-        'music_list': music_list,
-        'statistics': statistics,
-    }
     end_time = time.time()
     print(f"程序运行时间：{end_time - start_time}秒")
     # driver.close()
-    json_str = json.dumps(result, indent=4)
-    return json_str
+    # json_str = json.dumps(result, indent=4)
+    return music_list
 
 # r = query_youtube('比悲傷更悲傷')
 # print(r)
