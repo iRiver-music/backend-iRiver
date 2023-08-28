@@ -45,7 +45,7 @@ def query_db_song(request, query):
     try:
         # print(query)
         data = query_music(query)
-        print('data type', type(data))
+        print('db data type', type(data))
         if data is None:
             print("the res is empty")
             return JsonResponse({'isLogin': False})

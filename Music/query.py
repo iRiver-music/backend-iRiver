@@ -300,6 +300,11 @@ def query(query):
                 elif result[-1]['who am I '] == 'style':
                     style_results.extend(result)
 
+        del music_results[-1]
+        del artist_results[-1]
+        del album_results[-1]
+        del style_results[-1]
+
         data = {
             'song': music_results,
             'artist': artist_results,
