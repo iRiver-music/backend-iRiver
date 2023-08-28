@@ -52,11 +52,6 @@ def search_music(file_name, query) -> list:
     results = sorted(song_list, key=lambda song: song_search(
         song, query), reverse=True)
     results = results[:20]
-    # print(type(results))
-    # print(results)
-    print(len(results))
-    # push music_list into the querylist
-    print("finish sorted")
 
     return results
 
@@ -72,12 +67,6 @@ def search_artist(file_name, query) -> list:
     results = sorted(song_list, key=lambda song: artist_search(
         song, query), reverse=True)
     results = results[:20]
-    # print(type(results))
-    # print(results)
-    print(len(results))
-    # push music_list into the querylist
-    print("finish sorted")
-    
 
     return results
 
@@ -93,12 +82,6 @@ def search_album(file_name, query) -> list:
     results = sorted(song_list, key=lambda song: aldum_search(
         song, query), reverse=True)
     results = results[:20]
-    # print(type(results))
-    # print(results)
-    print(len(results))
-    # push music_list into the querylist
-    print("finish sorted")
-    
 
     return results
 
@@ -114,75 +97,6 @@ def search_style(file_name, query) -> list:
     results = sorted(song_list, key=lambda song: style_search(
         song, query), reverse=True)
     results = results[:20]
-    # print(type(results))
-    # print(results)
-    print(len(results))
-    # push music_list into the querylist
-    print("finish sorted")
-    
-
-    return results
-
-def search_artist(file_name, query) -> list:
-
-    # open json file
-    with open(file_name, 'r') as jsonFile:
-        song_json = json.load(jsonFile)
-
-    song_list = song_json['data']
-    # use radio algorithnm in fuzzywuzzy to sort music by rate (high to low)
-
-    results = sorted(song_list, key=lambda song: artist_search(
-        song, query), reverse=True)
-    results = results[:20]
-    # print(type(results))
-    # print(results)
-    print(len(results))
-    # push music_list into the querylist
-    print("finish sorted")
-    
-
-    return results
-
-def search_album(file_name, query) -> list:
-
-    # open json file
-    with open(file_name, 'r') as jsonFile:
-        song_json = json.load(jsonFile)
-
-    song_list = song_json['data']
-    # use radio algorithnm in fuzzywuzzy to sort music by rate (high to low)
-
-    results = sorted(song_list, key=lambda song: aldum_search(
-        song, query), reverse=True)
-    results = results[:20]
-    # print(type(results))
-    # print(results)
-    print(len(results))
-    # push music_list into the querylist
-    print("finish sorted")
-    
-
-    return results
-
-def search_style(file_name, query) -> list:
-
-    # open json file
-    with open(file_name, 'r') as jsonFile:
-        song_json = json.load(jsonFile)
-
-    song_list = song_json['data']
-    # use radio algorithnm in fuzzywuzzy to sort music by rate (high to low)
-
-    results = sorted(song_list, key=lambda song: style_search(
-        song, query), reverse=True)
-    results = results[:20]
-    # print(type(results))
-    # print(results)
-    print(len(results))
-    # push music_list into the querylist
-    print("finish sorted")
-    
 
     return results
 
@@ -205,7 +119,8 @@ def multiprocess_music(query, music_file_list) -> list :
     music_results = sorted(search_results,  key=lambda song: song_search(
                 song, query), reverse=True)
     print(type(music_results))
-    music_results.append({'who am I ' : 'music'})
+    print("finish music sorted")
+    # music_results.append({'who am I ' : 'music'})
     results = music_results[:20]
     results.append(music_results[-1])
     return results
@@ -228,7 +143,8 @@ def multiprocess_artist(query, music_file_list) -> list :
     artist_results = sorted(search_results,  key=lambda song: artist_search(
             song, query), reverse=True)
     print(type(artist_results))
-    artist_results.append({'who am I ' : 'artist'})
+    print("finish artist sorted")
+    # artist_results.append({'who am I ' : 'artist'})
     results = artist_results[:10]
     results.append(artist_results[-1])
     return results
@@ -250,7 +166,8 @@ def multiprocess_album(query, music_file_list) -> list :
     album_results = sorted(search_results,  key=lambda song: aldum_search(
             song, query), reverse=True)
     print(type(album_results))
-    album_results.append({'who am I ' : 'album'})
+    print("finish album sorted")
+    # album_results.append({'who am I ' : 'album'})
     results = album_results[:10]
     results.append(album_results[-1])
     return results
@@ -272,7 +189,8 @@ def multiprocess_style(query, music_file_list) -> list :
     album_results = sorted(search_results,  key=lambda song: style_search(
             song, query), reverse=True)
     print(type(album_results))
-    album_results.append({'who am I ' : 'style'})
+    print("finish style sorted")
+    # album_results.append({'who am I ' : 'style'})
     results = album_results[:10]
     results.append(album_results[-1])
     return results
