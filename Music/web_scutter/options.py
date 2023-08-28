@@ -3,13 +3,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import socket
 
-def get_chrome_options(port=9222 , is_headLess = False):
+
+def get_chrome_options(port=9222, is_headless=False):
     '''爬蟲參數'''
     options = Options()
-    if is_headLess:
+    if is_headless:
         options.add_argument("--headless")  # run Chrome in headless mode
-        
-   
+
     options.add_argument("--detach")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -17,7 +17,8 @@ def get_chrome_options(port=9222 , is_headLess = False):
     options.add_argument('--disable-extensions')
     options.add_argument('--disable-background-timer-throttling')
     options.add_argument('--disable-background-networking')
-    options.add_argument('--disable-component-extensions-with-background-pages')
+    options.add_argument(
+        '--disable-component-extensions-with-background-pages')
     options.add_argument('--disable-ipc-flooding-protection')
     options.add_argument('--disable-renderer-backgrounding')
     options.add_argument('--enable-features=NetworkServiceInProcess')
@@ -34,6 +35,41 @@ def get_chrome_options(port=9222 , is_headLess = False):
     options.add_argument("--start-minimized")
     options.add_argument('--blink-settings=imagesEnabled=false')
     return options
+
+
+def get_firefox_options(port=9222, is_headless=False):
+    '''爬虫参数'''
+    options = webdriver.FirefoxOptions()
+
+    if is_headless:
+        options.add_argument("--headless")  # 在无头模式下运行 Firefox
+
+    options.add_argument("--detach")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--log-level=3')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-background-timer-throttling')
+    options.add_argument('--disable-background-networking')
+    options.add_argument(
+        '--disable-component-extensions-with-background-pages')
+    options.add_argument('--disable-ipc-flooding-protection')
+    options.add_argument('--disable-renderer-backgrounding')
+    options.add_argument('--enable-features=NetworkServiceInProcess')
+    options.add_argument('--force-color-profile=srgb')
+    options.add_argument('--hide-scrollbars')
+    options.add_argument('--metrics-recording-only')
+    options.add_argument('--mute-audio')
+    options.add_argument('--no-default-browser-check')
+    options.add_argument('--no-first-run')
+    options.add_argument('--safebrowsing-disable-auto-update')
+    options.add_argument('--disable-popup-blocking')
+    # 设置 Firefox 的远程调试端口
+    options.add_argument('--marionette-port={}'.format(port))
+    options.add_argument("--start-minimized")
+    options.add_argument('--blink-settings=imagesEnabled=false')
+    return options
+
 
 def get_available_port():
     '''自動分配port'''

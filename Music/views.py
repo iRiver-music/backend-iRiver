@@ -70,6 +70,8 @@ def query_web_song(request, query):
         statistics = youtube_result['statistics']
     except Exception as e:
         print(e)
+        return Response({"mes": str(e)}, status=404)
+
     return JsonResponse({'success': True, 'music_list': music_list}, safe=False)
 
 
@@ -148,6 +150,11 @@ def artist_test(request, artist):
 
 
 def change(request):
-    obj = Style.objects.all().values()
-    print(obj)
-    return JsonResponse({"success": True})
+    # for style in Style.objects.all():
+    #     if Song.objects.filter(music_ID=style.music_ID).exists() is False:``
+    #         print(style.artist)
+    # return JsonResponse({"success": True})
+    songs_data = Song.objects.filter(music_ID="_kiWV9rpPYI").exists()
+
+    print(songs_data)
+    return Response(songs_data)

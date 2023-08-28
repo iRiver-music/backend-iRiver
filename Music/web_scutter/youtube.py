@@ -11,22 +11,24 @@ import json
 import re
 from collections import Counter
 
-from Music.models import Song
 # 自製
-from .options import get_chrome_options
+from .options import get_chrome_options, get_firefox_options
 from .options import get_available_port
 from Music.clean_str import clear_str
 
 
 def query_youtube(query: str) -> json:
-    service = Service('chromedriver.exe')
-    options = get_chrome_options(port=get_available_port(), is_headLess=True)
-    # driver = webdriver.Chrome(service = service, options=options)
-    driver = webdriver.Chrome(service=service, options=options)
-    # driver = webdriver.Chrome()
+    # service = Service('chromedriver_mac64/chromedriver')
+    options = get_firefox_options(port=get_available_port(), is_headless=True)
+    # # driver = webdriver.Chrome(service = service, options=options)
+    # driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Firefox(options=options)
+    # driver = webdriver.Chrome(options=options)
+
     start_time = time.time()
     driver.get(
         f"https://www.youtube.com/results?search_query={query}&sp=EgIQAQ%253D%253D&t=0s-7m")
+
     music_list = []
     video_elements = WebDriverWait(driver, 2).until(
         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#contents #video-title")))
@@ -64,8 +66,8 @@ def query_youtube(query: str) -> json:
             # video["artist_img_url"] = artist_img_url.get_attribute("src")
             video["artist_img_url"] = artist_img_url
 
-            if Song.objects.filter(music_ID=video["music_ID"]).exists():
-                continue
+            # if Song.objects.filter(music_ID=video["music_ID"]).exists():
+            #     continue
             music_list.append(video)
         except NoSuchElementException as e:
             pass
