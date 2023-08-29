@@ -102,7 +102,7 @@ def search_artist(file_name, query) -> list:
 
     results = sorted(song_list, key=lambda song: artist_search(
         song, query), reverse=True)
-    results = results[:20]
+    results = results[:10]
     # print(type(results))
     # print(results)
     # push music_list into the querylist
@@ -124,7 +124,7 @@ def search_album(file_name, query) -> list:
 
     results = sorted(song_list, key=lambda song: aldum_search(
         song, query), reverse=True)
-    results = results[:20]
+    results = results[:10]
     # print(type(results))
     # print(results)
     # push music_list into the querylist
@@ -135,84 +135,17 @@ def search_album(file_name, query) -> list:
 def search_style(file_name, query) -> list:
 
     # open json file
-    # with open(file_name, 'r') as jsonFile:
-    #     song_json = json.load(jsonFile)
+    with open(file_name, 'r') as jsonFile:
+        song_json = json.load(jsonFile)
 
-    # song_list = song_json['data']
+    song_list = song_json['data']
 
-    song_list = read_file(file_name)
 
     # use radio algorithnm in fuzzywuzzy to sort music by rate (high to low)
 
     results = sorted(song_list, key=lambda song: style_search(
         song, query), reverse=True)
-    results = results[:20]
-    # print(type(results))
-    # print(results)
-    # push music_list into the querylist
-
-    return results
-
-
-def search_artist(file_name, query) -> list:
-
-    # open json file
-    # with open(file_name, 'r') as jsonFile:
-    #     song_json = json.load(jsonFile)
-
-    # song_list = song_json['data']
-
-    song_list = read_file(file_name)
-
-    # use radio algorithnm in fuzzywuzzy to sort music by rate (high to low)
-
-    results = sorted(song_list, key=lambda song: artist_search(
-        song, query), reverse=True)
-    results = results[:20]
-    # print(type(results))
-    # print(results)
-    # push music_list into the querylist
-
-    return results
-
-
-def search_album(file_name, query) -> list:
-
-    # open json file
-    # with open(file_name, 'r') as jsonFile:
-    #     song_json = json.load(jsonFile)
-
-    # song_list = song_json['data']
-
-    song_list = read_file(file_name)
-
-    # use radio algorithnm in fuzzywuzzy to sort music by rate (high to low)
-
-    results = sorted(song_list, key=lambda song: aldum_search(
-        song, query), reverse=True)
-    results = results[:20]
-    # print(type(results))
-    # print(results)
-    # push music_list into the querylist
-
-    return results
-
-
-def search_style(file_name, query) -> list:
-
-    # open json file
-    # with open(file_name, 'r') as jsonFile:
-    #     song_json = json.load(jsonFile)
-
-    # song_list = song_json['data']
-
-    song_list = read_file(file_name)
-
-    # use radio algorithnm in fuzzywuzzy to sort music by rate (high to low)
-
-    results = sorted(song_list, key=lambda song: style_search(
-        song, query), reverse=True)
-    results = results[:20]
+    results = results[:10]
     # print(type(results))
     # print(results)
     # push music_list into the querylist
@@ -225,7 +158,7 @@ def search_style(file_name, query) -> list:
 def multiprocess_music(query, music_file_list) -> list:
     manager = Manager()
     search_results = manager.list()
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(music_file_list)) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=len(music_file_list)) as executor:
         future_to_file = {executor.submit(
             search_music, file, query): file for file in music_file_list}
         for future in concurrent.futures.as_completed(future_to_file):
@@ -247,7 +180,7 @@ def multiprocess_music(query, music_file_list) -> list:
 def multiprocess_artist(query, music_file_list) -> list:
     manager = Manager()
     search_results = manager.list()
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(music_file_list)) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=len(music_file_list)) as executor:
         future_to_file = {executor.submit(
             search_artist, file, query): file for file in music_file_list}
         for future in concurrent.futures.as_completed(future_to_file):
@@ -269,7 +202,7 @@ def multiprocess_artist(query, music_file_list) -> list:
 def multiprocess_album(query, music_file_list) -> list:
     manager = Manager()
     search_results = manager.list()
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(music_file_list)) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=len(music_file_list)) as executor:
         future_to_file = {executor.submit(
             search_album, file, query): file for file in music_file_list}
         for future in concurrent.futures.as_completed(future_to_file):
@@ -291,7 +224,7 @@ def multiprocess_album(query, music_file_list) -> list:
 def multiprocess_style(query, music_file_list) -> list:
     manager = Manager()
     search_results = manager.list()
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(music_file_list)) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=len(music_file_list)) as executor:
         future_to_file = {executor.submit(
             search_style, file, query): file for file in music_file_list}
         for future in concurrent.futures.as_completed(future_to_file):
@@ -322,7 +255,7 @@ def query(query):
         artist_results = []
         album_results = []
         style_results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=40) as executor:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=40) as executor:
             future_music = executor.submit(
                 multiprocess_music, query, music_file_list)
             future_artist = executor.submit(
