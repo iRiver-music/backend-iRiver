@@ -29,19 +29,19 @@ def count_style_file() -> list:
 
 
 def song_search(song, query):
-    return fuzz.ratio(query, song['title'])
+    return fuzz.ratio(query.lower(), song['title'].lower())
 
 
 def artist_search(artist, query):
-    return fuzz.ratio(query, artist['artist'])
+    return fuzz.ratio(query.lower(), artist['artist'].lower())
 
 
 def aldum_search(aldum, query):
-    return fuzz.ratio(query, aldum['album'])
+    return fuzz.ratio(query.lower(), aldum['album'].lower())
 
 
 def style_search(style, query):
-    return fuzz.ratio(query, style['style']) + fuzz.ratio(query, style['title'])
+    return fuzz.ratio(query.lower(), style['style'].lower()) + fuzz.ratio(query.lower(), style['title'].lower())
 
 # 將每項的4筆資料傳進來，分別為title, artist, album, ID。
 def read_file(file_name) : 
@@ -343,7 +343,7 @@ def query(query):
             'artist' : artist_results,
             'album' : album_results,
             'style' : style_results,
-            'first display' : first_display, 
+            'display' : first_display, 
         }
 
         
