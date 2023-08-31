@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'User',
     'Token',
     'Discover',
+    "Task"
 ]
 
 REST_FRAMEWORK = {

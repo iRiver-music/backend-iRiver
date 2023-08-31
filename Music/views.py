@@ -70,7 +70,7 @@ def query_web_song(request, query):
         print(e)
         return Response({"mes": str(e)}, status=404)
 
-    return JsonResponse({'success': True, 'music_list': music_list}, safe=False)
+    return Response({'music_list': music_list})
 
 
 @api_view(['GET'])
@@ -111,15 +111,7 @@ def artist(request, artist):
     songs_data = Song.objects.filter(
         artist=artist).values().order_by('-views')
 
-    artist_data = ArtistSerializer(Artist.objects.filter(
-        artist=artist).values(), many=True).data
-
-    response_data = {
-        'id': 1,
-        'artist': artist_data,
-        'songs': songs_data
-    }
-    return Response(response_data)
+    return Response(songs_data)
 
 
 # style =================================================================

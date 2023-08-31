@@ -263,3 +263,154 @@ Read port: 49710
 1693242240868	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
 DevTools listening on ws://127.0.0.1:49695/devtools/browser/7ed534bd-b34e-41fe-b20a-35b26fa97330
 1693242248478	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+1693242541563	geckodriver	INFO	Listening on 127.0.0.1:51029
+1693242542077	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" MOZ_NO_REMOTE="1" "/App ... s" "localhost" "-foreground" "-no-remote" "-profile" "/var/folders/cq/fm5jpxyd0cdg6lm8wsw93jqr0000gn/T/rust_mozprofile3MROHa"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1693242542383	Marionette	INFO	Marionette enabled
+console.error: "Warning: unrecognized command line flag" "-detach"
+console.error: "Warning: unrecognized command line flag" "-disable-dev-shm-usage"
+console.error: "Warning: unrecognized command line flag" "-disable-extensions"
+console.error: "Warning: unrecognized command line flag" "-disable-background-networking"
+console.error: "Warning: unrecognized command line flag" "-disable-ipc-flooding-protection"
+console.error: "Warning: unrecognized command line flag" "-enable-features"
+console.error: "Warning: unrecognized command line flag" "-force-color-profile"
+console.error: "Warning: unrecognized command line flag" "-hide-scrollbars"
+console.error: "Warning: unrecognized command line flag" "-mute-audio"
+console.error: "Warning: unrecognized command line flag" "-no-first-run"
+console.error: "Warning: unrecognized command line flag" "-disable-popup-blocking"
+console.error: "Warning: unrecognized command line flag" "-start-minimized"
+console.error: "Warning: unrecognized command line flag" "-remote-allow-hosts"
+1693242542589	Marionette	INFO	Listening on port 51048
+WebDriver BiDi listening on ws://127.0.0.1:51030
+Read port: 51048
+1693242542679	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+DevTools listening on ws://127.0.0.1:51030/devtools/browser/5bbc06f5-b1fc-439f-b42b-f789811a1b08
+1693242550647	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+1693242592223	geckodriver	INFO	Listening on 127.0.0.1:51324
+1693242592736	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" MOZ_NO_REMOTE="1" "/App ... s" "localhost" "-foreground" "-no-remote" "-profile" "/var/folders/cq/fm5jpxyd0cdg6lm8wsw93jqr0000gn/T/rust_mozprofile9eOaWV"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1693242593097	Marionette	INFO	Marionette enabled
+console.error: "Warning: unrecognized command line flag" "-detach"
+console.error: "Warning: unrecognized command line flag" "-disable-dev-shm-usage"
+console.error: "Warning: unrecognized command line flag" "-disable-extensions"
+console.error: "Warning: unrecognized command line flag" "-disable-background-networking"
+console.error: "Warning: unrecognized command line flag" "-disable-ipc-flooding-protection"
+console.error: "Warning: unrecognized command line flag" "-enable-features"
+console.error: "Warning: unrecognized command line flag" "-force-color-profile"
+console.error: "Warning: unrecognized command line flag" "-hide-scrollbars"
+console.error: "Warning: unrecognized command line flag" "-mute-audio"
+console.error: "Warning: unrecognized command line flag" "-no-first-run"
+console.error: "Warning: unrecognized command line flag" "-disable-popup-blocking"
+console.error: "Warning: unrecognized command line flag" "-start-minimized"
+console.error: "Warning: unrecognized command line flag" "-remote-allow-hosts"
+1693242593253	Marionette	INFO	Listening on port 51340
+Read port: 51340
+WebDriver BiDi listening on ws://127.0.0.1:51325
+1693242593289	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+DevTools listening on ws://127.0.0.1:51325/devtools/browser/74a5d0be-06da-4d52-bb24-085768a07927
+1693242595409	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+1693242816882	geckodriver	INFO	Listening on 127.0.0.1:52343
+1693242817384	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" MOZ_NO_REMOTE="1" "/App ... s" "localhost" "-foreground" "-no-remote" "-profile" "/var/folders/cq/fm5jpxyd0cdg6lm8wsw93jqr0000gn/T/rust_mozprofile6vbCAE"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1693242817644	Marionette	INFO	Marionette enabled
+console.error: "Warning: unrecognized command line flag" "-detach"
+console.error: "Warning: unrecognized command line flag" "-disable-dev-shm-usage"
+console.error: "Warning: unrecognized command line flag" "-disable-extensions"
+console.error: "Warning: unrecognized command line flag" "-disable-background-networking"
+console.error: "Warning: unrecognized command line flag" "-disable-ipc-flooding-protection"
+console.error: "Warning: unrecognized command line flag" "-enable-features"
+console.error: "Warning: unrecognized command line flag" "-force-color-profile"
+console.error: "Warning: unrecognized command line flag" "-hide-scrollbars"
+console.error: "Warning: unrecognized command line flag" "-mute-audio"
+console.error: "Warning: unrecognized command line flag" "-no-first-run"
+console.error: "Warning: unrecognized command line flag" "-disable-popup-blocking"
+console.error: "Warning: unrecognized command line flag" "-start-minimized"
+console.error: "Warning: unrecognized command line flag" "-remote-allow-hosts"
+1693242817867	Marionette	INFO	Listening on port 52359
+WebDriver BiDi listening on ws://127.0.0.1:52344
+Read port: 52359
+1693242818000	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+DevTools listening on ws://127.0.0.1:52344/devtools/browser/690eefd7-cb1f-4e0f-a6fa-d54e9f338f3b
+1693242825069	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: services.settings: 
+  Message: NetworkError: Network error: TypeError: NetworkError: Network request failed
+  Stack:
+    APIError@resource://services-settings/RemoteSettingsClient.sys.mjs:111:1
+NetworkError@resource://services-settings/RemoteSettingsClient.sys.mjs:115:5
+_adjustedError@resource://services-settings/RemoteSettingsClient.sys.mjs:911:14
+maybeSync@resource://services-settings/RemoteSettingsClient.sys.mjs:816:38
+
+console.error: (new NetworkError("Network error: TypeError: NetworkError: Network request failed", "resource://services-settings/RemoteSettingsClient.sys.mjs", 111))
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed
+console.error: RemoteSecuritySettings.jsm: 
+  Failed to download attachment: TypeError: NetworkError: Network request failed

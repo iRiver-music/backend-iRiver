@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from Discover.serializers import DiscoverTitleSerializer
 from Music.models import Album, Song
 from urllib import response
 
@@ -63,3 +64,49 @@ def push_discover(request, uid=None):
         DiscoverTitle.objects.create(name=name, show_title=title)
 
     return Response({"message": "sdsds"})
+
+
+class DiscoverEditView(APIView):
+    def get(self, request):
+        return Response(DiscoverTitleSerializer(DiscoverTitle.objects.all(), many=True).data)
+
+    def put(self, request):
+        if request.data["id1"]:
+            try:
+                change_id(request=request)
+                return Response({"message": "Data swapped and saved successfully"})
+
+            except KeyError as e:
+                return Response({"message": f"KeyError: {str(e)}"}, status=400)
+            except StopIteration:
+                return Response({"message": "One or both IDs not found in data"}, status=400)
+
+        serializer = DiscoverTitleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Data saved successfully"}, status=201)
+        else:
+            return Response(serializer.errors, status=400)
+
+    def post(self, request):
+        serializer = DiscoverTitleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Data saved successfully"}, status=201)
+        else:
+            return Response(serializer.errors, status=400)
+
+    def delete(self, request):
+        DiscoverTitle.objects.all().delete()
+
+        return Response({"mes": "ok"})
+
+
+def change_id(request):
+    id1 = request.data["id1"]
+    id2 = request.data["id2"]
+
+    DiscoverTitle.objects.filter(id=id2) .update(id=1000)
+    # change id
+    DiscoverTitle.objects.filter(id=id1) .update(id=id2)
+    DiscoverTitle.objects.filter(id=1000) .update(id=id1)
