@@ -2,7 +2,7 @@ import concurrent.futures
 import json
 import os
 import glob
-import json
+import ijson
 from fuzzywuzzy import fuzz
 from django.conf import settings
 from django.http import JsonResponse
@@ -43,30 +43,29 @@ def aldum_search(aldum, query):
 def style_search(style, query):
     return fuzz.ratio(query, style['style']) + fuzz.ratio(query, style['title'])
 
-
-def read_file(file_name):
+# 將每項的4筆資料傳進來，分別為title, artist, album, ID。
+def read_file(file_name) : 
     results = []
     current_dict = {}
     keys_to_extract = ['title', 'artist', 'album', 'music_ID']
-    with open(file_name, 'rb') as file:
+    with open(file_name, 'rb') as file :
         parser = ijson.parse(file)
         in_data_array = False
-        for prefix, event, value in parser:
+        for prefix, event, value in parser :
             if in_data_array:
-                if event == 'map_key':
+                if event == 'map_key' :
                     current_key = value
-                elif event == 'string' and current_key in keys_to_extract:
+                elif event == 'string' and current_key in keys_to_extract :
                     current_dict[current_key] = value
                     if len(current_dict) == len(keys_to_extract):
                         results.append(current_dict)
                         current_dict = {}
-            elif prefix == 'data' and event == 'start_array':
+            elif prefix == 'data' and event == 'start_array' :
                 in_data_array = True
-            elif prefix == 'data' and event == 'end_array':
+            elif prefix == 'data' and event == 'end_array' :
                 in_data_array = False
                 break
     return results
-
 
 def search_music(file_name, query) -> list:
 
@@ -140,6 +139,7 @@ def search_style(file_name, query) -> list:
         song_json = json.load(jsonFile)
 
     song_list = song_json['data']
+
 
     # use radio algorithnm in fuzzywuzzy to sort music by rate (high to low)
 
@@ -242,11 +242,56 @@ def multiprocess_style(query, music_file_list) -> list:
     results.append(album_results[-1])
     return results
 
+def compare_rate(query, music_list, artist_list, album_list, style_list) : 
+    music_rate = 0
+    artist_rate = 0
+    album_rate = 0
+    style_rate = 0
+    for i in range(3) : 
+        music_rate += fuzz.ratio(query.lower(), music_list[i]['title'].lower())
+        artist_rate += fuzz.ratio(query.lower(), artist_list[0]['artist'].lower())
+        album_rate += fuzz.ratio(query.lower(), album_list[i]['title'].lower())
+        style_rate += fuzz.ratio(query.lower(), style_list[i]['style'].lower()) + fuzz.ratio(query.lower(), style_list[i]['title'].lower())
+    music_rate /= 3
+    artist_rate /= 3
+    album_rate /= 3
+    style_rate /= 3
+    print('query : ', query)
+    print('music_rate : ', music_rate)
+    print('artist_rate : ', artist_rate)
+    print('album_rate : ', album_rate)
+    print('style_rate : ', style_rate)
+    rate_list = [music_rate, artist_rate, album_rate, style_rate]
+    rate_list = sorted(rate_list, reverse=True)
+    max_rate = rate_list[0]
+    if rate_list[0] - rate_list[1] > 25 : 
+        if max_rate == music_rate:
+            for i in range(3) : 
+                artist_list.insert(i, music_list[i])
+                album_list.insert(i, music_list[i])
+        elif max_rate == artist_rate:
+            for i in range(3) : 
+                music_list.insert(i, artist_list[i])
+                album_list.insert(i, artist_list[i])
+        elif max_rate == album_rate:
+            for i in range(3) : 
+                music_list.insert(i, album_list[i])
+                artist_list.insert(i, album_list[i])
+
+    if max_rate == music_rate:
+        return 'music'
+    elif max_rate == artist_rate:
+        return 'artist'
+    elif max_rate == album_rate:
+        return 'album'
+    else:
+        return 'style'
+
 
 def query(query):
     # manager = Manager()
     # search_results = manager.list()
-    try:
+    try :
         music_file_list = count_music_file()
         style_file_list = count_style_file()
 
@@ -277,22 +322,31 @@ def query(query):
                 elif result[-1]['who am I '] == 'style':
                     style_results.extend(result)
 
+
+        
+
         del music_results[-1]
         del artist_results[-1]
         del album_results[-1]
         del style_results[-1]
 
         # 將每個陣列的前五筆資料取平均分數，將分數最大的項回傳，告訴前端此項優先顯示。
+        first_display = compare_rate(query, music_results, artist_results, album_results, style_results)
+        print('first display : ', first_display)
+        
         # 測試演算法分數，設定一個閾值，如果分數最大項與分數第二大項平均分數相差超過閾值，則做關聯性比較（例：如果查詢稻香，
         # song的分數比artist高出閾值，則將song第一項對應的aritst項（周杰倫）推進artist list的第一項，style不用做）。
-        # 現在是將每項的19筆資料存進來，有內存隱患，改為將每項的4筆資料傳進來，分別為title, artist, album, ID。
+
 
         data = {
-            'song': music_results,
-            'artist': artist_results,
-            'album': album_results,
-            'style': style_results,
+            'song' : music_results,
+            'artist' : artist_results,
+            'album' : album_results,
+            'style' : style_results,
+            'first display' : first_display, 
         }
+
+        
 
         print('finish second sort')
     except Exception as e:
