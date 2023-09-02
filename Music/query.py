@@ -47,7 +47,7 @@ def style_search(style, query):
 def read_file(file_name) : 
     results = []
     current_dict = {}
-    keys_to_extract = ['title', 'artist', 'album', 'music_ID']
+    keys_to_extract = ['title', 'artist', 'album', 'music_ID','views']
     with open(file_name, 'rb') as file :
         parser = ijson.parse(file)
         in_data_array = False
@@ -55,7 +55,7 @@ def read_file(file_name) :
             if in_data_array:
                 if event == 'map_key' :
                     current_key = value
-                elif event == 'string' and current_key in keys_to_extract :
+                elif (event == 'string' or event == 'number') and current_key in keys_to_extract :
                     current_dict[current_key] = value
                     if len(current_dict) == len(keys_to_extract):
                         results.append(current_dict)
@@ -286,6 +286,34 @@ def compare_rate(query, music_list, artist_list, album_list, style_list) :
         return 'album'
     else:
         return 'style'
+    
+def compare_views(music_list, artist_list, album_list) : 
+    highest_rate = 0
+    for i in music_list : 
+        highest_rate = i['views'] if i['views'] > highest_rate else highest_rate
+        print('music highest rate : ', highest_rate)
+    for i in music_list : 
+        if i['views'] == highest_rate : 
+            print('views i : ', i['views'])
+            music_list.remove(i)
+            music_list.insert(0, i)
+    highest_rate = 0
+    for i in artist_list : 
+        highest_rate = i['views'] if i['views'] > highest_rate else highest_rate
+    for i in artist_list : 
+        if i['views'] == highest_rate : 
+            artist_list.remove(i)
+            artist_list.insert(0, i)
+    highest_rate = 0
+    for i in album_list : 
+        highest_rate = i['views'] if i['views'] > highest_rate else highest_rate
+    for i in album_list : 
+        if i['views'] == highest_rate : 
+            album_list.remove(i)
+            album_list.insert(0, i)
+
+
+
 
 
 def query(query):
@@ -294,7 +322,6 @@ def query(query):
     try :
         music_file_list = count_music_file()
         style_file_list = count_style_file()
-
         # music_results = mutiprocess_music(query, music_file_list)
         music_results = []
         artist_results = []
@@ -309,7 +336,7 @@ def query(query):
                 multiprocess_album, query, music_file_list)
             future_style = executor.submit(
                 multiprocess_style, query, style_file_list)
-
+            
             # 使用as_completed等待所有任务完成
             for future in concurrent.futures.as_completed([future_music, future_artist, future_album, future_style]):
                 result = future.result()
@@ -321,21 +348,20 @@ def query(query):
                     album_results.extend(result)
                 elif result[-1]['who am I '] == 'style':
                     style_results.extend(result)
-
-
         
-
         del music_results[-1]
         del artist_results[-1]
         del album_results[-1]
         del style_results[-1]
-
+        
         # 將每個陣列的前五筆資料取平均分數，將分數最大的項回傳，告訴前端此項優先顯示。
+        compare_views(music_results, artist_results, album_results)
         first_display = compare_rate(query, music_results, artist_results, album_results, style_results)
         print('first display : ', first_display)
         
         # 測試演算法分數，設定一個閾值，如果分數最大項與分數第二大項平均分數相差超過閾值，則做關聯性比較（例：如果查詢稻香，
         # song的分數比artist高出閾值，則將song第一項對應的aritst項（周杰倫）推進artist list的第一項，style不用做）。
+        print('stuck at new ')
 
 
         data = {
@@ -346,7 +372,15 @@ def query(query):
             'display' : first_display, 
         }
 
-        
+        for i in music_results : 
+            print('music views : ', i['views'])
+        print('\n')
+        for i in artist_results : 
+            print('artist views : ', i['views'])
+        print('\n')
+        for i in album_results : 
+            print('album views : ', i['views'])
+        print('\n')
 
         print('finish second sort')
     except Exception as e:
