@@ -1,17 +1,8 @@
-import json
-import time
-import difflib
-import jwt
-import requests
-import uuid
-import urllib.parse
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect, render
-from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
-from datetime import datetime
+from datetime import date, datetime
 from httplib2 import Authentication
 from django.contrib.auth import authenticate, login, logout
 from django.db import connections
@@ -27,7 +18,7 @@ from User.Authentication.authentication import FirebaseAuthentication
 
 # models
 from Music.models import Artist, Song
-from .models import Profile, Setting, EQ, Playlist, ListeningHistory, Social, Contract, SearchHistory, LastUsersong
+from User.models import EQ, Contract, LastUsersong, ListeningHistory, Playlist, Profile, SearchHistory, Setting
 from .serializers import PlaylistSetSerializer, SettingSerializer, ProfileSerializer, EQSerializer, PlaylistSerializer, LastUsersongSerializer
 from .function import printcolorhaveline, nowtime, switch_key
 
@@ -35,6 +26,8 @@ from .function import printcolorhaveline, nowtime, switch_key
 from drfa.decorators import api_view, APIView
 from asgiref.sync import sync_to_async
 from rest_framework.decorators import api_view, authentication_classes
+
+# USR RESOURCE
 
 
 @api_view(["GET"])

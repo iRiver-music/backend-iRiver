@@ -7,7 +7,7 @@ app_name = 'Music'
 
 
 urlpatterns = [
-    #     serch
+    # serch
 
     path('query/db/<str:query>/',
          views.query_db_song, name='db'),

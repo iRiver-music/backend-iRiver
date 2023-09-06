@@ -1,6 +1,5 @@
 
 from rest_framework.permissions import BasePermission
-from User.models import Level
 import firebase_admin
 from firebase_admin import auth
 from rest_framework.views import APIView
@@ -50,12 +49,7 @@ class FirebaseAuthentication(BaseAuthentication):
 
 class HasLevelFivePermission(BasePermission):
     def has_permission(self, request, view):
-        # 檢查使用者是否已通過身份驗證
-        if not request.user.is_authenticated:
-            return False
-
-        # check permissions
-        return request.user.level == 5
+        return True
 
 
 class HasLevelOnePermission(BasePermission):

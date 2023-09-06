@@ -7,7 +7,7 @@ urlpatterns = [
     path('creat/',
          views.push_discover, name='creat'),
 
-    path('edit/',
+    path('edit',
          views.DiscoverEditView.as_view(), name='DiscoverEditView'),
     # last
     path('<str:uid>/',

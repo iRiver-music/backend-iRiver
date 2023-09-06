@@ -35,7 +35,7 @@ class Album(models.Model):
 
 class Artist(models.Model):
     artist = models.CharField(max_length=255, unique=True)
-    summary = models.TextField()
+    summary = models.TextField(default="summary")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):

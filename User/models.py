@@ -69,26 +69,17 @@ class Setting(models.Model):
 
 class EQ(models.Model):
     uid = models.CharField(max_length=36, primary_key=True, unique=True)
-    ENGANCE_HIGH = models.BooleanField(null=True, blank=True, default=False)
-    ENGANCE_MIDDLE = models.BooleanField(null=True, blank=True, default=False)
-    ENGANCE_LOW = models.BooleanField(null=True, blank=True, default=False)
-    ENGANCE_HEAVY = models.BooleanField(null=True, blank=True, default=False)
+
     STYLE = models.CharField(max_length=255, null=True,
                              blank=True, default="auto")
-    EQ_HIGH = models.IntegerField(null=True, default=0)
-    EQ_MIDDLE = models.IntegerField(null=True, default=0)
-    EQ_LOW = models.IntegerField(null=True, default=0)
-    EQ_HEAVY = models.IntegerField(null=True, default=0)
-    EQ_DISTORTION = models.IntegerField(null=True, default=0)
-    EQ_ZIP = models.IntegerField(null=True, default=0)
-    SPATIAL_AUDIO = models.CharField(
-        max_length=255, null=True, blank=True, default="auto")
 
-    _60HZ = models.IntegerField(null=True, default=0)
-    _230HZ = models.IntegerField(null=True, default=0)
-    _910HZ = models.IntegerField(null=True, default=0)
-    _4kHZ = models.IntegerField(null=True, default=0)
-    _14kHZ = models.IntegerField(null=True, default=0)
+    _32HZ = models.IntegerField(null=True, default=0)
+    _64HZ = models.IntegerField(null=True, default=0)
+    _128HZ = models.IntegerField(null=True, default=0)
+    _256HZ = models.IntegerField(null=True, default=0)
+    _512HZ = models.IntegerField(null=True, default=0)
+    _1kHZ = models.IntegerField(null=True, default=0)
+    _2kHZ = models.IntegerField(null=True, default=0)
 
     created_at = models.DateTimeField(default=custom_default_date)
 
@@ -193,26 +184,3 @@ class LastUsersong(models.Model):
 
     def __str__(self):
         return self.title
-
-
-#  admin =================================================================
-
-class AdminUser(AbstractSet):
-    code = models.CharField(max_length=100)
-    level = models.IntegerField(default=1)
-
-    class Meta:
-        app_label = 'User'
-        db_table = 'adminUser'
-
-    def __str__(self):
-        return self.username
-
-
-class Level(models.Model):
-    regName = models.CharField(max_length=100)
-    code = models.CharField(default=uuid.uuid4, max_length=100)
-    level = models.IntegerField()
-
-    def __str__(self):
-        return str(self.code)

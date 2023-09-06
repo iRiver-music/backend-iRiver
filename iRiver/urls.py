@@ -16,13 +16,38 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import FileResponse
+from django.conf import settings
+import os
+
+
+def serve_robots_txt(request):
+    robots_txt_path = os.path.join(settings.BASE_DIR, 'robots.txt')
+    return FileResponse(open(robots_txt_path, 'rb'))
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/auth/', include('rest_framework.urls')),
+    # music
     path('api/music/', include('Music.urls', namespace='Music')),
+    # user
     path('api/auth/', include('User.urls', namespace='User')),
+    # discover
     path('api/discover/', include('Discover.urls', namespace='Discover')),
+    # ??
     path('api/token/', include('Token.urls', namespace='Token')),
-    # 監測  電腦效能
+
+    # Track  追蹤資料
+    path('api/task/', include('Task.urls', namespace='Task')),
+
+    # Track  追蹤資料
+    path('api/track/', include('Track.urls', namespace='Track')),
+
+    # administration
+    path('api/admin/', include('Administration.urls', namespace='Administration')),
+
+
+
+    # robots
+    path('robots.txt', serve_robots_txt, name='robots_txt'),
+
 ]

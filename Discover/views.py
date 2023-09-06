@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from Discover.serializers import DiscoverTitleSerializer
-from Music.models import Album, Song
+from Discover.serializers import DiscoverTitleSerializer, StyleTitleSerializer
+from Music.models import Album, Song, StyleTitle
 from urllib import response
 
 from Music.serializers import AlbumSerializer, SongSerializer
@@ -68,25 +68,27 @@ def push_discover(request, uid=None):
 
 class DiscoverEditView(APIView):
     def get(self, request):
-        return Response(DiscoverTitleSerializer(DiscoverTitle.objects.all(), many=True).data)
+        discover_table = DiscoverTitleSerializer(
+            DiscoverTitle.objects.all(), many=True).data
+        return Response({"style_table":  StyleTitle.objects.all().values(), "discover_table": discover_table})
 
     def put(self, request):
-        if request.data["id1"]:
-            try:
-                change_id(request=request)
-                return Response({"message": "Data swapped and saved successfully"})
+        # if request.data["id1"]:
+        #     try:
+        #         change_id(request=request)
+        #         return Response({"message": "Data swapped and saved successfully"})
 
-            except KeyError as e:
-                return Response({"message": f"KeyError: {str(e)}"}, status=400)
-            except StopIteration:
-                return Response({"message": "One or both IDs not found in data"}, status=400)
+        #     except KeyError as e:
+        #         return Response({"message": f"KeyError: {str(e)}"}, status=404)
+        #     except StopIteration:
+        #         return Response({"message": "One or both IDs not found in data"}, status=404)
 
         serializer = DiscoverTitleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Data saved successfully"}, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=404)
 
     def post(self, request):
         serializer = DiscoverTitleSerializer(data=request.data)
@@ -94,12 +96,14 @@ class DiscoverEditView(APIView):
             serializer.save()
             return Response({"message": "Data saved successfully"}, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=404)
 
     def delete(self, request):
-        DiscoverTitle.objects.all().delete()
-
-        return Response({"mes": "ok"})
+        try:
+            DiscoverTitle.objects.filter(name=request.GET["name"]).delete()
+            return Response({"message": "Data saved successfully"}, status=201)
+        except Exception as e:
+            return Response({"message": str(e)}, status=201)
 
 
 def change_id(request):

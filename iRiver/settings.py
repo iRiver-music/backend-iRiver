@@ -44,6 +44,8 @@ INSTALLED_APPS = [
 
     # api
     'rest_framework',
+    # 使用者 裝置
+    'django_user_agents',
     # 'rest_framework_simplejwt.token_blacklist',
 
     # 跨網域
@@ -54,13 +56,15 @@ INSTALLED_APPS = [
     'User',
     'Token',
     'Discover',
-    "Task"
+    "Task",
+    "Administration",
+    "Track",
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
     )
 }
 
@@ -108,7 +112,13 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
+    # NDS
+    # font request
+    'https://iriver.api.iriver.api.com',
+    # font admin
+    'https://iriver.admin.iriver.api.com',
+
+    'http://localhost:3002',
 
     # admin
     'http://0.0.0.0:5001',
@@ -119,7 +129,6 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,6 +142,9 @@ MIDDLEWARE = [
     # core
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    # user devices
+    'django_user_agents.middleware.UserAgentMiddleware',
+
 ]
 
 ROOT_URLCONF = 'iRiver.urls'
@@ -140,7 +152,7 @@ ROOT_URLCONF = 'iRiver.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -235,7 +247,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    # BASE_DIR / "myapp/static/css",
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -253,5 +268,32 @@ FIREBASE_AUTH = {
 }
 
 
-# user
-# AUTH_USER_MODEL = 'User.AdminUser'
+# media root path =================================================================
+
+MEDIA_PATH = 'D:\\media'
+
+
+# email ================================================================
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# SMTP服务器和端口
+EMAIL_HOST = 'smtp-relay.brevo.com'
+EMAIL_PORT = 587
+
+# 使用TLS加密
+EMAIL_USE_TLS = False
+
+# 发件人邮箱地址和密码（Gmail账户）
+EMAIL_HOST_USER = 'iserver2023@gmail.com'
+EMAIL_HOST_PASSWORD = 'S3h6aQ8U1Tf0zdC9'
+
+# email detail
+COMP = "其他聯絡人: 賴泓瑋 lai09150915@gmail.com"
+ADMIN_DNS = "https://sql.iside.shop/"
+SUBJECT = "iriver 系統通知"
+
+# admin
+ADMIN_URL = "http://127.0.0.1:8000"
+ADMIN_ACCOUNT = "4PBvQRaKaZHR2dSNvTv8r664yS7etm6NtK6AsZ39mYzQQsQbaAr6PAfVpXM52sQ6"
+ADMIN_PASSWORD = "PM43qE35fNAntftDA95b5N5ysnDD2wfabTwMyTbxqczt3pHYHDM7SsXFS4wb5XNY"
