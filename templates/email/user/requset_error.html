@@ -1,0 +1,36 @@
+{% extends 'email/email_template.html' %}
+<!-- title -->
+{% block Title %} {{title}} {% endblock %}
+<!-- username -->
+{% block Username %} {{username}} {% endblock %}
+
+<!-- content -->
+{% block Content %}
+<br />
+<div
+  style="
+    background-color: #f7f7f7;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+  "
+>
+  <h2 style="color: #333">{{content}}</h2>
+  <hr style="border-color: #ddd" />
+  <p style="font-size: 16px; line-height: 1.5">{{additional_content_1}}</p>
+  <p style="font-size: 16px; line-height: 1.5; color: #007bff">
+    {{contact_support}}
+  </p>
+</div>
+{% endblock %}
+
+<!-- ButtonURL -->
+{% block ButtonURL %} {{buttonURL}} {% endblock %}
+<!-- ButtonName -->
+{% block ButtonName %} {{buttonName}} {% endblock %}
+
+<!-- who -->
+{% block Who %} {{who}} {% endblock %}
+
+<!-- Comp -->
+{% block Comp %} {{comp}} {% endblock %}

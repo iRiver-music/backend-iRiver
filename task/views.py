@@ -10,6 +10,7 @@ from Music.writeJson import make_json_file
 from Task.base.TaseBase import BaseTask
 from Task.lib.check.check_song_file import check_song_artist_img_and_dow, check_song_file_action
 from Task.lib.check.check_task_log_action import check_log_action, check_task_log_action
+from Task.lib.mail.send_mail_task import send_mail_action
 from Task.lib.style.check import check_style_song
 from Task.lib.style.push_style import clean_style, push_style
 from Task.lib.style.style import get_style
@@ -25,8 +26,13 @@ from User.Authentication.authentication import HasLevelFivePermission, HasLevelT
 from User.models import Profile
 from lib.Email.send import send_style_mail
 from django.conf import settings
+# job
+from django_apscheduler.jobstores import DjangoJobStore, register_events, register_job
+from apscheduler.schedulers.background import BackgroundScheduler
 
 # base task
+scheduler = BackgroundScheduler()
+scheduler.add_jobstore(DjangoJobStore(), 'default')
 
 
 # initialize =================================================
@@ -44,31 +50,31 @@ def initialize(request):
     lib_list = [
         {
             "port": port,
-            "url": "/task/update_style/",
+            "url": "/task/update_style",
             "proj": proj,
             "desc": "Update the latest song content.  (a mounth)"
         },
         {
             "port": port,
-            "url": "/task/update_song/",
+            "url": "/task/update_song",
             "proj": proj,
             "desc": "Check if there are any new songs added to download.   (a week)"
         },
         {
             "port": port,
-            "url": "/task/check_style_task/",
+            "url": "/task/check_style_task",
             "proj": proj,
             "desc": "Check if all the songs in the style table are there, if not, join the download. (a week)"
         },
         {
             "port": port,
-            "url": "/task/check_log/",
+            "url": "/task/check_log",
             "proj": proj,
             "desc": "Check all logs and quantities. (a week)"
         },
         {
             "port": port,
-            "url": "/task/update_qurey/",
+            "url": "/task/update_qurey",
             "proj": proj,
             "desc": "update all query json files.  (daily)"
         },
@@ -77,13 +83,13 @@ def initialize(request):
 
         {
             "port": file_port,
-            "url": "/task/check_song/",
+            "url": "/task/check_song",
             "proj": file_proj,
             "desc": "Check if all songs and covers are there  (a week)"
         },
         {
             "port": file_port,
-            "url": "/task/dow_fail_artist/",
+            "url": "/task/dow_fail_artist",
             "proj": file_proj,
             "desc": "Dow all fail dow artists.  (a week)"
         },
@@ -230,6 +236,29 @@ def update_qurey(request):
 
     return Response({"mes": task.respjson})
 
+# email =================================================================
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, HasLevelFivePermission])
+def sned_mail(request):
+    """
+    更新json檔案
+    """
+
+    class sned_mail_task(BaseTask):
+        def __init__(self, task_name,  **opcode_mes):
+            super().__init__(task_name, **opcode_mes)
+
+        def run_task(self):
+            send_mail_action()
+
+            super().run_task()
+
+    task = sned_mail_task(task_name="sned_mail_task", **request.data)
+    task.run()
+
+    return Response({"mes": task.respjson})
 # log =================================================================
 
 
@@ -296,3 +325,15 @@ class LibraryView(APIView):
 
     def put(self, request):
         pass
+
+
+@api_view(["DELETE"])
+def stop_all_tasks(request):
+    scheduler.remove_all_jobs()
+    # Library.objects.all().delete()
+    return Response({"status": "success"})
+
+
+# job =================================================================
+register_events(scheduler)
+scheduler.start()

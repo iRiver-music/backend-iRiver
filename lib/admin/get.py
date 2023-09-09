@@ -2,7 +2,7 @@ from django.conf import settings
 import requests
 
 
-def get_user():
+def get_admin_user():
     # 构建HTTP请求
     url = settings .ADMIN_URL + "/get_all_users/"
 

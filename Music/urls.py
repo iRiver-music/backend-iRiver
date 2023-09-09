@@ -9,22 +9,22 @@ app_name = 'Music'
 urlpatterns = [
     # serch
 
-    path('query/db/<str:query>/',
+    path('query/db/<str:query>',
          views.query_db_song, name='db'),
-    path('query/web/<str:query>/',
+    path('query/web/<str:query>',
          views.query_web_song, name='web'),
 
-    path('query_style/',
+    path('query_style',
          views.query_style, name='query_style'),
 
-    path('artist/<str:artist>/',
+    path('artist/<str:artist>',
          views.artist, name='artist'),
-    path('artist_test/<str:artist>/',
+    path('artist_test/<str:artist>',
          views.artist_test, name='artist'),
 
-    path('album/<str:album>/',
+    path('album/<str:album>',
          views.album, name='album'),
-    path('songs/<str:artist>/',
+    path('songs/<str:artist>',
          views.songs, name='songs'),
 
 

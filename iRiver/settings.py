@@ -47,10 +47,10 @@ INSTALLED_APPS = [
     # 使用者 裝置
     'django_user_agents',
     # 'rest_framework_simplejwt.token_blacklist',
-
     # 跨網域
     'corsheaders',
-
+    # tasks
+    'django_apscheduler',
     # app
     'Music',
     'User',
@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "Task",
     "Administration",
     "Track",
+    "Reviews"
 ]
 
 REST_FRAMEWORK = {
@@ -247,6 +248,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / "static",
     # BASE_DIR / "myapp/static/css",
@@ -255,10 +257,6 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-# for system app
-FORDERED_PATH = "/Users/hungwei/Desktop/code/iRiver-music/back/django-test-for-phone/test_phone/media"
 
 
 # fire base settings
@@ -297,3 +295,17 @@ SUBJECT = "iriver 系統通知"
 ADMIN_URL = "http://127.0.0.1:8000"
 ADMIN_ACCOUNT = "4PBvQRaKaZHR2dSNvTv8r664yS7etm6NtK6AsZ39mYzQQsQbaAr6PAfVpXM52sQ6"
 ADMIN_PASSWORD = "PM43qE35fNAntftDA95b5N5ysnDD2wfabTwMyTbxqczt3pHYHDM7SsXFS4wb5XNY"
+
+
+# 使用django-apscheduler作为APScheduler的后端
+SCHEDULER_JOBSTORES = {
+    'default': {
+        'type': 'django_apscheduler.jobstores:DjangoJobStore'
+    }
+}
+
+
+# port
+WEB_MUSIC_DNS = '49.213.238.75'
+MODILE_MUSIC = '49.213.238.75'
+IP = '49.213.238.75'

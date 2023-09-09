@@ -42,6 +42,9 @@ urlpatterns = [
     # Track  追蹤資料
     path('api/track/', include('Track.urls', namespace='Track')),
 
+    # Reviews 紀錄與評論
+    path('api/reviews/', include('Reviews.urls', namespace='Reviews')),
+
     # administration
     path('api/admin/', include('Administration.urls', namespace='Administration')),
 

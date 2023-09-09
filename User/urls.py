@@ -18,43 +18,43 @@ from rest_framework.response import Response
 app_name = "User"
 urlpatterns = [
     # contract
-    path("contract/<str:uid>/",
+    path("contract/<str:uid>",
          views.contract, name="contract"),
 
     # HIS
-    path("listeningHistory/<str:music_ID>/",
+    path("listeningHistory/<str:music_ID>",
          views.listeningHistory, name="listeningHistory"),
-    path("searchHistory/<str:uid>/<str:query>/",
+    path("searchHistory/<str:uid>/<str:query>",
          views.searchHistory, name="SearchHistory"),
 
 
-    path("my_playList/<str:uid>/", MyPlayListAPIView.as_view(), name="my_playList"),
+    path("my_playList/<str:uid>", MyPlayListAPIView.as_view(), name="my_playList"),
 
 
-    path("setting/<str:uid>/", SettingAPIView.as_view(), name="setting"),  # 設定
-    path("eq/<str:uid>/", EQAPIView.as_view(), name="eq"),  # eq設定
-    path("profile/<str:uid>/", ProfileAPIView.as_view(), name="profile"),  # 個人檔案設定
+    path("setting/<str:uid>", SettingAPIView.as_view(), name="setting"),  # 設定
+    path("eq/<str:uid>", EQAPIView.as_view(), name="eq"),  # eq設定
+    path("profile/<str:uid>", ProfileAPIView.as_view(), name="profile"),  # 個人檔案設定
 
-    path("playlist/<str:uid>/<str:playlist>/",
+    path("playlist/<str:uid>/<str:playlist>",
          PlaylistAPIView.as_view(), name="playlist"),
-    path("playlist/<str:uid>/", PlaylistAPIView.as_view(), name="playlist"),
+    path("playlist/<str:uid>", PlaylistAPIView.as_view(), name="playlist"),
 
     # get playlist
-    path("playlistSet/<str:uid>/", views.playlistSet, name="playlistSet"),
+    path("playlistSet/<str:uid>", views.playlistSet, name="playlistSet"),
 
     # get user music_ID
-    path("music_ID/<str:uid>/", views.music_ID, name="music_ID"),
+    path("music_ID/<str:uid>", views.music_ID, name="music_ID"),
 
     # last user song
-    path("lastUserSong/<str:uid>/",
+    path("lastUserSong/<str:uid>",
          views.LastuserSongAPIView.as_view(), name="userSong"),
 
 
 
     # test
-    path("creat_test/",
+    path("creat_test",
          views.creat_test_user, name="creat_test"),  # 紀錄播放紀錄
 
     # 必須放最後一個
-    path("<str:uid>/", UserAPIView.as_view(), name="user"),  # 獲取帳號資訊 刪除帳號
+    path("<str:uid>", UserAPIView.as_view(), name="user"),  # 獲取帳號資訊 刪除帳號
 ]

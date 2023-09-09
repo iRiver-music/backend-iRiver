@@ -43,6 +43,7 @@ class Profile(models.Model):
     birthday = models.DateField(null=True, default=datetime.datetime.now)
     gender = models.CharField(max_length=1, null=True, default="K")
     level = models.PositiveSmallIntegerField(default=0, null=True)
+    email = models.CharField(max_length=255, default="none")
     invitation_code = models.CharField(
         max_length=255, default=uuid.uuid4, editable=False)
     invited_by_code = models.CharField(max_length=255, null=True)
@@ -51,6 +52,9 @@ class Profile(models.Model):
     class Meta:
         app_label = "User"
         db_table = "profile"
+
+    def __str__(self):
+        return self.username
 
 
 class Setting(models.Model):

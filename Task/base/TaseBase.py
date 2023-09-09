@@ -1,8 +1,16 @@
-from Task.models import TaskLog
+from Task.models import Library, TaskLog
 from Task.serializers import TaskLogSerializer
 
 
 class BaseTask:
+    """
+    input: 
+    username,
+    sources ??,
+    opcode,
+    taskID,
+    """
+
     def __init__(self, task_name: str, **opcode_desc):
         # Use .get() to safely access dictionary keys
         self.task_name = task_name
@@ -46,8 +54,22 @@ class BaseTask:
             self.set_error(self.ERROR, validation_errors)
             return  # Data is not valid, don't save it
 
+        if self.opcode_desc.get("code") == self.OK:
+            Library.objects.filter(
+                id=self.opcode_desc.get("taskID")).update(active=True)
+        else:
+            Library.objects.filter(
+                id=self.opcode_desc.get("taskID")).update(active=False)
+
         # Save task related data using Django model (TaskLog)
-        task_log = TaskLog(**self.opcode_desc)
+        log = {}
+        log["username"] = self.opcode_desc.get("username")
+        log["opcode"] = self.opcode_desc.get("opcode")
+        log["source"] = self.opcode_desc.get("source", "Server")
+        log["code"] = self.opcode_desc.get("code")
+        log["desc"] = self.opcode_desc.get("desc")
+
+        task_log = TaskLog(**log)
         task_log.save()
 
     def run_task(self):

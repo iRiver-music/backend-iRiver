@@ -31,7 +31,7 @@ def mail(subject, recipient_list, html_template=None, context=None):
     # 发送邮件
     send_mail(
         subject,
-        context["message"],
+        context["content"],
         settings.EMAIL_HOST_USER,
         recipient_list,
         html_message=html_message,  # 使用HTML消息
@@ -122,7 +122,7 @@ def send_repot_mail(who: str, email: str, mes: str):
         'username': who,
         'content': mes,
         'buttonURL': settings.ADMIN_DNS,
-        'buttonName': '前往至管理頁面',
+        'buttonName': '去聽歌',
         'who': "iriver系統",
         'comp': settings.COMP,
         'additional_content_2': '請在管理頁面上查看和選擇適合的選項。',
@@ -136,8 +136,59 @@ def send_repot_mail(who: str, email: str, mes: str):
              context=context)
         return True
     except Exception as e:
-        print(e)
+        print(e, "mail failed")
         return False
 
 
 #  新增admin 管理者 ??
+
+
+# user
+
+
+def send_user_requset_error_mail(who: str, email: str, mes: str):
+    context = {
+        'title': 'iriver 音樂',
+        'username': who,
+        'content': mes,
+        'buttonURL': settings.WEB_MUSIC_DNS,
+        'buttonName': '去聽歌',
+        'who': "iriver系統",
+        'comp': settings.COMP,
+        'additional_content_1': '謝謝你願意回饋問題',
+        'contact_support': '如果您有任何問題或需要幫助，請隨時聯繫我們的支持團隊。',
+    }
+
+    try:
+        mail(subject="iriver 回報通知",
+             recipient_list=[email],
+             html_template="email/user/requset_error.html",
+             context=context)
+        return True
+    except Exception as e:
+        print(e, "mail failed")
+        return False
+
+
+def sned_request_reviews_mail(who: str, email: str, mes: str):
+    context = {
+        'title': 'iriver 系統',
+        'username': who,
+        'content': mes,
+        'buttonURL': settings.ADMIN_DNS,
+        'buttonName': '前往至管理頁面',
+        'who': "iriver系統",
+        'comp': settings.COMP,
+        'additional_content_1': '謝謝你願意回饋問題',
+        'contact_support': '如果您有任何問題或需要幫助，請隨時聯繫我們的支持團隊。',
+    }
+
+    try:
+        mail(subject="iriver 回報通知",
+             recipient_list=[email],
+             html_template="email/admin/request_reviews.html",
+             context=context)
+        return True
+    except Exception as e:
+        print(e, "mail failed")
+        return False
