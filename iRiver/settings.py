@@ -292,7 +292,8 @@ ADMIN_DNS = "https://sql.iside.shop/"
 SUBJECT = "iriver 系統通知"
 
 # admin
-ADMIN_URL = "http://127.0.0.1:8000"
+ADMIN_URL = "http://127.0.0.1:5002"
+
 ADMIN_ACCOUNT = "4PBvQRaKaZHR2dSNvTv8r664yS7etm6NtK6AsZ39mYzQQsQbaAr6PAfVpXM52sQ6"
 ADMIN_PASSWORD = "PM43qE35fNAntftDA95b5N5ysnDD2wfabTwMyTbxqczt3pHYHDM7SsXFS4wb5XNY"
 

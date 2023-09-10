@@ -30,6 +30,8 @@ from django.conf import settings
 from django_apscheduler.jobstores import DjangoJobStore, register_events, register_job
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from lib.admin.get import get_admin_user
+
 # base task
 scheduler = BackgroundScheduler()
 scheduler.add_jobstore(DjangoJobStore(), 'default')
@@ -284,7 +286,7 @@ def del_task_log(requset):
 
 @api_view(['GET'])
 def test(request):
-    ok = send_style_mail(who="賴泓瑋", email="lai09150915@gmail.com")
+    get_admin_user()
     return Response({"date": 123})
 
 
@@ -331,6 +333,7 @@ class LibraryView(APIView):
 def stop_all_tasks(request):
     scheduler.remove_all_jobs()
     # Library.objects.all().delete()
+
     return Response({"status": "success"})
 
 

@@ -9,6 +9,7 @@ RUN pip install virtualenv
 
 # 創建一個名為 venv 的虛擬環境
 RUN python -m venv venv
+
 RUN apt-get update && apt-get install -y ffmpeg
 
 # 啟用虛擬環境
