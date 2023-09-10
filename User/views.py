@@ -1,3 +1,7 @@
+from django.conf import settings
+from django.http import JsonResponse, FileResponse
+import os
+import random
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -102,6 +106,42 @@ class LastuserSongAPIView(APIView):
         except Exception as e:
             return Response({"mes": str(e)}, status=404)
 
+
+# user img ============================================================
+
+
+@api_view(['GET'])
+def user_playlist_img(request, uid, playlist):
+    # 构建用户图片目录路径
+    user_img_path = os.path.join(
+        settings.BASE_DIR, 'static', 'user', str(uid), f"{playlist}.jpg")
+
+    # 检查用户图片目录是否存在
+    if os.path.exists(user_img_path):
+        with open(user_img_path, 'rb') as img_file:
+            response = FileResponse(img_file)
+            return response
+
+    # 如果用户图片目录不存在或没有图片文件，从random目录中随机选择一个.jpg文件并返回该图片
+    random_img_dir = os.path.join(
+        settings.BASE_DIR, 'static', 'user', 'random')
+    random_img_files = [f for f in os.listdir(
+        random_img_dir) if f.endswith('.jpg')]
+
+    if random_img_files:
+        try:
+            selected_random_img = random.choice(random_img_files)
+            random_img_path = os.path.join(random_img_dir, selected_random_img)
+            with open(random_img_path, 'rb') as img_file:
+                response = HttpResponse(content_type='image/jpeg')
+                response['Content-Disposition'] = f'attachment; filename="{selected_random_img}"'
+                response.write(img_file.read())
+                return response
+        except Exception as e:
+            print(e)
+
+    # 如果连random目录中都没有.jpg文件，返回默认图片或错误信息，根据需要进行修改
+    return HttpResponse('No images found.', status=404)
 
 # user music_ID =============================================================
 

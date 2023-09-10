@@ -3,11 +3,13 @@ from django.forms import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from Track.views import device_view
 
 from User.models import Setting, EQ, Profile
 from User.serializers import SettingSerializer, ProfileSerializer, EQSerializer
 # firebase
 from User.Authentication.authentication import FirebaseAuthentication
+from User.views import contract
 
 #  ----------------------------------------------------------------
 
@@ -50,7 +52,26 @@ class UserAPIView(APIView):
                 "eq": EQSerializer(EQ.objects.get(uid=uid)).data
             }
 
+            # 註冊時紀錄帳號裝置
+            device_view(request=request)
+
+            # 合約
+            contract(request=request, uid=uid)
+
             return Response(data)
 
         except Exception as e:
             return Response({"mes": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, uid):
+        try:
+            Profile.objects.filter(
+                uid=uid).delete()
+            Setting.objects.filter(uid=uid).delete()
+            EQ.objects.filter(uid=uid).delete()
+
+            # response
+            return Response("ok")
+        except Exception as e:
+            print(e)
+        return Response({"mes": str(e)}, status=status.HTTP_404_NOT_FOUND)

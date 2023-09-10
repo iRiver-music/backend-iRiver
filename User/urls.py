@@ -52,9 +52,13 @@ urlpatterns = [
 
 
     # test
-    path("creat_test",
+    path("creat_ztest",
          views.creat_test_user, name="creat_test"),  # 紀錄播放紀錄
 
+    # playlist img
+
+    path("img/<str:uid>/<str:playlist>",
+         views.user_playlist_img, name="user_playlist_img"),
     # 必須放最後一個
     path("<str:uid>", UserAPIView.as_view(), name="user"),  # 獲取帳號資訊 刪除帳號
 ]

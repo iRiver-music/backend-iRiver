@@ -33,8 +33,6 @@ class PlaylistAPIView(APIView):
 
             except Exception as e:
                 return Response({"mes": str(e)}, status=status.HTTP_404_NOT_FOUND)
-
-            return Response(music_info_list)
         else:
             obj = Playlist.objects.filter(uid=uid, playlist=playlist).values()
 
@@ -76,7 +74,7 @@ class PlaylistAPIView(APIView):
         except IntegrityError:
             return Response({"mes": "Failed to create playlist. The 'id' field may already exist."}, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, uid, playlist=None):
+    def put(self, request, uid, playlist):
         try:
             playlists = Playlist.objects.filter(playlist=playlist, uid=uid)
         except Playlist.DoesNotExist:
