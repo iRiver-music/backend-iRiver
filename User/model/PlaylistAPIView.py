@@ -3,11 +3,16 @@ from django.forms import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.conf import settings
 from User.serializers import PlaylistSerializer
 from User.models import Playlist
 from Music.models import Song
 from Music.serializers import SongSerializer
+
+# rate
+from django.conf import settings
+from django_ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
 
 
 def get_uid_fav_song(uid: str) -> list:
@@ -25,6 +30,10 @@ def get_uid_fav_song(uid: str) -> list:
     return music_info_list
 
 
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='GET'), name='get')
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='POST'), name='post')
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='PUT'), name='put')
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='DELETE'), name='delete')
 class PlaylistAPIView(APIView):
     def get(self, request, uid, playlist=None):
         if playlist is None:
@@ -48,6 +57,7 @@ class PlaylistAPIView(APIView):
 
             return Response(music_info_list)
 
+    @ratelimit(key='user', rate='user')
     def post(self, request, uid, playlist=None):
         # Access the data from the request data directly
         playlist_data = request.data
@@ -74,6 +84,7 @@ class PlaylistAPIView(APIView):
         except IntegrityError:
             return Response({"mes": "Failed to create playlist. The 'id' field may already exist."}, status=status.HTTP_400_BAD_REQUEST)
 
+    @ratelimit(key='user', rate='user')
     def put(self, request, uid, playlist):
         try:
             playlists = Playlist.objects.filter(playlist=playlist, uid=uid)
@@ -96,6 +107,7 @@ class PlaylistAPIView(APIView):
         except:
             return Response({"mes": "Failed to update playlist"}, status=status.HTTP_400_BAD_REQUEST)
 
+    @ratelimit(key='user', rate='user')
     def delete(self, request, uid, playlist=None):
         if len(request.data) == 0:
             # 刪除我的最愛

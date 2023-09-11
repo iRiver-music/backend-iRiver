@@ -1,8 +1,9 @@
+from django_ratelimit.decorators import ratelimit
 from django.http import JsonResponse
 import json
 
 import difflib
-
+from django.conf import settings
 import concurrent.futures
 
 
@@ -41,6 +42,7 @@ test = False
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
 def query_db_song(request, query):
     try:
         # print(query)
@@ -56,6 +58,7 @@ def query_db_song(request, query):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
 def query_web_song(request, query):
     # query = request.GET.get('query', '')
     # with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
@@ -74,11 +77,13 @@ def query_web_song(request, query):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
 def query_style(request, uid=None):
     return Response(StyleTitleSerializer(StyleTitle.objects.all(), many=True).data)
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
 def album(request, album):
     search_album = Song.objects.all()
     matches = difflib.get_close_matches(
@@ -99,6 +104,7 @@ def album(request, album):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
 def songs(request, artist):
     songs_data = Song.objects.filter(
         artist=artist).values().order_by('-views')
@@ -107,6 +113,7 @@ def songs(request, artist):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
 def artist(request, artist):
     songs_data = Song.objects.filter(
         artist=artist).values().order_by('-views')
@@ -118,6 +125,7 @@ def artist(request, artist):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
 def style(request, style):
     obj = Style.objects.filter(style=style)
 
@@ -132,6 +140,7 @@ def style(request, style):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
 def artist_test(request, artist):
     songs_data = Song.objects.filter(
         artist=artist).values().order_by('-views')
@@ -139,6 +148,8 @@ def artist_test(request, artist):
     return Response(songs_data)
 
 
+@api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
 def change(request):
     # for style in Style.objects.all():
     #     if Song.objects.filter(music_ID=style.music_ID).exists() is False:``

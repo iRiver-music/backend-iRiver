@@ -11,14 +11,21 @@ from User.serializers import SettingSerializer, ProfileSerializer, EQSerializer
 from User.Authentication.authentication import FirebaseAuthentication
 from User.views import contract
 
+# rate
+from django.conf import settings
+from django_ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
+
 #  ----------------------------------------------------------------
 
 
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='GET'), name='get')
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='POST'), name='post')
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='DELETE'), name='delete')
 class UserAPIView(APIView):
     # authentication_firebase
     authentication_classes = [FirebaseAuthentication]
 
-    # 取得帳號資料
     def get(self, request, uid):
         try:
             data = {
@@ -31,7 +38,6 @@ class UserAPIView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-    # 註冊
     def post(self, request, uid):
         # 檢查是否邀請碼正確
         try:

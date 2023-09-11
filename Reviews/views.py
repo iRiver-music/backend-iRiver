@@ -8,10 +8,15 @@ from Reviews.models import ActivityLog
 from User.models import Profile
 from lib.Email.send import send_user_requset_error_mail
 
+from django.conf import settings
+from django_ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
 
+
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='GET'), name='get')
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='POST'), name='post')
 class CommentView(APIView):
     def get(self, request):
-        print(request.GET.get("log_type"))
         return Response(ActivityLog.objects.filter(log_type=request.GET.get("log_type")).values().order_by('-created_at'))
 
     def post(self, request):
@@ -29,6 +34,7 @@ class CommentView(APIView):
 
 
 @api_view(["POST"])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def request_comments(request):
     try:
         uid = request.GET.get("uid")
@@ -43,6 +49,7 @@ def request_comments(request):
 
 
 @api_view(["POST"])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def request_error_comments(request):
     try:
         uid = request.GET.get("uid")

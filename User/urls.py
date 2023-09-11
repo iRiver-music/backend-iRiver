@@ -6,6 +6,8 @@ from User.model.SettingAPIView import SettingAPIView
 from User.model.UserAPIView import UserAPIView
 from User.model.MyPlayListAPIView import MyPlayListAPIView
 from . import views
+# rate
+from django_ratelimit.decorators import ratelimit
 
 # 異步版本
 from drfa.decorators import api_view, APIView
@@ -17,10 +19,6 @@ from rest_framework.response import Response
 
 app_name = "User"
 urlpatterns = [
-    # contract
-    path("contract/<str:uid>",
-         views.contract, name="contract"),
-
     # HIS
     path("listeningHistory/<str:music_ID>",
          views.listeningHistory, name="listeningHistory"),
@@ -32,7 +30,9 @@ urlpatterns = [
 
 
     path("setting/<str:uid>", SettingAPIView.as_view(), name="setting"),  # 設定
+
     path("eq/<str:uid>", EQAPIView.as_view(), name="eq"),  # eq設定
+
     path("profile/<str:uid>", ProfileAPIView.as_view(), name="profile"),  # 個人檔案設定
 
     path("playlist/<str:uid>/<str:playlist>",
@@ -50,9 +50,8 @@ urlpatterns = [
          views.LastuserSongAPIView.as_view(), name="userSong"),
 
 
-
     # test
-    path("creat_ztest",
+    path("creat_test",
          views.creat_test_user, name="creat_test"),  # 紀錄播放紀錄
 
     # playlist img

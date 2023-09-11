@@ -31,7 +31,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
 class PlaylistSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Playlist
-        fields = ["playlist"]
+        fields = '__all__'
 
 
 class AdminSerializer(serializers.ModelSerializer):

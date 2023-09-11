@@ -16,6 +16,9 @@ from django.forms import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+# rate
+from django_ratelimit.decorators import ratelimit
+from django.views.generic import View
 
 from User.Authentication.authentication import FirebaseAuthentication
 
@@ -35,6 +38,7 @@ from rest_framework.decorators import api_view, authentication_classes
 
 
 @api_view(["GET"])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_USER)
 # @authentication_classes([FirebaseAuthentication])
 def listeningHistory(request, music_ID):
     if not ListeningHistory.objects.filter(music_ID=music_ID).exists():
@@ -48,24 +52,30 @@ def listeningHistory(request, music_ID):
 
 
 @api_view(["GET"])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 # @authentication_classes([FirebaseAuthentication])
 def searchHistory(request, uid, query):
     SearchHistory.objects.create(uid=uid, query=query)
     return Response({"mes": "ok"}, status=200)
 
 
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_USER)
 @api_view(["GET"])
-# @authentication_classes([FirebaseAuthentication])
 def playlistSet(request, uid):
-    playlists = Playlist.objects.filter(uid=uid)
-    serializer = PlaylistSetSerializer(playlists, many=True)
-    return Response(serializer.data)
+    try:
+        playlists = Playlist.objects.filter(uid=uid)
+        serializer = PlaylistSetSerializer(playlists, many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        print(e)
+        return Response(str(e), status=404)
 
 
 # contract =================================================================
 
 
 @api_view(["GET"])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_USER)
 @authentication_classes([FirebaseAuthentication])
 def contract(request, uid):
     try:
@@ -83,6 +93,7 @@ def contract(request, uid):
 
 class LastuserSongAPIView(APIView):
     # authentication_firebase
+
     def get(slef, request,  uid):
         try:
             obj = LastUsersong.objects.get(uid=uid)
@@ -111,6 +122,7 @@ class LastuserSongAPIView(APIView):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_IMAGE)
 def user_playlist_img(request, uid, playlist):
     # 构建用户图片目录路径
     user_img_path = os.path.join(
@@ -147,6 +159,7 @@ def user_playlist_img(request, uid, playlist):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_USER)
 def music_ID(request, uid):
     obj = Playlist.objects.filter(
         uid=uid, playlist="fav").values('music_ID', "id").distinct()
@@ -154,6 +167,7 @@ def music_ID(request, uid):
     return Response(obj)
 
 
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_USER)
 @api_view(['GET'])
 def creat_test_user(request):
     Profile.objects.create(uid="123")

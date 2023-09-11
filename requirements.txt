@@ -22,7 +22,10 @@ distlib==0.3.7
 Django==4.2.3
 django-apscheduler==0.6.2
 django-cors-headers==4.1.0
+django-csp==3.7
+django-ratelimit==4.1.0
 django-rest-framework-async==0.1.0
+django-sslserver==0.22
 django-user-agents==0.4.0
 djangorestframework==3.14.0
 djangorestframework-firebase==0.3.0
@@ -75,10 +78,10 @@ pyasn1-modules==0.3.0
 pycparser==2.21
 pydub==0.25.1
 PyJWT==2.7.0
-
 pyOpenSSL==23.2.0
 pyparsing==3.1.0
 PySocks==1.7.1
+python-dateutil==2.8.0
 python-Levenshtein==0.21.1
 python3-openid==3.2.0
 pytz==2023.3

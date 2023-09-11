@@ -1,4 +1,5 @@
 import datetime
+from django_ratelimit.decorators import ratelimit
 from .models import Artist, ArtistViewsCount
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -16,9 +17,11 @@ from Track.models import DailyViews, MusicViews, RegisterViews, SongViewsCount, 
 from django_user_agents.utils import get_user_agent
 
 from lib.Email.send import send_style_mail
+from django.conf import settings
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 def init(request):
     try:
         tab_list = ["discoverer", "myPlaylist", "myData", "search", "user"]
@@ -60,6 +63,7 @@ def init(request):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def views(request):
     # 获取今天的日期
     today = date.today()
@@ -78,6 +82,7 @@ def views(request):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def music_view(request):
     # 获取今天的日期
     today = date.today()
@@ -97,6 +102,7 @@ def music_view(request):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def search_view(request):
     # 获取今天的日期
     today = date.today()
@@ -116,6 +122,7 @@ def search_view(request):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def artist_view(request):
     try:
         # 从请求中获取艺术家的名称
@@ -143,6 +150,7 @@ def artist_view(request):
 
 
 @api_view(['GET'])
+@ratelimit(key='track', rate='track')
 def song_view(request):
     try:
         # 从请求中获取歌曲的ID
@@ -166,6 +174,7 @@ def song_view(request):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def fav_view(request):
     try:
         # 从请求中获取歌曲的ID
@@ -191,6 +200,7 @@ def fav_view(request):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def tab_view(request):
     try:
         tab = request.GET.get('tab')  # 从查询参数中获取歌曲ID
@@ -214,6 +224,7 @@ def tab_view(request):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def device_view(request):
 
     device = get_user_agent(request)
@@ -245,6 +256,7 @@ def device_view(request):
 # daily registration views =================================================================================
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def register_views(request):
     # 获取今天的日期
     today = date.today()
@@ -261,6 +273,7 @@ def register_views(request):
 
 
 @api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_TRACK)
 def test(request):
     device = get_user_agent(request)
 

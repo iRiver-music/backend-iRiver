@@ -1,5 +1,7 @@
+from django.utils.decorators import method_decorator
 import base64
 from django.shortcuts import render
+from django_ratelimit.decorators import ratelimit
 # 異步版本
 from drfa.decorators import api_view, APIView
 import requests
@@ -106,6 +108,7 @@ def initialize(request):
 
 
 @api_view(['POST'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 def update_style(request):
     """
     更新歌曲 
@@ -135,6 +138,7 @@ def update_style(request):
 
 
 @api_view(['POST'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 def update_song(request):
     class update_song_task(BaseTask):
         def __init__(self, task_name,  **opcode_mes):
@@ -197,6 +201,7 @@ def update_song(request):
 
 
 @api_view(['POST'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 def check_log(request):
     """
     確認所有log 都範圍內
@@ -217,6 +222,7 @@ def check_log(request):
     return Response({"mes": task.respjson})
 
 
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, HasLevelFivePermission])
 def update_qurey(request):
@@ -241,6 +247,7 @@ def update_qurey(request):
 # email =================================================================
 
 
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, HasLevelFivePermission])
 def sned_mail(request):
@@ -264,6 +271,7 @@ def sned_mail(request):
 # log =================================================================
 
 
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 @api_view(["GET"])
 # @permission_classes([IsAuthenticated, HasLevelThreePermission])
 def get_task_log(request):
@@ -275,6 +283,7 @@ def get_task_log(request):
         return JsonResponse({"error": str(e)}, status=400)
 
 
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 @api_view(["DELETE"])
 # @permission_classes([IsAuthenticated, HasLevelThreePermission])
 def del_task_log(requset):
@@ -283,7 +292,7 @@ def del_task_log(requset):
 
 # test = =====================================================================
 
-
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 @api_view(['GET'])
 def test(request):
     get_admin_user()
@@ -293,6 +302,9 @@ def test(request):
 # library =====================================================================
 
 
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='GET'), name='get')
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='POST'), name='post')
+@method_decorator(ratelimit(key='ip', rate=settings.RATELIMITS_USER, method='DELETE'), name='delete')
 class LibraryView(APIView):
     # @permission_classes([IsAuthenticated, HasLevelThreePermission])
     def get(self, request):
@@ -329,6 +341,7 @@ class LibraryView(APIView):
         pass
 
 
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_ADMIN)
 @api_view(["DELETE"])
 def stop_all_tasks(request):
     scheduler.remove_all_jobs()
