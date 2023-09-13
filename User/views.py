@@ -59,11 +59,25 @@ def searchHistory(request, uid, query):
     return Response({"mes": "ok"}, status=200)
 
 
+# playlistSet. =================================================================
+
+
 @ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_USER)
 @api_view(["GET"])
 def playlistSet(request, uid):
     try:
-        playlists = Playlist.objects.filter(uid=uid)
+        playlists = Playlist.objects.filter(uid=uid).values("playlist").union()
+        return Response(playlists)
+    except Exception as e:
+        print(e)
+        return Response(str(e), status=404)
+
+
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_USER)
+@api_view(["GET"])
+def playlistSet_song(request, uid, playlist):
+    try:
+        playlists = Playlist.objects.filter(uid=uid, playlist=playlist)
         serializer = PlaylistSetSerializer(playlists, many=True)
         return Response(serializer.data)
     except Exception as e:

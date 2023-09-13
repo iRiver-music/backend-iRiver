@@ -57,7 +57,6 @@ class PlaylistAPIView(APIView):
 
             return Response(music_info_list)
 
-    @ratelimit(key='user', rate='user')
     def post(self, request, uid, playlist=None):
         # Access the data from the request data directly
         playlist_data = request.data
@@ -84,7 +83,6 @@ class PlaylistAPIView(APIView):
         except IntegrityError:
             return Response({"mes": "Failed to create playlist. The 'id' field may already exist."}, status=status.HTTP_400_BAD_REQUEST)
 
-    @ratelimit(key='user', rate='user')
     def put(self, request, uid, playlist):
         try:
             playlists = Playlist.objects.filter(playlist=playlist, uid=uid)
@@ -107,7 +105,6 @@ class PlaylistAPIView(APIView):
         except:
             return Response({"mes": "Failed to update playlist"}, status=status.HTTP_400_BAD_REQUEST)
 
-    @ratelimit(key='user', rate='user')
     def delete(self, request, uid, playlist=None):
         if len(request.data) == 0:
             # 刪除我的最愛

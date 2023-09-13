@@ -39,8 +39,11 @@ urlpatterns = [
          PlaylistAPIView.as_view(), name="playlist"),
     path("playlist/<str:uid>", PlaylistAPIView.as_view(), name="playlist"),
 
-    # get playlist
+    # get playlist title
     path("playlistSet/<str:uid>", views.playlistSet, name="playlistSet"),
+    #     song
+    path("playlistSet/song/<str:uid>/<playlist:str>",
+         views.playlistSet_song, name="playlistSet"),
 
     # get user music_ID
     path("music_ID/<str:uid>", views.music_ID, name="music_ID"),

@@ -25,8 +25,6 @@ urlpatterns = [
 
     path("register_views", views.register_views, name="register_views"),
 
-
-
     # test
     path("test", views.test, name="test"),
 

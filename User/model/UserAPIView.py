@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from Track.views import device_view
 
-from User.models import Setting, EQ, Profile
+from User.models import Contract, LastUsersong, Playlist, Setting, EQ, Profile
 from User.serializers import SettingSerializer, ProfileSerializer, EQSerializer
 # firebase
 from User.Authentication.authentication import FirebaseAuthentication
@@ -75,6 +75,12 @@ class UserAPIView(APIView):
                 uid=uid).delete()
             Setting.objects.filter(uid=uid).delete()
             EQ.objects.filter(uid=uid).delete()
+            # playlist
+            Playlist.objects.filter(uid=uid).delete()
+            Contract.objects.filter(uid=uid).delete()
+            LastUsersong.objects.filter(uid=uid).delete()
+
+            # contract
 
             # response
             return Response("ok")

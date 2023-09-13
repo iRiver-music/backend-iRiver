@@ -207,8 +207,8 @@ def get_tab():
         tab_title = tab.tab
         views_count = tab_views_obj.views_count
 
-        tab_views_dict["title"] = (tab_title)
-        tab_views_dict["views_count"] = (views_count)
+        tab_views_dict["title"] = tab_title
+        tab_views_dict["views_count"] = views_count
 
         tab_views_list.append(tab_views_dict)
 
