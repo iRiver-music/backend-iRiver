@@ -13,9 +13,14 @@ urlpatterns = [
          views.query_db_song, name='db'),
     path('query/web/<str:query>',
          views.query_web_song, name='web'),
+    #     search list title
+    path('search_style_list',
+         views.get_search_style_list, name='get_search_style_list'),
+    #     search list title
+    path('search_style_songs/<str:style>',
+         views.get_search_style_song, name='get_search_style_list'),
 
-    path('query_style',
-         views.query_style, name='query_style'),
+
 
     path('artist/<str:artist>',
          views.artist, name='artist'),

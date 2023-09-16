@@ -78,8 +78,14 @@ def query_web_song(request, query):
 
 @api_view(['GET'])
 @ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
-def query_style(request, uid=None):
+def get_search_style_list(request):
     return Response(StyleTitleSerializer(StyleTitle.objects.all(), many=True).data)
+
+
+@api_view(['GET'])
+@ratelimit(key=settings.RATELIMIT_KEY, rate=settings.RATELIMITS_DEFAULT)
+def get_search_style_song(request, style):
+    return Response(StyleTitleSerializer(Style.objects.filter(style=style), many=True).data)
 
 
 @api_view(['GET'])

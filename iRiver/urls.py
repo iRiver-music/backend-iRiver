@@ -49,6 +49,8 @@ urlpatterns = [
     path('api/admin/', include('Administration.urls', namespace='Administration')),
 
 
+    # sandbox
+    path('api/sandbox/', include('Sandbox.urls', namespace='Sandbox')),
 
     # robots
     path('robots.txt', serve_robots_txt, name='robots_txt'),

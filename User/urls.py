@@ -42,7 +42,7 @@ urlpatterns = [
     # get playlist title
     path("playlistSet/<str:uid>", views.playlistSet, name="playlistSet"),
     #     song
-    path("playlistSet/song/<str:uid>/<playlist:str>",
+    path("playlistSet/song/<str:uid>/<str:playlist>",
          views.playlistSet_song, name="playlistSet"),
 
     # get user music_ID

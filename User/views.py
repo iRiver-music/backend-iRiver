@@ -66,7 +66,8 @@ def searchHistory(request, uid, query):
 @api_view(["GET"])
 def playlistSet(request, uid):
     try:
-        playlists = Playlist.objects.filter(uid=uid).values("playlist").union()
+        playlists = Playlist.objects.filter(
+            uid=uid).values("playlist").distinct()
         return Response(playlists)
     except Exception as e:
         print(e)
