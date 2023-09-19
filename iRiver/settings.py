@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     # 使用者 裝置
     'django_user_agents',
 
-    'djangosecure',
+    # 'djangosecure',
     # http
     # 'sslserver',
     'csp',
@@ -62,7 +62,7 @@ INSTALLED_APPS = [
     'User',
     'Token',
     'Discover',
-    "Task",
+    # "Task",
     "Administration",
     "Track",
     "Reviews"

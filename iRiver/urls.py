@@ -37,7 +37,7 @@ urlpatterns = [
     path('api/token/', include('Token.urls', namespace='Token')),
 
     # Track  追蹤資料
-    path('api/task/', include('Task.urls', namespace='Task')),
+    # path('api/task/', include('Task.urls', namespace='Task')),
 
     # Track  追蹤資料
     path('api/track/', include('Track.urls', namespace='Track')),

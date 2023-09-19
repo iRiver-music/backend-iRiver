@@ -13,6 +13,7 @@ cachetools==5.3.1
 certifi==2023.5.7
 cffi==1.15.1
 charset-normalizer==3.2.0
+colorama==0.4.6
 constantly==15.1.0
 cryptography==41.0.1
 daphne==4.0.0
@@ -78,12 +79,14 @@ pyasn1-modules==0.3.0
 pycparser==2.21
 pydub==0.25.1
 PyJWT==2.7.0
+PyMySQL==1.1.0
 pyOpenSSL==23.2.0
 pyparsing==3.1.0
 PySocks==1.7.1
 python-dateutil==2.8.0
 python-Levenshtein==0.21.1
 python3-openid==3.2.0
+pytube==15.0.0
 pytz==2023.3
 rapidfuzz==3.2.0
 requests==2.31.0
@@ -104,8 +107,10 @@ tqdm==4.65.0
 trio==0.22.1
 trio-websocket==0.10.3
 Twisted==22.10.0
+twisted-iocpsupport==1.0.3
 txaio==23.1.1
 typing_extensions==4.7.1
+tzdata==2023.3
 tzlocal==5.0.1
 ua-parser==0.18.0
 uritemplate==4.1.1
